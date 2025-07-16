@@ -114,7 +114,7 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, googleLogin } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -128,6 +128,19 @@ const Login = () => {
     setLoading(false);
   };
 
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setLoading(true);
+    const success = await googleLogin(credentialResponse);
+    if (!success) {
+      alert('Error de autenticación con Google');
+    }
+    setLoading(false);
+  };
+
+  const handleGoogleError = () => {
+    alert('Error al iniciar sesión con Google');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 flex items-center justify-center">
       <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md">
@@ -138,6 +151,78 @@ const Login = () => {
           <h1 className="text-2xl font-bold text-gray-800">IL MANDORLA</h1>
           <p className="text-gray-600">Dashboard Administrativo</p>
         </div>
+
+        {/* Google OAuth Login */}
+        <div className="mb-6">
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={handleGoogleError}
+            theme="outline"
+            size="large"
+            text="signin_with"
+            shape="rectangular"
+            locale="es"
+            useOneTap={false}
+          />
+        </div>
+
+        <div className="relative mb-6">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-300"></div>
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 bg-white text-gray-500">O continúa con</span>
+          </div>
+        </div>
+
+        {/* Traditional Login Form */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Email
+            </label>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+              placeholder="tu@email.com"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Contraseña
+            </label>
+            <input
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+              placeholder="••••••••"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-orange-500 text-white py-3 px-4 rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:opacity-50"
+          >
+            {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+          </button>
+        </form>
+
+        <div className="text-center mt-6">
+          <p className="text-xs text-gray-500">
+            Sistema KUMIA ELITE - Versión 1.0
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
