@@ -342,3 +342,5 @@ test_plan:
 agent_communication:
   - agent: "main"
     message: "Implemented core IL MANDORLA dashboard system with authentication, real-time metrics, menu management, customer management, AI agents, NFT rewards, and integrations. Database seeded with sample data. All endpoints follow /api prefix pattern for Kubernetes ingress. Ready for backend testing to verify all endpoints work correctly."
+  - agent: "main"
+    message: "MAJOR UPDATE: Added Google OAuth2 and OpenAI integrations with real API credentials. Backend now supports: 1) Google OAuth2 authentication with callback routes, 2) OpenAI-powered AI chat with channel-specific personalities, 3) Conversation history storage. Frontend updated with Google Login button and AI Chat interface. Dependencies: authlib, itsdangerous, emergentintegrations, @react-oauth/google. API keys configured in .env. Ready for comprehensive testing."
