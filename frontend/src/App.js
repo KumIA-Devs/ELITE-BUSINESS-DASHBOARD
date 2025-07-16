@@ -224,6 +224,157 @@ const Login = () => {
   );
 };
 
+// AI Chat Component
+const AIChat = () => {
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [selectedChannel, setSelectedChannel] = useState('general');
+  const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
+
+  const channels = [
+    { id: 'general', name: 'General', icon: '💬' },
+    { id: 'whatsapp', name: 'WhatsApp', icon: '📱' },
+    { id: 'instagram', name: 'Instagram', icon: '📸' },
+    { id: 'facebook', name: 'Facebook', icon: '👥' },
+    { id: 'tiktok', name: 'TikTok', icon: '🎵' }
+  ];
+
+  const sendMessage = async () => {
+    if (!input.trim()) return;
+
+    const userMessage = {
+      id: Date.now(),
+      text: input,
+      isUser: true,
+      timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setInput('');
+    setLoading(true);
+
+    try {
+      const response = await axios.post(`${API}/ai/chat`, {
+        message: input,
+        session_id: sessionId,
+        channel: selectedChannel
+      });
+
+      const aiMessage = {
+        id: Date.now() + 1,
+        text: response.data.response,
+        isUser: false,
+        timestamp: new Date()
+      };
+
+      setMessages(prev => [...prev, aiMessage]);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      const errorMessage = {
+        id: Date.now() + 1,
+        text: 'Error al procesar el mensaje. Intenta nuevamente.',
+        isUser: false,
+        isError: true,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 h-[600px] flex flex-col">
+      <div className="p-4 border-b border-gray-200">
+        <h3 className="text-lg font-semibold mb-4">Chat con IA - IL MANDORLA</h3>
+        
+        {/* Channel Selection */}
+        <div className="flex space-x-2 mb-4">
+          {channels.map((channel) => (
+            <button
+              key={channel.id}
+              onClick={() => setSelectedChannel(channel.id)}
+              className={`flex items-center px-3 py-2 rounded-lg text-sm ${
+                selectedChannel === channel.id
+                  ? 'bg-orange-100 text-orange-700 border border-orange-200'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              <span className="mr-2">{channel.icon}</span>
+              {channel.name}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {messages.length === 0 && (
+          <div className="text-center text-gray-500 py-8">
+            <p>¡Hola! Soy el asistente de IA de IL MANDORLA. ¿En qué puedo ayudarte hoy?</p>
+          </div>
+        )}
+        
+        {messages.map((message) => (
+          <div
+            key={message.id}
+            className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
+          >
+            <div
+              className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                message.isUser
+                  ? 'bg-orange-500 text-white'
+                  : message.isError
+                  ? 'bg-red-100 text-red-700'
+                  : 'bg-gray-100 text-gray-900'
+              }`}
+            >
+              <p className="text-sm">{message.text}</p>
+              <p className="text-xs mt-1 opacity-70">
+                {message.timestamp.toLocaleTimeString()}
+              </p>
+            </div>
+          </div>
+        ))}
+        
+        {loading && (
+          <div className="flex justify-start">
+            <div className="bg-gray-100 text-gray-900 px-4 py-2 rounded-lg">
+              <div className="flex items-center">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-orange-500 mr-2"></div>
+                <span className="text-sm">Escribiendo...</span>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Input */}
+      <div className="p-4 border-t border-gray-200">
+        <div className="flex space-x-2">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+            placeholder="Escribe tu mensaje..."
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+            disabled={loading}
+          />
+          <button
+            onClick={sendMessage}
+            disabled={loading || !input.trim()}
+            className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <span>Enviar</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Dashboard Component
 const Dashboard = () => {
   const { user, logout } = useAuth();
