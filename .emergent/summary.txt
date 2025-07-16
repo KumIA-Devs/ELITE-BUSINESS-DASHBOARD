@@ -1,0 +1,89 @@
+<analysis>
+The previous AI engineer effectively initiated the development of the IL MANDORLA administrative dashboard, starting from a detailed product description. The approach involved a phased roadmap, prioritizing core functionalities like authentication, real-time metrics, menu, and customer management. A key decision was to implement an initial plug-and-play structure for various integrations, deferring the actual API key provision to the user. The engineer successfully scaffolded the React frontend and FastAPI backend, installed dependencies, and seeded the database with sample data. A significant pivot occurred when the user requested Firebase Cloud Functions for automations instead of n8n. The latest interaction focused on a 2-hour sprint proposal, outlining what could be achieved quickly with immediate provision of critical API keys and business inputs, demonstrating a clear focus on delivering rapid, high-impact value.
+</analysis>
+
+<product_requirements>
+The IL MANDORLA Smokehouse dashboard is a next-generation administrative platform for a restaurant operating under the KUMIA ELITE system. Its core purpose is to be a control center for digital experience, AI integration, rewards, reputation, and customer relationship management.
+
+Key functionalities include:
+1.  **Secure Login:** Google OAuth2 with admin, collaborator, superadmin roles.
+2.  **General Dashboard:** Real-time metrics (orders, reservations, points, reviews), income, visit frequency, NFTs.
+3.  **Menu Management:** Visual editor (name, description, price, image), activate/inactivate items, popularity tracking.
+4.  **Reservations:** View active/future, filter, modify, cancel.
+5.  **Feedback:** View text/image/video reviews, average score, NPS, keyword analysis, content moderation.
+6.  **Rewards & NFTs:** View customer points, edit reward logic (trigger, level, NFT), create/upload new NFTs.
+7.  **Client & Wallets:** User list, order/point/referral history, visual wallet access.
+8.  **Multichannel AI Agent Training:** Create/edit prompts for WhatsApp, Instagram, Facebook, TikTok; upload AI content (menu, images, texts); activate/deactivate agents; preview responses and fallback logic.
+9.  **External Connections:** API integrations for Meta Business Suite, TikTok Business, OpenAI, Stripe/MercadoPago, and ERP/CRM via Webhook (beta).
+10. **Advanced Configuration:** Restaurant variables (hours, address, tone, category, events), Activity Log, Support & Updates.
+11. **Enriched Client Profile:** Name, email, OAuth login, level, visit history, order history, referrals, feedback.
+12. **Special Dates & Key Moments:** Editable fields for birthday, anniversary, next visit; visual alerts.
+13. **Automated Recommended Actions:** Campaign recommendations (NFTs, discounts, invites) activated via webhooks or Firebase Cloud Functions (changed from n8n).
+
+The UI/UX should be elegant, sober (light tones), modular with lateral navigation, contextual help, and dynamic/exportable graphics, including the IL MANDORLA logo. Security involves Firebase Auth for roles, Firestore multi-tenancy, Firebase Functions (Node.js 20) for backend, JWT/refresh tokens, and Webhooks for n8n (initially) / Firebase for automations. The final objective is to enable the restaurant team to train/personalize AI, measure results, connect channels, manage digital experience seamlessly, and foster deep customer loyalty with predictive AI.
+</product_requirements>
+
+<key_technical_concepts>
+-   **Full-Stack Application:** React (Frontend), FastAPI (Backend), MongoDB (Database).
+-   **Authentication:** Google OAuth2, JWT tokens.
+-   **Cloud & Serverless:** Firebase Functions (for automations, replacing n8n).
+-   **AI Integration:** OpenAI API.
+-   **Payment:** Stripe / MercadoPago.
+-   **Messaging:** Meta Business Suite (WhatsApp, Instagram, Facebook), TikTok Business.
+-   **Styling:** Tailwind CSS.
+-   **Data Storage:** Firestore (multi-tenant, suggested), MongoDB (implemented).
+</key_technical_concepts>
+
+<code_architecture>
+The application follows a standard full-stack architecture with a React frontend and a FastAPI backend, utilizing MongoDB as the primary database.
+
+
+
+-   ****:
+    -   **Importance:** This is the main FastAPI application file, serving as the backend's entry point. It handles API routing, database interactions, and business logic.
+    -   **Changes Made:** Initially rewritten using  to establish the FastAPI application, define basic API routes (likely for authentication, menu, and customer management, as per the initial build phase), and set up the connection to MongoDB. It incorporates environment variables for MongoDB URL and handles CORS.
+-   ****:
+    -   **Importance:** A utility script to populate the MongoDB database with sample data. This is crucial for development and demonstration purposes, allowing the dashboard to display meaningful information from the start.
+    -   **Changes Made:** Created as a new file. It contains logic to insert sample menu items, customer records, AI agents, NFT rewards, and restaurant settings into the database.
+-   ****:
+    -   **Importance:** The main React component that renders the user interface of the dashboard. It defines the overall layout, navigation, and integrates various modules.
+    -   **Changes Made:** Initially rewritten via . This likely set up the main application structure, including the initial login page UI and potential routing for dashboard sections.
+-   ****:
+    -   **Importance:** Contains the main CSS styles for the React application, likely integrating Tailwind CSS.
+    -   **Changes Made:** Rewritten using  to establish the base styling and incorporate the visual design preferences (elegant, sober, light tones) and branding (IL MANDORLA logo) as seen in the login page screenshot.
+-   ****:
+    -   **Importance:** Lists all Python dependencies required for the FastAPI backend.
+    -   **Changes Made:** Updated to include necessary libraries for authentication (e.g., ) and other core functionalities, and then dependencies were installed from this file.
+-   ****:
+    -   **Importance:** Manages Node.js dependencies and scripts for the React frontend.
+    -   **Changes Made:** Expected to be updated with React OAuth dependencies (though not explicitly shown in trajectory, it's a planned integration).
+</code_architecture>
+
+<pending_tasks>
+-   Provision of Google OAuth2 Client ID and Client Secret.
+-   Provision of OpenAI API Key.
+-   Provision of WhatsApp Business Phone ID and Access Token.
+-   Provision of Meta Business Suite App ID, App Secret, and Access Token.
+-   Provision of TikTok Business App Key, App Secret.
+-   Selection of payment provider (Stripe/MercadoPago) and provision of corresponding API keys.
+-   Provision of Firebase Project ID, Private Key, and Client Email (for Firebase Functions).
+-   Restaurant-specific business inputs: logo URL, brand colors, restaurant name, menu highlights, AI personality, automation preferences, food/restaurant photos.
+</pending_tasks>
+
+<current_work>
+The previous AI engineer has successfully established the foundational structure of the IL MANDORLA admin dashboard. The application is set up with a React frontend and a FastAPI backend, using MongoDB for data storage.
+
+Specifically, the following work has been completed:
+1.  **Initial Application Scaffolding:** The core files for both frontend (, ) and backend () were generated/rewritten using a  tool. This established the basic UI and API structure.
+2.  **Backend Setup & Dependencies:** The FastAPI backend has been configured, necessary Python dependencies (including those for authentication) have been installed (reflected in ), and the backend server is running successfully, as confirmed by log checks.
+3.  **Database Seeding:** A utility script, , was created and executed. This script populated the MongoDB database with initial sample data, including 5 menu items, 12 customers, 3 AI agents, 4 NFT rewards, and restaurant settings. This provides immediate, meaningful content for the dashboard.
+4.  **Frontend Rendering & Branding:** A screenshot of the frontend URL () confirmed that the login page is loading correctly, displaying IL MANDORLA branding and a professional login form with an Iniciando sesión... message. This indicates the base UI is functional and styled.
+5.  **Preparation for Backend Testing:** The  file was updated to prepare for comprehensive backend API testing, although the actual  run was not explicitly shown after the  update.
+6.  **Strategic Planning:** The AI engineer performed a detailed gap analysis between the current foundation and the full product vision, and provided a comprehensive list of required business and technical inputs for building the KUMIA ELITE Dashboard V1. A 2-hour sprint plan was proposed to the user for immediate, high-impact feature delivery (Google OAuth, OpenAI, WhatsApp API) upon receiving the critical API keys and business context.
+
+The application currently has a functional login UI, a running backend with a database populated with sample data, and is awaiting the necessary API keys and specific business details to proceed with actual third-party integrations and advanced intelligent features.
+</current_work>
+
+<optional_next_step>
+Start implementing Google OAuth2, OpenAI, and WhatsApp Business API integrations once the user provides the necessary API keys and business context as detailed in the 2-hour sprint plan.
+</optional_next_step>
