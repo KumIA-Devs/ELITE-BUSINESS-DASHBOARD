@@ -236,8 +236,90 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         raise HTTPException(status_code=401, detail="Invalid token")
 
 # Authentication routes
+@api_router.get("/auth/google/login")
+async def google_login(request: Request):
+    """Initiate Google OAuth login"""
+    redirect_uri = request.url_for("google_auth_callback")
+    return await oauth.google.authorize_redirect(request, redirect_uri)
+
+@api_router.get("/auth/google/callback")
+async def google_auth_callback(request: Request):
+    """Handle Google OAuth callback"""
+    try:
+        token = await oauth.google.authorize_access_token(request)
+        user_info = token.get("userinfo")
+        
+        if not user_info:
+            raise HTTPException(status_code=400, detail="Failed to get user info")
+        
+        # Check if user exists or create new one
+        existing_user = await db.users.find_one({"email": user_info["email"]})
+        
+        if existing_user:
+            # Update existing user
+            user_data = {
+                "name": user_info.get("name", existing_user.get("name")),
+                "picture": user_info.get("picture"),
+                "google_id": user_info.get("sub"),
+                "last_login": datetime.utcnow()
+            }
+            await db.users.update_one(
+                {"email": user_info["email"]},
+                {"$set": user_data}
+            )
+            user = await db.users.find_one({"email": user_info["email"]})
+        else:
+            # Create new user
+            user_data = {
+                "id": str(uuid.uuid4()),
+                "name": user_info.get("name"),
+                "email": user_info["email"],
+                "google_id": user_info.get("sub"),
+                "picture": user_info.get("picture"),
+                "role": "admin",  # Default role
+                "created_at": datetime.utcnow(),
+                "last_login": datetime.utcnow()
+            }
+            await db.users.insert_one(user_data)
+            user = user_data
+        
+        # Create JWT token
+        access_token = create_access_token(data={"sub": user["email"]})
+        
+        # Return user data and token
+        return {
+            "access_token": access_token,
+            "token_type": "bearer",
+            "user": {
+                "id": user["id"],
+                "name": user["name"],
+                "email": user["email"],
+                "picture": user.get("picture"),
+                "role": user["role"]
+            }
+        }
+    
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"OAuth authentication failed: {str(e)}")
+
+@api_router.post("/auth/google/token")
+async def google_token_auth(auth_request: GoogleAuthRequest):
+    """Alternative Google OAuth token exchange"""
+    try:
+        # This is for frontend integration with Google OAuth
+        # For now, we'll implement a simplified version
+        # In production, you'd verify the code with Google's token endpoint
+        
+        # Mock implementation - replace with actual Google token verification
+        raise HTTPException(status_code=501, detail="Direct token auth not implemented yet")
+    
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Token authentication failed: {str(e)}")
+
+# Legacy login for backward compatibility
 @api_router.post("/auth/login")
 async def login(request: LoginRequest):
+    """Legacy login endpoint - creates demo user"""
     # For demo purposes, create a default admin user
     user_data = {
         "id": str(uuid.uuid4()),
@@ -264,6 +346,82 @@ async def login(request: LoginRequest):
 @api_router.get("/auth/me")
 async def get_me(current_user: User = Depends(get_current_user)):
     return current_user
+
+# OpenAI Chat Integration
+@api_router.post("/ai/chat", response_model=AIConversationResponse)
+async def ai_chat(request: AIConversationRequest, current_user: User = Depends(get_current_user)):
+    """Chat with AI agent for different channels"""
+    try:
+        # Create channel-specific system message
+        channel_personalities = {
+            "whatsapp": f"You are a WhatsApp assistant for {RESTAURANT_CONFIG['name']}. {RESTAURANT_CONFIG['ai_personality']}. Keep responses concise and friendly for mobile messaging.",
+            "instagram": f"You are an Instagram assistant for {RESTAURANT_CONFIG['name']}. {RESTAURANT_CONFIG['ai_personality']}. Be trendy and visual-focused in your responses.",
+            "facebook": f"You are a Facebook assistant for {RESTAURANT_CONFIG['name']}. {RESTAURANT_CONFIG['ai_personality']}. Be professional and informative.",
+            "tiktok": f"You are a TikTok assistant for {RESTAURANT_CONFIG['name']}. {RESTAURANT_CONFIG['ai_personality']}. Be energetic and fun.",
+            "general": f"You are a general assistant for {RESTAURANT_CONFIG['name']}. {RESTAURANT_CONFIG['ai_personality']}. Provide helpful information about our smokehouse cuisine."
+        }
+        
+        system_message = channel_personalities.get(request.channel, channel_personalities["general"])
+        system_message += f"\n\nOur menu highlights: {', '.join(RESTAURANT_CONFIG['menu_highlights'])}"
+        
+        # Create LLM chat instance
+        chat = LlmChat(
+            api_key=OPENAI_API_KEY,
+            session_id=request.session_id,
+            system_message=system_message
+        ).with_model("openai", "gpt-4o")
+        
+        # Create user message
+        user_message = UserMessage(text=request.message)
+        
+        # Get AI response
+        response = await chat.send_message(user_message)
+        
+        # Store conversation in database
+        conversation_data = {
+            "id": str(uuid.uuid4()),
+            "user_id": current_user.id,
+            "session_id": request.session_id,
+            "channel": request.channel,
+            "user_message": request.message,
+            "ai_response": response,
+            "created_at": datetime.utcnow()
+        }
+        await db.conversations.insert_one(conversation_data)
+        
+        return AIConversationResponse(
+            response=response,
+            session_id=request.session_id,
+            channel=request.channel
+        )
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"AI chat failed: {str(e)}")
+
+# Get conversation history
+@api_router.get("/ai/conversations/{session_id}")
+async def get_conversation_history(session_id: str, current_user: User = Depends(get_current_user)):
+    """Get conversation history for a session"""
+    conversations = await db.conversations.find(
+        {"session_id": session_id, "user_id": current_user.id}
+    ).sort("created_at", 1).to_list(100)
+    
+    return [
+        {
+            "id": conv["id"],
+            "user_message": conv["user_message"],
+            "ai_response": conv["ai_response"],
+            "channel": conv["channel"],
+            "created_at": conv["created_at"]
+        }
+        for conv in conversations
+    ]
+
+# Restaurant configuration endpoint
+@api_router.get("/restaurant/config")
+async def get_restaurant_config(current_user: User = Depends(get_current_user)):
+    """Get restaurant configuration"""
+    return RESTAURANT_CONFIG
 
 # Dashboard metrics
 @api_router.get("/dashboard/metrics")
