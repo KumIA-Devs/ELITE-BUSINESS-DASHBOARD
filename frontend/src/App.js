@@ -618,6 +618,7 @@ const Dashboard = () => {
                 { id: 'reservations', label: 'Reservas', icon: '📅' },
                 { id: 'feedback', label: 'Feedback', icon: '💬' },
                 { id: 'ai-agents', label: 'Agentes IA', icon: '🤖' },
+                { id: 'ai-chat', label: 'Chat IA', icon: '💬' },
                 { id: 'rewards', label: 'Recompensas', icon: '🎁' },
                 { id: 'integrations', label: 'Integraciones', icon: '🔗' },
                 { id: 'settings', label: 'Configuración', icon: '⚙️' }
