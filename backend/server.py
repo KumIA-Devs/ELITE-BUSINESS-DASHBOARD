@@ -1,6 +1,7 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Depends, Request
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, Request, Response
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.sessions import SessionMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
@@ -15,6 +16,8 @@ from dotenv import load_dotenv
 import json
 import asyncio
 from bson import ObjectId
+from authlib.integrations.starlette_client import OAuth
+from emergentintegrations.llm.chat import LlmChat, UserMessage
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -30,9 +33,48 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 SECRET_KEY = os.environ.get("SECRET_KEY", "your-secret-key-here")
 ALGORITHM = "HS256"
 
+# Google OAuth2 setup
+oauth = OAuth()
+oauth.register(
+    name="google",
+    client_id=os.environ.get("GOOGLE_CLIENT_ID"),
+    client_secret=os.environ.get("GOOGLE_CLIENT_SECRET"),
+    authorization_url="https://accounts.google.com/o/oauth2/v2/auth",
+    token_url="https://oauth2.googleapis.com/token",
+    userinfo_url="https://openidconnect.googleapis.com/v1/userinfo",
+    issuer="https://accounts.google.com",
+    scopes=["openid", "email", "profile"],
+)
+
+# OpenAI setup
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+
 # Create the main app
 app = FastAPI(title="IL MANDORLA Admin Dashboard")
 api_router = APIRouter(prefix="/api")
+
+# Session middleware for OAuth
+app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
+
+# CORS configuration
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Restaurant configuration
+RESTAURANT_CONFIG = {
+    "name": os.environ.get("RESTAURANT_NAME", "IL MANDORLA SMOKEHOUSE"),
+    "logo": os.environ.get("RESTAURANT_LOGO", "https://images.app.goo.gl/HySig5BgebwJZG6B9"),
+    "brand_color_primary": os.environ.get("BRAND_COLOR_PRIMARY", "#FF6B35"),
+    "brand_color_secondary": os.environ.get("BRAND_COLOR_SECONDARY", "#FFFFFF"),
+    "menu_highlights": ["Asado de Tira Premium", "Brisket Smokehouse", "Pulled Pork"],
+    "ai_personality": "Warm, professional, knowledgeable about smokehouse cuisine",
+    "automation_preferences": ["Birthday campaigns", "post-visit feedback", "loyalty upgrades"]
+}
 
 # Models
 class User(BaseModel):
