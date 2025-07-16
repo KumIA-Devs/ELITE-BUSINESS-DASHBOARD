@@ -81,13 +81,29 @@ class User(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
     email: str
+    google_id: Optional[str] = None
+    picture: Optional[str] = None
     role: str = "admin"  # admin, colaborador, superadmin
     created_at: datetime = Field(default_factory=datetime.utcnow)
     last_login: Optional[datetime] = None
 
+class GoogleAuthRequest(BaseModel):
+    code: str
+    redirect_uri: str
+
 class LoginRequest(BaseModel):
     email: str
     password: str
+
+class AIConversationRequest(BaseModel):
+    message: str
+    session_id: str
+    channel: str = "general"  # whatsapp, instagram, facebook, tiktok, general
+
+class AIConversationResponse(BaseModel):
+    response: str
+    session_id: str
+    channel: str
 
 class MenuItem(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
