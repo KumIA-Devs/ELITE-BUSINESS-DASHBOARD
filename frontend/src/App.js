@@ -573,6 +573,9 @@ const Dashboard = () => {
           </div>
         );
 
+      case 'ai-chat':
+        return <AIChat />;
+
       default:
         return <div>Módulo en desarrollo</div>;
     }
