@@ -599,6 +599,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Register API routes
+app.include_router(api_router)
+
+# CORS configuration
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # Logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
