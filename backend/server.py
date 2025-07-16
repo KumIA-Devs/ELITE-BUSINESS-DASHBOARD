@@ -39,7 +39,7 @@ oauth.register(
     name="google",
     client_id=os.environ.get("GOOGLE_CLIENT_ID"),
     client_secret=os.environ.get("GOOGLE_CLIENT_SECRET"),
-    authorization_url="https://accounts.google.com/o/oauth2/v2/auth",
+    authorize_url="https://accounts.google.com/o/oauth2/v2/auth",
     token_url="https://oauth2.googleapis.com/token",
     userinfo_url="https://openidconnect.googleapis.com/v1/userinfo",
     issuer="https://accounts.google.com",
