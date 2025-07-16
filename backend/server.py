@@ -1,15 +1,20 @@
-from fastapi import FastAPI, APIRouter
-from dotenv import load_dotenv
-from starlette.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, Request
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
+from pydantic import BaseModel, Field
+from typing import List, Optional, Dict, Any
+from datetime import datetime, timedelta
 import os
 import logging
-from pathlib import Path
-from pydantic import BaseModel, Field
-from typing import List
 import uuid
-from datetime import datetime
-
+import jwt
+from passlib.context import CryptContext
+from pathlib import Path
+from dotenv import load_dotenv
+import json
+import asyncio
+from bson import ObjectId
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -19,42 +24,357 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
-# Create the main app without a prefix
-app = FastAPI()
+# Security
+security = HTTPBearer()
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+SECRET_KEY = os.environ.get("SECRET_KEY", "your-secret-key-here")
+ALGORITHM = "HS256"
 
-# Create a router with the /api prefix
+# Create the main app
+app = FastAPI(title="IL MANDORLA Admin Dashboard")
 api_router = APIRouter(prefix="/api")
 
-
-# Define Models
-class StatusCheck(BaseModel):
+# Models
+class User(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    client_name: str
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    name: str
+    email: str
+    role: str = "admin"  # admin, colaborador, superadmin
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    last_login: Optional[datetime] = None
 
-class StatusCheckCreate(BaseModel):
-    client_name: str
+class LoginRequest(BaseModel):
+    email: str
+    password: str
 
-# Add your routes to the router instead of directly to app
-@api_router.get("/")
-async def root():
-    return {"message": "Hello World"}
+class MenuItem(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    description: str
+    price: float
+    category: str
+    image_base64: Optional[str] = None
+    is_active: bool = True
+    popularity_score: float = 0.0
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
 
-@api_router.post("/status", response_model=StatusCheck)
-async def create_status_check(input: StatusCheckCreate):
-    status_dict = input.dict()
-    status_obj = StatusCheck(**status_dict)
-    _ = await db.status_checks.insert_one(status_obj.dict())
-    return status_obj
+class Customer(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    email: str
+    phone: Optional[str] = None
+    first_visit: datetime = Field(default_factory=datetime.utcnow)
+    last_visit: Optional[datetime] = None
+    birthday: Optional[datetime] = None
+    anniversary_date: Optional[datetime] = None
+    nft_level: str = "bronce"  # bronce, plata, oro, citizen_kumia
+    points: int = 0
+    referrals: int = 0
+    next_reward: Optional[str] = None
+    preferred_dish: Optional[str] = None
+    total_orders: int = 0
+    total_spent: float = 0.0
+    created_at: datetime = Field(default_factory=datetime.utcnow)
 
-@api_router.get("/status", response_model=List[StatusCheck])
-async def get_status_checks():
-    status_checks = await db.status_checks.find().to_list(1000)
-    return [StatusCheck(**status_check) for status_check in status_checks]
+class Reservation(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    customer_id: str
+    customer_name: str
+    date: datetime
+    time: str
+    guests: int
+    phone: str
+    email: str
+    status: str = "confirmed"  # confirmed, cancelled, completed
+    special_requests: Optional[str] = None
+    created_at: datetime = Field(default_factory=datetime.utcnow)
 
-# Include the router in the main app
+class Feedback(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    customer_id: str
+    customer_name: str
+    rating: int
+    comment: str
+    media_base64: Optional[str] = None
+    media_type: Optional[str] = None  # image, video
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    is_approved: bool = True
+
+class AIAgent(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    channel: str  # whatsapp, instagram, facebook, tiktok
+    name: str
+    prompt: str
+    is_active: bool = True
+    api_key: Optional[str] = None
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+class NFTReward(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    description: str
+    image_base64: str
+    level: str  # bronce, plata, oro, citizen_kumia
+    points_required: int
+    attributes: Dict[str, Any] = {}
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class Integration(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    type: str  # google_oauth, openai, meta, tiktok, stripe
+    api_key: Optional[str] = None
+    api_secret: Optional[str] = None
+    is_active: bool = False
+    config: Dict[str, Any] = {}
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class RestaurantSettings(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str = "IL MANDORLA SMOKEHOUSE"
+    address: str = ""
+    phone: str = ""
+    email: str = ""
+    opening_hours: Dict[str, str] = {}
+    voice_tone: str = "amigable y profesional"
+    category: str = "smokehouse"
+    special_events: List[str] = []
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+class DashboardMetrics(BaseModel):
+    total_orders: int = 0
+    total_reservations: int = 0
+    total_customers: int = 0
+    total_points_delivered: int = 0
+    total_revenue: float = 0.0
+    avg_rating: float = 0.0
+    nfts_delivered: int = 0
+    active_ai_agents: int = 0
+
+# Authentication functions
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
+    to_encode = data.copy()
+    if expires_delta:
+        expire = datetime.utcnow() + expires_delta
+    else:
+        expire = datetime.utcnow() + timedelta(minutes=15)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    try:
+        payload = jwt.decode(credentials.credentials, SECRET_KEY, algorithms=[ALGORITHM])
+        email: str = payload.get("sub")
+        if email is None:
+            raise HTTPException(status_code=401, detail="Invalid token")
+        user = await db.users.find_one({"email": email})
+        if user is None:
+            raise HTTPException(status_code=401, detail="User not found")
+        return User(**user)
+    except jwt.JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+# Authentication routes
+@api_router.post("/auth/login")
+async def login(request: LoginRequest):
+    # For demo purposes, create a default admin user
+    user_data = {
+        "id": str(uuid.uuid4()),
+        "name": "Admin IL MANDORLA",
+        "email": request.email,
+        "role": "superadmin",
+        "created_at": datetime.utcnow(),
+        "last_login": datetime.utcnow()
+    }
+    
+    # Check if user exists, if not create one
+    existing_user = await db.users.find_one({"email": request.email})
+    if not existing_user:
+        await db.users.insert_one(user_data)
+    else:
+        await db.users.update_one(
+            {"email": request.email},
+            {"$set": {"last_login": datetime.utcnow()}}
+        )
+    
+    access_token = create_access_token(data={"sub": request.email})
+    return {"access_token": access_token, "token_type": "bearer", "user": user_data}
+
+@api_router.get("/auth/me")
+async def get_me(current_user: User = Depends(get_current_user)):
+    return current_user
+
+# Dashboard metrics
+@api_router.get("/dashboard/metrics")
+async def get_dashboard_metrics(current_user: User = Depends(get_current_user)):
+    metrics = DashboardMetrics()
+    
+    # Get real-time metrics
+    metrics.total_customers = await db.customers.count_documents({})
+    metrics.total_reservations = await db.reservations.count_documents({})
+    metrics.total_orders = await db.orders.count_documents({}) if await db.orders.count_documents({}) else 0
+    metrics.active_ai_agents = await db.ai_agents.count_documents({"is_active": True})
+    metrics.nfts_delivered = await db.nft_rewards.count_documents({})
+    
+    # Calculate total points delivered
+    customers = await db.customers.find({}).to_list(1000)
+    metrics.total_points_delivered = sum(customer.get("points", 0) for customer in customers)
+    
+    # Calculate average rating
+    feedback_list = await db.feedback.find({}).to_list(1000)
+    if feedback_list:
+        metrics.avg_rating = sum(f.get("rating", 0) for f in feedback_list) / len(feedback_list)
+    
+    # Calculate total revenue (mock data for now)
+    metrics.total_revenue = sum(customer.get("total_spent", 0) for customer in customers)
+    
+    return metrics
+
+# Menu management
+@api_router.get("/menu", response_model=List[MenuItem])
+async def get_menu(current_user: User = Depends(get_current_user)):
+    menu_items = await db.menu_items.find({}).to_list(1000)
+    return [MenuItem(**item) for item in menu_items]
+
+@api_router.post("/menu", response_model=MenuItem)
+async def create_menu_item(item: MenuItem, current_user: User = Depends(get_current_user)):
+    item_dict = item.dict()
+    await db.menu_items.insert_one(item_dict)
+    return item
+
+@api_router.put("/menu/{item_id}", response_model=MenuItem)
+async def update_menu_item(item_id: str, item: MenuItem, current_user: User = Depends(get_current_user)):
+    item.updated_at = datetime.utcnow()
+    item_dict = item.dict()
+    await db.menu_items.update_one({"id": item_id}, {"$set": item_dict})
+    return item
+
+@api_router.delete("/menu/{item_id}")
+async def delete_menu_item(item_id: str, current_user: User = Depends(get_current_user)):
+    await db.menu_items.delete_one({"id": item_id})
+    return {"message": "Item deleted successfully"}
+
+# Customer management
+@api_router.get("/customers", response_model=List[Customer])
+async def get_customers(current_user: User = Depends(get_current_user)):
+    customers = await db.customers.find({}).to_list(1000)
+    return [Customer(**customer) for customer in customers]
+
+@api_router.post("/customers", response_model=Customer)
+async def create_customer(customer: Customer, current_user: User = Depends(get_current_user)):
+    customer_dict = customer.dict()
+    await db.customers.insert_one(customer_dict)
+    return customer
+
+@api_router.put("/customers/{customer_id}", response_model=Customer)
+async def update_customer(customer_id: str, customer: Customer, current_user: User = Depends(get_current_user)):
+    customer_dict = customer.dict()
+    await db.customers.update_one({"id": customer_id}, {"$set": customer_dict})
+    return customer
+
+# Reservations
+@api_router.get("/reservations", response_model=List[Reservation])
+async def get_reservations(current_user: User = Depends(get_current_user)):
+    reservations = await db.reservations.find({}).to_list(1000)
+    return [Reservation(**reservation) for reservation in reservations]
+
+@api_router.post("/reservations", response_model=Reservation)
+async def create_reservation(reservation: Reservation, current_user: User = Depends(get_current_user)):
+    reservation_dict = reservation.dict()
+    await db.reservations.insert_one(reservation_dict)
+    return reservation
+
+@api_router.put("/reservations/{reservation_id}", response_model=Reservation)
+async def update_reservation(reservation_id: str, reservation: Reservation, current_user: User = Depends(get_current_user)):
+    reservation_dict = reservation.dict()
+    await db.reservations.update_one({"id": reservation_id}, {"$set": reservation_dict})
+    return reservation
+
+# Feedback management
+@api_router.get("/feedback", response_model=List[Feedback])
+async def get_feedback(current_user: User = Depends(get_current_user)):
+    feedback_list = await db.feedback.find({}).to_list(1000)
+    return [Feedback(**feedback) for feedback in feedback_list]
+
+@api_router.post("/feedback", response_model=Feedback)
+async def create_feedback(feedback: Feedback, current_user: User = Depends(get_current_user)):
+    feedback_dict = feedback.dict()
+    await db.feedback.insert_one(feedback_dict)
+    return feedback
+
+# AI Agents management
+@api_router.get("/ai-agents", response_model=List[AIAgent])
+async def get_ai_agents(current_user: User = Depends(get_current_user)):
+    agents = await db.ai_agents.find({}).to_list(1000)
+    return [AIAgent(**agent) for agent in agents]
+
+@api_router.post("/ai-agents", response_model=AIAgent)
+async def create_ai_agent(agent: AIAgent, current_user: User = Depends(get_current_user)):
+    agent_dict = agent.dict()
+    await db.ai_agents.insert_one(agent_dict)
+    return agent
+
+@api_router.put("/ai-agents/{agent_id}", response_model=AIAgent)
+async def update_ai_agent(agent_id: str, agent: AIAgent, current_user: User = Depends(get_current_user)):
+    agent.updated_at = datetime.utcnow()
+    agent_dict = agent.dict()
+    await db.ai_agents.update_one({"id": agent_id}, {"$set": agent_dict})
+    return agent
+
+# NFT Rewards
+@api_router.get("/nft-rewards", response_model=List[NFTReward])
+async def get_nft_rewards(current_user: User = Depends(get_current_user)):
+    rewards = await db.nft_rewards.find({}).to_list(1000)
+    return [NFTReward(**reward) for reward in rewards]
+
+@api_router.post("/nft-rewards", response_model=NFTReward)
+async def create_nft_reward(reward: NFTReward, current_user: User = Depends(get_current_user)):
+    reward_dict = reward.dict()
+    await db.nft_rewards.insert_one(reward_dict)
+    return reward
+
+# Integrations
+@api_router.get("/integrations", response_model=List[Integration])
+async def get_integrations(current_user: User = Depends(get_current_user)):
+    integrations = await db.integrations.find({}).to_list(1000)
+    return [Integration(**integration) for integration in integrations]
+
+@api_router.post("/integrations", response_model=Integration)
+async def create_integration(integration: Integration, current_user: User = Depends(get_current_user)):
+    integration_dict = integration.dict()
+    await db.integrations.insert_one(integration_dict)
+    return integration
+
+@api_router.put("/integrations/{integration_id}", response_model=Integration)
+async def update_integration(integration_id: str, integration: Integration, current_user: User = Depends(get_current_user)):
+    integration_dict = integration.dict()
+    await db.integrations.update_one({"id": integration_id}, {"$set": integration_dict})
+    return integration
+
+# Restaurant Settings
+@api_router.get("/settings", response_model=RestaurantSettings)
+async def get_settings(current_user: User = Depends(get_current_user)):
+    settings = await db.settings.find_one({})
+    if not settings:
+        default_settings = RestaurantSettings()
+        await db.settings.insert_one(default_settings.dict())
+        return default_settings
+    return RestaurantSettings(**settings)
+
+@api_router.put("/settings", response_model=RestaurantSettings)
+async def update_settings(settings: RestaurantSettings, current_user: User = Depends(get_current_user)):
+    settings.updated_at = datetime.utcnow()
+    settings_dict = settings.dict()
+    await db.settings.update_one({}, {"$set": settings_dict}, upsert=True)
+    return settings
+
+# Include router
 app.include_router(api_router)
 
+# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
@@ -63,11 +383,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+# Logging
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 @app.on_event("shutdown")
