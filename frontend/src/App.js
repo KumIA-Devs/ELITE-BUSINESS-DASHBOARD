@@ -56,15 +56,54 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  const googleLogin = async (credentialResponse) => {
+    try {
+      // For now, we'll use a simple approach - decode the JWT token
+      const credential = credentialResponse.credential;
+      
+      // Decode the JWT token to get user info
+      const base64Url = credential.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+      
+      const userInfo = JSON.parse(jsonPayload);
+      
+      // Create a simple token for demo
+      const userData = {
+        id: userInfo.sub,
+        name: userInfo.name,
+        email: userInfo.email,
+        picture: userInfo.picture,
+        role: 'admin'
+      };
+      
+      // For demo purposes, create a simple token
+      const mockToken = btoa(JSON.stringify(userData));
+      
+      setToken(mockToken);
+      setUser(userData);
+      localStorage.setItem('token', mockToken);
+      localStorage.setItem('user', JSON.stringify(userData));
+      
+      return true;
+    } catch (error) {
+      console.error('Google login error:', error);
+      return false;
+    }
+  };
+
   const logout = () => {
     setToken(null);
     setUser(null);
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     delete axios.defaults.headers.common['Authorization'];
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!token }}>
+    <AuthContext.Provider value={{ user, login, googleLogin, logout, isAuthenticated: !!token }}>
       {children}
     </AuthContext.Provider>
   );
