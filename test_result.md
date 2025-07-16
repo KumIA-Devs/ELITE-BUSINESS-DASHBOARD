@@ -225,6 +225,42 @@ backend:
         agent: "main"
         comment: "Implemented restaurant settings management including hours, contact info, voice tone, and special events."
 
+  - task: "Google OAuth2 Integration"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented Google OAuth2 authentication with callback routes, user creation/update, JWT token generation. Frontend integration with @react-oauth/google library and login button."
+
+  - task: "OpenAI Chat Integration"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented OpenAI-powered AI chat with channel-specific personalities (WhatsApp, Instagram, Facebook, TikTok, General). Uses emergentintegrations library with GPT-4o model. Conversation history storage in MongoDB."
+
+  - task: "Restaurant Configuration API"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added restaurant configuration endpoint with branding, menu highlights, AI personality, and business context from environment variables."
+
   - task: "Database Seeding"
     implemented: true
     working: "NA"
