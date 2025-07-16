@@ -651,11 +651,13 @@ const Dashboard = () => {
 // Main App Component
 const App = () => {
   return (
-    <AuthProvider>
-      <div className="App">
-        <AuthWrapper />
-      </div>
-    </AuthProvider>
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      <AuthProvider>
+        <div className="App">
+          <AuthWrapper />
+        </div>
+      </AuthProvider>
+    </GoogleOAuthProvider>
   );
 };
 
