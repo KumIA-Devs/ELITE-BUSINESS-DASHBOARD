@@ -58,10 +58,8 @@ const AuthProvider = ({ children }) => {
 
   const googleLogin = async (credentialResponse) => {
     try {
-      // For now, we'll use a simple approach - decode the JWT token
       const credential = credentialResponse.credential;
       
-      // Decode the JWT token to get user info
       const base64Url = credential.split('.')[1];
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
       const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
@@ -70,7 +68,6 @@ const AuthProvider = ({ children }) => {
       
       const userInfo = JSON.parse(jsonPayload);
       
-      // Create a simple token for demo
       const userData = {
         id: userInfo.sub,
         name: userInfo.name,
@@ -79,7 +76,6 @@ const AuthProvider = ({ children }) => {
         role: 'admin'
       };
       
-      // For demo purposes, create a simple token
       const mockToken = btoa(JSON.stringify(userData));
       
       setToken(mockToken);
@@ -142,17 +138,17 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
+      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
             <span className="text-white text-2xl font-bold">IM</span>
           </div>
-          <h1 className="text-2xl font-bold text-gray-800">IL MANDORLA</h1>
-          <p className="text-gray-600">Dashboard Administrativo</p>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">IL MANDORLA</h1>
+          <p className="text-gray-600 mb-1">Dashboard Administrativo</p>
+          <p className="text-sm text-orange-600 font-medium">Sistema KUMIA Elite</p>
         </div>
 
-        {/* Google OAuth Login */}
         <div className="mb-6">
           <GoogleLogin
             onSuccess={handleGoogleSuccess}
@@ -175,7 +171,6 @@ const Login = () => {
           </div>
         </div>
 
-        {/* Traditional Login Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -186,8 +181,8 @@ const Login = () => {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-              placeholder="tu@email.com"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all duration-200"
+              placeholder="admin@ilmandorla.com"
             />
           </div>
 
@@ -200,7 +195,7 @@ const Login = () => {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all duration-200"
               placeholder="••••••••"
             />
           </div>
@@ -208,7 +203,7 @@ const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-orange-500 text-white py-3 px-4 rounded-lg hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:opacity-50"
+            className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 px-4 rounded-lg hover:from-orange-600 hover:to-red-600 focus:outline-none focus:ring-2 focus:ring-orange-500 disabled:opacity-50 transition-all duration-200 transform hover:scale-105 shadow-lg"
           >
             {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
           </button>
@@ -216,7 +211,7 @@ const Login = () => {
 
         <div className="text-center mt-6">
           <p className="text-xs text-gray-500">
-            Sistema KUMIA ELITE - Versión 1.0
+            Sistema KUMIA ELITE - Versión 2.0
           </p>
         </div>
       </div>
@@ -224,152 +219,299 @@ const Login = () => {
   );
 };
 
-// AI Chat Component
-const AIChat = () => {
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [selectedChannel, setSelectedChannel] = useState('general');
-  const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
+// Metrics Card Component
+const MetricsCard = ({ title, value, icon, color, trend, onClick, loading = false }) => (
+  <div 
+    onClick={onClick}
+    className={`bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all duration-200 cursor-pointer transform hover:scale-102 ${loading ? 'animate-pulse' : ''}`}
+  >
+    <div className="flex items-start justify-between">
+      <div className="flex-1">
+        <div className="flex items-center mb-2">
+          <span className="text-2xl mr-3">{icon}</span>
+          <h3 className="text-sm font-medium text-gray-600">{title}</h3>
+        </div>
+        <p className={`text-3xl font-bold ${color} mb-1`}>
+          {loading ? '...' : value}
+        </p>
+        {trend && (
+          <p className={`text-sm flex items-center ${trend.positive ? 'text-green-600' : 'text-red-600'}`}>
+            <span className="mr-1">{trend.positive ? '↗' : '↘'}</span>
+            {trend.percentage}% vs mes anterior
+          </p>
+        )}
+      </div>
+    </div>
+  </div>
+);
 
-  const channels = [
-    { id: 'general', name: 'General', icon: '💬' },
-    { id: 'whatsapp', name: 'WhatsApp', icon: '📱' },
-    { id: 'instagram', name: 'Instagram', icon: '📸' },
-    { id: 'facebook', name: 'Facebook', icon: '👥' },
-    { id: 'tiktok', name: 'TikTok', icon: '🎵' }
+// ROI Viewer Panel
+const ROIViewer = () => {
+  const [roiData, setRoiData] = useState({
+    monthlyIncrease: 4.3,
+    averageTicket: { before: 2500, after: 3200 },
+    attributedRevenue: 145000,
+    channelRevenue: {
+      whatsapp: 45000,
+      instagram: 32000,
+      tiktok: 28000,
+      web: 40000
+    }
+  });
+
+  return (
+    <div id="roi_viewer_panel" className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-bold text-gray-800">📊 ROI Viewer</h2>
+        <button className="text-sm bg-green-100 text-green-700 px-3 py-1 rounded-full">
+          Retorno +{roiData.monthlyIncrease}x
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="bg-gradient-to-r from-green-50 to-green-100 p-4 rounded-lg">
+          <div className="text-sm text-green-700 font-medium mb-1">Ticket Promedio</div>
+          <div className="text-2xl font-bold text-green-800">
+            ${roiData.averageTicket.after.toLocaleString()}
+          </div>
+          <div className="text-xs text-green-600">
+            +{((roiData.averageTicket.after - roiData.averageTicket.before) / roiData.averageTicket.before * 100).toFixed(1)}% vs antes
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-lg">
+          <div className="text-sm text-blue-700 font-medium mb-1">Ingresos Atribuidos</div>
+          <div className="text-2xl font-bold text-blue-800">
+            ${roiData.attributedRevenue.toLocaleString()}
+          </div>
+          <div className="text-xs text-blue-600">Este mes</div>
+        </div>
+
+        <div className="bg-gradient-to-r from-purple-50 to-purple-100 p-4 rounded-lg">
+          <div className="text-sm text-purple-700 font-medium mb-1">Canal Top</div>
+          <div className="text-2xl font-bold text-purple-800">
+            WhatsApp
+          </div>
+          <div className="text-xs text-purple-600">
+            ${roiData.channelRevenue.whatsapp.toLocaleString()}
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-r from-orange-50 to-orange-100 p-4 rounded-lg">
+          <div className="text-sm text-orange-700 font-medium mb-1">Crecimiento</div>
+          <div className="text-2xl font-bold text-orange-800">
+            +{roiData.monthlyIncrease}x
+          </div>
+          <div className="text-xs text-orange-600">ROI mensual</div>
+        </div>
+      </div>
+
+      <div className="bg-gray-50 rounded-lg p-4">
+        <div className="flex items-center mb-2">
+          <span className="text-lg mr-2">🤖</span>
+          <span className="text-sm font-medium text-gray-700">Análisis IA</span>
+        </div>
+        <p className="text-sm text-gray-600">
+          Tu retorno estimado es <strong>+{roiData.monthlyIncrease}x</strong> en los últimos 30 días. 
+          El canal WhatsApp está generando el mayor impacto con ${roiData.channelRevenue.whatsapp.toLocaleString()} en ingresos atribuidos.
+        </p>
+      </div>
+    </div>
+  );
+};
+
+// Dashboard Summary Section
+const DashboardSummary = ({ metrics }) => {
+  const [aiRecommendation, setAiRecommendation] = useState("Activar campaña de NFTs para clientes recurrentes puede incrementar retención en 23%");
+
+  return (
+    <div id="dashboard_summary" className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-gray-800">📈 Dashboard General</h2>
+        <button className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-lg hover:from-orange-600 hover:to-red-600 transition-all duration-200 transform hover:scale-105">
+          Expandir KUMIA
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <MetricsCard
+          title="Clientes Únicos"
+          value={metrics.total_customers || 0}
+          icon="👥"
+          color="text-blue-600"
+          trend={{ positive: true, percentage: 15.2 }}
+        />
+        <MetricsCard
+          title="Feedback Recibido"
+          value={metrics.total_feedback || 0}
+          icon="💬"
+          color="text-green-600"
+          trend={{ positive: true, percentage: 8.7 }}
+        />
+        <MetricsCard
+          title="NFTs Entregados"
+          value={metrics.nfts_delivered || 0}
+          icon="🎁"
+          color="text-purple-600"
+          trend={{ positive: true, percentage: 12.3 }}
+        />
+        <MetricsCard
+          title="Puntos Activos"
+          value={metrics.total_points_delivered || 0}
+          icon="⭐"
+          color="text-yellow-600"
+          trend={{ positive: true, percentage: 18.5 }}
+        />
+        <MetricsCard
+          title="Ingresos Atribuidos"
+          value={`$${(metrics.total_revenue || 0).toLocaleString()}`}
+          icon="💰"
+          color="text-green-600"
+          trend={{ positive: true, percentage: 22.1 }}
+        />
+        <MetricsCard
+          title="Rating Promedio"
+          value={`${(metrics.avg_rating || 0).toFixed(1)}/5`}
+          icon="⭐"
+          color="text-orange-600"
+          trend={{ positive: true, percentage: 4.2 }}
+        />
+        <MetricsCard
+          title="Conversiones IA"
+          value={metrics.ai_conversions || 0}
+          icon="🤖"
+          color="text-indigo-600"
+          trend={{ positive: true, percentage: 28.9 }}
+        />
+        <MetricsCard
+          title="Audiencia Total"
+          value={metrics.total_audience || 0}
+          icon="📈"
+          color="text-rose-600"
+          trend={{ positive: true, percentage: 11.4 }}
+        />
+      </div>
+
+      <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl p-6 border border-indigo-100">
+        <div className="flex items-center mb-4">
+          <span className="text-2xl mr-3">🤖</span>
+          <h3 className="text-lg font-bold text-indigo-800">IA te recomienda</h3>
+        </div>
+        <p className="text-indigo-700 mb-4">{aiRecommendation}</p>
+        <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-all duration-200">
+          Aplicar Recomendación
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// Clients Section
+const ClientsSection = () => {
+  const [clients, setClients] = useState([]);
+  const [filter, setFilter] = useState('all');
+
+  const clientFilters = [
+    { id: 'all', label: 'Todos', color: 'bg-gray-100' },
+    { id: 'ambassador', label: 'Embajador', color: 'bg-purple-100' },
+    { id: 'recurrent', label: 'Recurrente', color: 'bg-green-100' },
+    { id: 'new', label: 'Nuevo', color: 'bg-blue-100' },
+    { id: 'inactive', label: 'Inactivo', color: 'bg-red-100' }
   ];
 
-  const sendMessage = async () => {
-    if (!input.trim()) return;
+  useEffect(() => {
+    fetchClients();
+  }, []);
 
-    const userMessage = {
-      id: Date.now(),
-      text: input,
-      isUser: true,
-      timestamp: new Date()
-    };
-
-    setMessages(prev => [...prev, userMessage]);
-    setInput('');
-    setLoading(true);
-
+  const fetchClients = async () => {
     try {
-      const response = await axios.post(`${API}/ai/chat`, {
-        message: input,
-        session_id: sessionId,
-        channel: selectedChannel
-      });
-
-      const aiMessage = {
-        id: Date.now() + 1,
-        text: response.data.response,
-        isUser: false,
-        timestamp: new Date()
-      };
-
-      setMessages(prev => [...prev, aiMessage]);
+      const response = await axios.get(`${API}/customers`);
+      setClients(response.data);
     } catch (error) {
-      console.error('Error sending message:', error);
-      const errorMessage = {
-        id: Date.now() + 1,
-        text: 'Error al procesar el mensaje. Intenta nuevamente.',
-        isUser: false,
-        isError: true,
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, errorMessage]);
-    } finally {
-      setLoading(false);
+      console.error('Error fetching clients:', error);
     }
   };
 
+  const ClientCard = ({ client }) => (
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all duration-200">
+      <div className="flex items-start justify-between mb-4">
+        <div className="flex items-center">
+          <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-red-400 rounded-full flex items-center justify-center mr-4">
+            <span className="text-white font-bold text-lg">{client.name.charAt(0)}</span>
+          </div>
+          <div>
+            <h3 className="font-semibold text-gray-800">{client.name}</h3>
+            <p className="text-sm text-gray-600">{client.email}</p>
+          </div>
+        </div>
+        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+          client.nft_level === 'citizen_kumia' ? 'bg-purple-100 text-purple-800' :
+          client.nft_level === 'oro' ? 'bg-yellow-100 text-yellow-800' :
+          client.nft_level === 'plata' ? 'bg-gray-100 text-gray-800' :
+          'bg-orange-100 text-orange-800'
+        }`}>
+          {client.nft_level}
+        </span>
+      </div>
+
+      <div className="grid grid-cols-3 gap-4 mb-4">
+        <div className="text-center">
+          <div className="text-2xl font-bold text-blue-600">{client.visit_count || 0}</div>
+          <div className="text-xs text-gray-600">Visitas</div>
+        </div>
+        <div className="text-center">
+          <div className="text-2xl font-bold text-green-600">{client.points || 0}</div>
+          <div className="text-xs text-gray-600">Puntos</div>
+        </div>
+        <div className="text-center">
+          <div className="text-2xl font-bold text-purple-600">{client.total_spent || 0}</div>
+          <div className="text-xs text-gray-600">Total $</div>
+        </div>
+      </div>
+
+      <div className="flex space-x-2">
+        <button className="flex-1 bg-orange-100 text-orange-700 px-3 py-2 rounded-lg text-sm hover:bg-orange-200 transition-colors">
+          Recompensar
+        </button>
+        <button className="flex-1 bg-blue-100 text-blue-700 px-3 py-2 rounded-lg text-sm hover:bg-blue-200 transition-colors">
+          Historial
+        </button>
+        <button className="flex-1 bg-purple-100 text-purple-700 px-3 py-2 rounded-lg text-sm hover:bg-purple-200 transition-colors">
+          Activar NFT
+        </button>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 h-[600px] flex flex-col">
-      <div className="p-4 border-b border-gray-200">
-        <h3 className="text-lg font-semibold mb-4">Chat con IA - IL MANDORLA</h3>
-        
-        {/* Channel Selection */}
-        <div className="flex space-x-2 mb-4">
-          {channels.map((channel) => (
-            <button
-              key={channel.id}
-              onClick={() => setSelectedChannel(channel.id)}
-              className={`flex items-center px-3 py-2 rounded-lg text-sm ${
-                selectedChannel === channel.id
-                  ? 'bg-orange-100 text-orange-700 border border-orange-200'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
-            >
-              <span className="mr-2">{channel.icon}</span>
-              {channel.name}
-            </button>
-          ))}
-        </div>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-gray-800">👥 Clientes</h2>
+        <button className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-lg hover:from-orange-600 hover:to-red-600 transition-all duration-200">
+          Nuevo Cliente
+        </button>
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.length === 0 && (
-          <div className="text-center text-gray-500 py-8">
-            <p>¡Hola! Soy el asistente de IA de IL MANDORLA. ¿En qué puedo ayudarte hoy?</p>
-          </div>
-        )}
-        
-        {messages.map((message) => (
-          <div
-            key={message.id}
-            className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
-          >
-            <div
-              className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                message.isUser
-                  ? 'bg-orange-500 text-white'
-                  : message.isError
-                  ? 'bg-red-100 text-red-700'
-                  : 'bg-gray-100 text-gray-900'
-              }`}
-            >
-              <p className="text-sm">{message.text}</p>
-              <p className="text-xs mt-1 opacity-70">
-                {message.timestamp.toLocaleTimeString()}
-              </p>
-            </div>
-          </div>
-        ))}
-        
-        {loading && (
-          <div className="flex justify-start">
-            <div className="bg-gray-100 text-gray-900 px-4 py-2 rounded-lg">
-              <div className="flex items-center">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-orange-500 mr-2"></div>
-                <span className="text-sm">Escribiendo...</span>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Input */}
-      <div className="p-4 border-t border-gray-200">
-        <div className="flex space-x-2">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-            placeholder="Escribe tu mensaje..."
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-            disabled={loading}
-          />
+      <div className="flex flex-wrap gap-2">
+        {clientFilters.map(filterItem => (
           <button
-            onClick={sendMessage}
-            disabled={loading || !input.trim()}
-            className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            key={filterItem.id}
+            onClick={() => setFilter(filterItem.id)}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+              filter === filterItem.id 
+                ? 'bg-orange-500 text-white' 
+                : `${filterItem.color} text-gray-700 hover:opacity-80`
+            }`}
           >
-            <span>Enviar</span>
+            {filterItem.label}
           </button>
-        </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {clients.map(client => (
+          <ClientCard key={client.id} client={client} />
+        ))}
       </div>
     </div>
   );
@@ -380,378 +522,86 @@ const Dashboard = () => {
   const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [metrics, setMetrics] = useState({});
-  const [menuItems, setMenuItems] = useState([]);
-  const [customers, setCustomers] = useState([]);
-  const [reservations, setReservations] = useState([]);
-  const [feedback, setFeedback] = useState([]);
-  const [aiAgents, setAiAgents] = useState([]);
-  const [nftRewards, setNftRewards] = useState([]);
-  const [integrations, setIntegrations] = useState([]);
-  const [settings, setSettings] = useState({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchDashboardData();
+    fetchMetrics();
   }, []);
 
-  const fetchDashboardData = async () => {
+  const fetchMetrics = async () => {
     try {
-      const [
-        metricsRes,
-        menuRes,
-        customersRes,
-        reservationsRes,
-        feedbackRes,
-        agentsRes,
-        nftRes,
-        integrationsRes,
-        settingsRes
-      ] = await Promise.all([
-        axios.get(`${API}/dashboard/metrics`),
-        axios.get(`${API}/menu`),
-        axios.get(`${API}/customers`),
-        axios.get(`${API}/reservations`),
-        axios.get(`${API}/feedback`),
-        axios.get(`${API}/ai-agents`),
-        axios.get(`${API}/nft-rewards`),
-        axios.get(`${API}/integrations`),
-        axios.get(`${API}/settings`)
-      ]);
-
-      setMetrics(metricsRes.data);
-      setMenuItems(menuRes.data);
-      setCustomers(customersRes.data);
-      setReservations(reservationsRes.data);
-      setFeedback(feedbackRes.data);
-      setAiAgents(agentsRes.data);
-      setNftRewards(nftRes.data);
-      setIntegrations(integrationsRes.data);
-      setSettings(settingsRes.data);
+      const response = await axios.get(`${API}/dashboard/metrics`);
+      setMetrics(response.data);
     } catch (error) {
-      console.error('Error fetching dashboard data:', error);
+      console.error('Error fetching metrics:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const MetricsCard = ({ title, value, icon, color }) => (
-    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm text-gray-600 mb-1">{title}</p>
-          <p className={`text-2xl font-bold ${color}`}>{value}</p>
-        </div>
-        <div className={`p-3 rounded-lg ${color.replace('text-', 'bg-').replace('-600', '-100')}`}>
-          <span className="text-xl">{icon}</span>
-        </div>
-      </div>
-    </div>
-  );
+  const navigationItems = [
+    { id: 'dashboard', label: 'Dashboard', icon: '📈' },
+    { id: 'clients', label: 'Clientes', icon: '👥' },
+    { id: 'feedback', label: 'Feedback', icon: '💬' },
+    { id: 'reservations', label: 'Reservas', icon: '📅' },
+    { id: 'ai-agents', label: 'Agentes IA', icon: '🤖' },
+    { id: 'rewards', label: 'Recompensas', icon: '🎁' },
+    { id: 'roi-viewer', label: 'ROI Viewer', icon: '📊' },
+    { id: 'integrations', label: 'Integraciones', icon: '🔗' },
+    { id: 'settings', label: 'Configuración', icon: '⚙️' }
+  ];
 
-  const renderDashboardContent = () => {
+  const renderContent = () => {
     switch (activeTab) {
       case 'dashboard':
-        return (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <MetricsCard
-                title="Total Clientes"
-                value={metrics.total_customers || 0}
-                icon="👥"
-                color="text-blue-600"
-              />
-              <MetricsCard
-                title="Reservas Activas"
-                value={metrics.total_reservations || 0}
-                icon="📅"
-                color="text-green-600"
-              />
-              <MetricsCard
-                title="Puntos Entregados"
-                value={metrics.total_points_delivered || 0}
-                icon="⭐"
-                color="text-yellow-600"
-              />
-              <MetricsCard
-                title="NFTs Entregados"
-                value={metrics.nfts_delivered || 0}
-                icon="🎯"
-                color="text-purple-600"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h3 className="text-lg font-semibold mb-4">Ingresos Totales</h3>
-                <p className="text-3xl font-bold text-green-600">
-                  ${metrics.total_revenue?.toLocaleString() || 0}
-                </p>
-              </div>
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                <h3 className="text-lg font-semibold mb-4">Rating Promedio</h3>
-                <p className="text-3xl font-bold text-orange-600">
-                  {metrics.avg_rating?.toFixed(1) || 0}/5
-                </p>
-              </div>
-            </div>
-
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-              <h3 className="text-lg font-semibold mb-4">Actividad Reciente</h3>
-              <div className="space-y-3">
-                {feedback.slice(0, 5).map((item, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div>
-                      <p className="font-medium">{item.customer_name}</p>
-                      <p className="text-sm text-gray-600">{item.comment}</p>
-                    </div>
-                    <div className="flex items-center">
-                      <span className="text-yellow-500">{'⭐'.repeat(item.rating)}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        );
-
-      case 'menu':
-        return (
-          <div className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold">Gestión del Menú</h2>
-              <button className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors">
-                Agregar Ítem
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {menuItems.map((item) => (
-                <div key={item.id} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                  {item.image_base64 && (
-                    <img
-                      src={`data:image/jpeg;base64,${item.image_base64}`}
-                      alt={item.name}
-                      className="w-full h-48 object-cover rounded-lg mb-4"
-                    />
-                  )}
-                  <h3 className="text-lg font-semibold mb-2">{item.name}</h3>
-                  <p className="text-gray-600 mb-3">{item.description}</p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-xl font-bold text-orange-600">${item.price}</span>
-                    <span className={`px-3 py-1 rounded-full text-sm ${
-                      item.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                    }`}>
-                      {item.is_active ? 'Activo' : 'Inactivo'}
-                    </span>
-                  </div>
-                  <div className="mt-4 flex space-x-2">
-                    <button className="flex-1 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors">
-                      Editar
-                    </button>
-                    <button className="flex-1 bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition-colors">
-                      Eliminar
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-
-      case 'customers':
-        return (
-          <div className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold">Gestión de Clientes</h2>
-              <button className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors">
-                Agregar Cliente
-              </button>
-            </div>
-
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Cliente
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Nivel NFT
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Puntos
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Última Visita
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Acciones
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {customers.map((customer) => (
-                      <tr key={customer.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div>
-                            <div className="text-sm font-medium text-gray-900">{customer.name}</div>
-                            <div className="text-sm text-gray-500">{customer.email}</div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-2 py-1 text-xs rounded-full ${
-                            customer.nft_level === 'citizen_kumia' ? 'bg-purple-100 text-purple-800' :
-                            customer.nft_level === 'oro' ? 'bg-yellow-100 text-yellow-800' :
-                            customer.nft_level === 'plata' ? 'bg-gray-100 text-gray-800' :
-                            'bg-orange-100 text-orange-800'
-                          }`}>
-                            {customer.nft_level}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {customer.points}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {customer.last_visit ? new Date(customer.last_visit).toLocaleDateString() : 'Nunca'}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <button className="text-blue-600 hover:text-blue-900 mr-3">
-                            Ver Perfil
-                          </button>
-                          <button className="text-green-600 hover:text-green-900">
-                            Editar
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        );
-
-      case 'ai-agents':
-        return (
-          <div className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold">Agentes de IA Multicanal</h2>
-              <button className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors">
-                Crear Agente
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {aiAgents.map((agent) => (
-                <div key={agent.id} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold">{agent.name}</h3>
-                    <span className={`px-3 py-1 rounded-full text-sm ${
-                      agent.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                    }`}>
-                      {agent.is_active ? 'Activo' : 'Inactivo'}
-                    </span>
-                  </div>
-                  <div className="mb-4">
-                    <span className="text-sm text-gray-600">Canal: </span>
-                    <span className="font-medium capitalize">{agent.channel}</span>
-                  </div>
-                  <div className="mb-4">
-                    <span className="text-sm text-gray-600">Prompt:</span>
-                    <p className="text-sm bg-gray-50 p-3 rounded-lg mt-1 line-clamp-3">
-                      {agent.prompt}
-                    </p>
-                  </div>
-                  <div className="flex space-x-2">
-                    <button className="flex-1 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors">
-                      Editar
-                    </button>
-                    <button className="flex-1 bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition-colors">
-                      Probar
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-
-      case 'integrations':
-        return (
-          <div className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold">Integraciones Externas</h2>
-              <button className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors">
-                Agregar Integración
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[
-                { name: 'Google OAuth2', type: 'google_oauth', icon: '🔐' },
-                { name: 'OpenAI', type: 'openai', icon: '🤖' },
-                { name: 'Meta Business', type: 'meta', icon: '📱' },
-                { name: 'TikTok Business', type: 'tiktok', icon: '🎵' },
-                { name: 'Stripe', type: 'stripe', icon: '💳' },
-                { name: 'MercadoPago', type: 'mercadopago', icon: '💰' }
-              ].map((integration) => {
-                const existingIntegration = integrations.find(i => i.type === integration.type);
-                return (
-                  <div key={integration.type} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center">
-                        <span className="text-2xl mr-3">{integration.icon}</span>
-                        <h3 className="text-lg font-semibold">{integration.name}</h3>
-                      </div>
-                      <span className={`px-3 py-1 rounded-full text-sm ${
-                        existingIntegration?.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                      }`}>
-                        {existingIntegration?.is_active ? 'Conectado' : 'Desconectado'}
-                      </span>
-                    </div>
-                    <div className="space-y-2">
-                      <input
-                        type="password"
-                        placeholder="API Key"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                      />
-                      <button className="w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition-colors">
-                        {existingIntegration?.is_active ? 'Actualizar' : 'Conectar'}
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        );
-
-      case 'ai-chat':
-        return <AIChat />;
-
+        return <DashboardSummary metrics={metrics} />;
+      case 'clients':
+        return <ClientsSection />;
+      case 'roi-viewer':
+        return <ROIViewer />;
       default:
-        return <div>Módulo en desarrollo</div>;
+        return (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
+            <div className="text-6xl mb-4">🚧</div>
+            <h3 className="text-xl font-bold text-gray-800 mb-2">Módulo en construcción</h3>
+            <p className="text-gray-600">Esta sección estará disponible pronto</p>
+          </div>
+        );
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
+        <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
-              <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center mr-3">
-                <span className="text-white font-bold">IM</span>
+              <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center mr-4 shadow-lg">
+                <span className="text-white font-bold text-lg">IM</span>
               </div>
               <div>
                 <h1 className="text-xl font-bold text-gray-900">IL MANDORLA</h1>
-                <p className="text-sm text-gray-600">Dashboard Administrativo</p>
+                <p className="text-sm text-gray-600">Sistema KUMIA Elite</p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-700">Bienvenido, {user?.name}</span>
+              <div className="flex items-center space-x-2">
+                {user?.picture && (
+                  <img 
+                    src={user.picture} 
+                    alt={user.name} 
+                    className="w-8 h-8 rounded-full"
+                  />
+                )}
+                <div className="text-right">
+                  <p className="text-sm font-medium text-gray-900">{user?.name}</p>
+                  <p className="text-xs text-gray-500">{user?.role}</p>
+                </div>
+              </div>
               <button
                 onClick={logout}
-                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-all duration-200 transform hover:scale-105"
               >
                 Cerrar Sesión
               </button>
@@ -760,43 +610,47 @@ const Dashboard = () => {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="flex">
-          {/* Sidebar */}
-          <div className="w-64 bg-white rounded-xl shadow-sm border border-gray-200 mr-6">
-            <nav className="p-4 space-y-2">
-              {[
-                { id: 'dashboard', label: 'Dashboard', icon: '📊' },
-                { id: 'menu', label: 'Menú', icon: '🍽️' },
-                { id: 'customers', label: 'Clientes', icon: '👥' },
-                { id: 'reservations', label: 'Reservas', icon: '📅' },
-                { id: 'feedback', label: 'Feedback', icon: '💬' },
-                { id: 'ai-agents', label: 'Agentes IA', icon: '🤖' },
-                { id: 'ai-chat', label: 'Chat IA', icon: '💬' },
-                { id: 'rewards', label: 'Recompensas', icon: '🎁' },
-                { id: 'integrations', label: 'Integraciones', icon: '🔗' },
-                { id: 'settings', label: 'Configuración', icon: '⚙️' }
-              ].map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveTab(item.id)}
-                  className={`w-full flex items-center px-4 py-3 rounded-lg text-left transition-colors ${
-                    activeTab === item.id
-                      ? 'bg-orange-100 text-orange-700 border border-orange-200'
-                      : 'text-gray-600 hover:bg-gray-100'
-                  }`}
-                >
-                  <span className="mr-3">{item.icon}</span>
-                  {item.label}
-                </button>
-              ))}
-            </nav>
-          </div>
+      <div className="flex">
+        {/* Sidebar */}
+        <div className="w-64 bg-white shadow-sm border-r border-gray-200 min-h-screen">
+          <nav className="p-4 space-y-2">
+            {navigationItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => setActiveTab(item.id)}
+                className={`w-full flex items-center px-4 py-3 rounded-xl text-left transition-all duration-200 ${
+                  activeTab === item.id
+                    ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg transform scale-105'
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                <span className="mr-3 text-xl">{item.icon}</span>
+                <span className="font-medium">{item.label}</span>
+              </button>
+            ))}
+          </nav>
 
-          {/* Main Content */}
-          <div className="flex-1">
-            {renderDashboardContent()}
+          {/* CTA Global */}
+          <div className="p-4 mt-8">
+            <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl p-4 text-white">
+              <h3 className="font-bold mb-2">🚀 Expandir KUMIA</h3>
+              <p className="text-sm mb-3 opacity-90">Refiere a un colega o abre otra sede</p>
+              <button className="w-full bg-white text-purple-600 px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors">
+                Referir Ahora
+              </button>
+            </div>
           </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 p-6">
+          {loading ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+            </div>
+          ) : (
+            renderContent()
+          )}
         </div>
       </div>
     </div>
