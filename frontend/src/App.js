@@ -406,10 +406,11 @@ const DashboardSummary = ({ metrics }) => {
   );
 };
 
-// Clients Section
+// Enhanced Clients Section
 const ClientsSection = () => {
   const [clients, setClients] = useState([]);
   const [filter, setFilter] = useState('all');
+  const [selectedClient, setSelectedClient] = useState(null);
 
   const clientFilters = [
     { id: 'all', label: 'Todos', color: 'bg-gray-100' },
@@ -442,6 +443,9 @@ const ClientsSection = () => {
           <div>
             <h3 className="font-semibold text-gray-800">{client.name}</h3>
             <p className="text-sm text-gray-600">{client.email}</p>
+            <p className="text-xs text-gray-500">
+              Última visita: {new Date(client.last_visit || Date.now()).toLocaleDateString()}
+            </p>
           </div>
         </div>
         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -464,24 +468,62 @@ const ClientsSection = () => {
           <div className="text-xs text-gray-600">Puntos</div>
         </div>
         <div className="text-center">
-          <div className="text-2xl font-bold text-purple-600">{client.total_spent || 0}</div>
-          <div className="text-xs text-gray-600">Total $</div>
+          <div className="text-2xl font-bold text-purple-600">{client.feedback_count || 0}</div>
+          <div className="text-xs text-gray-600">Reviews</div>
         </div>
       </div>
 
-      <div className="flex space-x-2">
-        <button className="flex-1 bg-orange-100 text-orange-700 px-3 py-2 rounded-lg text-sm hover:bg-orange-200 transition-colors">
-          Recompensar
+      <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+        <div className="text-xs text-gray-600 mb-1">Información Personal</div>
+        <div className="text-sm">
+          <p><strong>Cumpleaños:</strong> {client.birthday || 'No especificado'}</p>
+          <p><strong>Alergias:</strong> {client.allergies || 'Ninguna'}</p>
+          <p><strong>Fecha especial:</strong> {client.special_date || 'No especificado'}</p>
+        </div>
+      </div>
+
+      <div className="flex flex-col space-y-2">
+        <button 
+          onClick={() => handleRewardNFT(client.id)}
+          className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-2 rounded-lg text-sm hover:from-purple-600 hover:to-pink-600 transition-all duration-200"
+        >
+          🎁 Recompensar con NFT
         </button>
-        <button className="flex-1 bg-blue-100 text-blue-700 px-3 py-2 rounded-lg text-sm hover:bg-blue-200 transition-colors">
-          Historial
-        </button>
-        <button className="flex-1 bg-purple-100 text-purple-700 px-3 py-2 rounded-lg text-sm hover:bg-purple-200 transition-colors">
-          Activar NFT
+        <div className="flex space-x-2">
+          <button 
+            onClick={() => setSelectedClient(client)}
+            className="flex-1 bg-blue-100 text-blue-700 px-3 py-2 rounded-lg text-sm hover:bg-blue-200 transition-colors"
+          >
+            📊 Ver Historial
+          </button>
+          <button 
+            onClick={() => handleContactClient(client.id)}
+            className="flex-1 bg-green-100 text-green-700 px-3 py-2 rounded-lg text-sm hover:bg-green-200 transition-colors"
+          >
+            📞 Contactar
+          </button>
+        </div>
+        <button 
+          onClick={() => handleActivateAutoReward(client.id)}
+          className="w-full bg-orange-100 text-orange-700 px-3 py-2 rounded-lg text-sm hover:bg-orange-200 transition-colors"
+        >
+          ⚡ Activar Recompensa Automática
         </button>
       </div>
     </div>
   );
+
+  const handleRewardNFT = (clientId) => {
+    alert(`Recompensando con NFT al cliente ${clientId}`);
+  };
+
+  const handleContactClient = (clientId) => {
+    alert(`Contactando al cliente ${clientId}`);
+  };
+
+  const handleActivateAutoReward = (clientId) => {
+    alert(`Activando recompensa automática para cliente ${clientId}`);
+  };
 
   return (
     <div className="space-y-6">
@@ -512,6 +554,842 @@ const ClientsSection = () => {
         {clients.map(client => (
           <ClientCard key={client.id} client={client} />
         ))}
+      </div>
+    </div>
+  );
+};
+
+// Feedback Section
+const FeedbackSection = () => {
+  const [feedback, setFeedback] = useState([]);
+  const [feedbackStats, setFeedbackStats] = useState({
+    ratingDistribution: { 5: 45, 4: 32, 3: 12, 2: 8, 1: 3 },
+    weeklyEvolution: [85, 92, 78, 95, 88, 96, 102],
+    npsScore: 8.4,
+    keywords: [
+      { word: 'delicioso', count: 45, sentiment: 'positive' },
+      { word: 'excelente', count: 38, sentiment: 'positive' },
+      { word: 'rápido', count: 32, sentiment: 'positive' },
+      { word: 'calidad', count: 28, sentiment: 'positive' },
+      { word: 'espera', count: 15, sentiment: 'negative' }
+    ]
+  });
+
+  useEffect(() => {
+    fetchFeedback();
+  }, []);
+
+  const fetchFeedback = async () => {
+    try {
+      const response = await axios.get(`${API}/feedback`);
+      setFeedback(response.data);
+    } catch (error) {
+      console.error('Error fetching feedback:', error);
+    }
+  };
+
+  const FeedbackCard = ({ rating, count, percentage }) => (
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition-all duration-200">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center">
+          <span className="text-2xl mr-2">⭐</span>
+          <span className="text-lg font-bold">{rating}</span>
+        </div>
+        <div className="text-right">
+          <div className="text-2xl font-bold text-blue-600">{count}</div>
+          <div className="text-sm text-gray-600">{percentage}%</div>
+        </div>
+      </div>
+      <div className="w-full bg-gray-200 rounded-full h-2">
+        <div 
+          className="bg-gradient-to-r from-orange-400 to-red-400 h-2 rounded-full transition-all duration-500"
+          style={{ width: `${percentage}%` }}
+        ></div>
+      </div>
+    </div>
+  );
+
+  const handleRespondWithReward = (feedbackId) => {
+    alert(`Respondiendo con recompensa automática al feedback ${feedbackId}`);
+  };
+
+  return (
+    <div id="feedback_module" className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-gray-800">💬 Feedback</h2>
+        <button className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-2 rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all duration-200">
+          Configurar Respuestas Automáticas
+        </button>
+      </div>
+
+      {/* Rating Distribution */}
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+        {Object.entries(feedbackStats.ratingDistribution).reverse().map(([rating, count]) => (
+          <FeedbackCard 
+            key={rating}
+            rating={rating}
+            count={count}
+            percentage={(count / 100) * 100}
+          />
+        ))}
+      </div>
+
+      {/* Weekly Evolution Chart */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-lg font-bold mb-4">📈 Evolución Semanal</h3>
+        <div className="flex items-end justify-between h-32">
+          {feedbackStats.weeklyEvolution.map((value, index) => (
+            <div key={index} className="flex flex-col items-center">
+              <div 
+                className="bg-gradient-to-t from-orange-400 to-red-400 rounded-t-lg transition-all duration-500"
+                style={{ height: `${(value / 120) * 100}%`, width: '20px' }}
+              ></div>
+              <span className="text-xs text-gray-600 mt-1">
+                {['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'][index]}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Keywords Cloud & AI Analysis */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <h3 className="text-lg font-bold mb-4">🔤 Palabras Clave IA</h3>
+          <div className="flex flex-wrap gap-2">
+            {feedbackStats.keywords.map(keyword => (
+              <span
+                key={keyword.word}
+                className={`px-3 py-1 rounded-full text-sm font-medium ${
+                  keyword.sentiment === 'positive' 
+                    ? 'bg-green-100 text-green-800' 
+                    : keyword.sentiment === 'negative'
+                    ? 'bg-red-100 text-red-800'
+                    : 'bg-gray-100 text-gray-800'
+                }`}
+                style={{ fontSize: `${Math.max(12, keyword.count / 3)}px` }}
+              >
+                {keyword.word} ({keyword.count})
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 border border-indigo-100">
+          <div className="flex items-center mb-4">
+            <span className="text-2xl mr-3">🤖</span>
+            <h3 className="text-lg font-bold text-indigo-800">Análisis IA</h3>
+          </div>
+          <p className="text-indigo-700 mb-4">
+            NPS Score: <strong>{feedbackStats.npsScore}/10</strong> (Excelente)
+          </p>
+          <p className="text-indigo-700 mb-4">
+            Temas frecuentes: Calidad de comida (+), Velocidad de servicio (+), Tiempo de espera (-)
+          </p>
+          <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-all duration-200">
+            Ver Recomendaciones Detalladas
+          </button>
+        </div>
+      </div>
+
+      {/* Recent Feedback */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-lg font-bold mb-4">📝 Feedback Reciente</h3>
+        <div className="space-y-4">
+          {feedback.slice(0, 5).map((item, index) => (
+            <div key={index} className="flex items-start justify-between p-4 bg-gray-50 rounded-lg">
+              <div className="flex-1">
+                <div className="flex items-center mb-2">
+                  <span className="font-medium text-gray-800">{item.customer_name}</span>
+                  <div className="flex ml-2">
+                    {[...Array(5)].map((_, i) => (
+                      <span key={i} className={`text-sm ${i < item.rating ? 'text-yellow-400' : 'text-gray-300'}`}>
+                        ⭐
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <p className="text-gray-600 text-sm">{item.comment}</p>
+              </div>
+              <button 
+                onClick={() => handleRespondWithReward(item.id)}
+                className="bg-green-100 text-green-700 px-3 py-1 rounded-lg text-sm hover:bg-green-200 transition-colors"
+              >
+                Responder con Recompensa
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Reservations Section
+const ReservationsSection = () => {
+  const [reservations, setReservations] = useState([]);
+  const [filter, setFilter] = useState('today');
+  const [selectedDate, setSelectedDate] = useState(new Date());
+
+  useEffect(() => {
+    fetchReservations();
+  }, []);
+
+  const fetchReservations = async () => {
+    try {
+      const response = await axios.get(`${API}/reservations`);
+      setReservations(response.data);
+    } catch (error) {
+      console.error('Error fetching reservations:', error);
+    }
+  };
+
+  const filterOptions = [
+    { id: 'today', label: 'Hoy', icon: '📅' },
+    { id: 'week', label: 'Esta semana', icon: '📆' },
+    { id: 'upcoming', label: 'Próximo evento', icon: '🎉' }
+  ];
+
+  const handleConfirmReservation = (id) => {
+    alert(`Confirmando reserva ${id}`);
+  };
+
+  const handleCancelReservation = (id) => {
+    alert(`Cancelando reserva ${id}`);
+  };
+
+  const handleRescheduleReservation = (id) => {
+    alert(`Reagendando reserva ${id}`);
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-gray-800">📅 Reservas</h2>
+        <button className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-lg hover:from-orange-600 hover:to-red-600 transition-all duration-200">
+          Nueva Reserva
+        </button>
+      </div>
+
+      {/* Filters */}
+      <div className="flex flex-wrap gap-2">
+        {filterOptions.map(option => (
+          <button
+            key={option.id}
+            onClick={() => setFilter(option.id)}
+            className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+              filter === option.id 
+                ? 'bg-orange-500 text-white' 
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            <span className="mr-2">{option.icon}</span>
+            {option.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Calendar View */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-lg font-bold mb-4">📅 Vista Calendario</h3>
+        <div className="grid grid-cols-7 gap-2 mb-4">
+          {['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].map(day => (
+            <div key={day} className="text-center text-sm font-medium text-gray-600 py-2">
+              {day}
+            </div>
+          ))}
+        </div>
+        <div className="grid grid-cols-7 gap-2">
+          {[...Array(35)].map((_, index) => (
+            <div 
+              key={index}
+              className={`h-10 rounded-lg border border-gray-200 flex items-center justify-center text-sm cursor-pointer hover:bg-orange-50 transition-colors ${
+                index % 7 === 0 ? 'bg-orange-100' : ''
+              }`}
+            >
+              {index % 3 === 0 ? (
+                <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+              ) : (
+                <span className="text-gray-600">{((index % 31) + 1)}</span>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Reservations List */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-lg font-bold mb-4">📋 Lista de Reservas</h3>
+        <div className="space-y-4">
+          {reservations.map((reservation, index) => (
+            <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+              <div className="flex-1">
+                <div className="flex items-center mb-2">
+                  <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-red-400 rounded-full flex items-center justify-center mr-3">
+                    <span className="text-white font-bold text-sm">{reservation.customer_name?.charAt(0)}</span>
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-gray-800">{reservation.customer_name}</h4>
+                    <div className="flex items-center text-sm text-gray-600">
+                      <span className="mr-4">👥 {reservation.guests} personas</span>
+                      <span className="mr-4">🕒 {reservation.time}</span>
+                      <span>📞 {reservation.phone}</span>
+                    </div>
+                  </div>
+                </div>
+                {reservation.special_requests && (
+                  <p className="text-sm text-gray-600 bg-white px-3 py-1 rounded-lg">
+                    💭 {reservation.special_requests}
+                  </p>
+                )}
+                <div className="mt-2 text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full inline-block">
+                  🤖 Este cliente cumple años el 15 de este mes
+                </div>
+              </div>
+              <div className="flex space-x-2">
+                <button 
+                  onClick={() => handleConfirmReservation(reservation.id)}
+                  className="bg-green-100 text-green-700 px-3 py-1 rounded-lg text-sm hover:bg-green-200 transition-colors"
+                >
+                  ✅ Confirmar
+                </button>
+                <button 
+                  onClick={() => handleRescheduleReservation(reservation.id)}
+                  className="bg-blue-100 text-blue-700 px-3 py-1 rounded-lg text-sm hover:bg-blue-200 transition-colors"
+                >
+                  🔄 Reagendar
+                </button>
+                <button 
+                  onClick={() => handleCancelReservation(reservation.id)}
+                  className="bg-red-100 text-red-700 px-3 py-1 rounded-lg text-sm hover:bg-red-200 transition-colors"
+                >
+                  ❌ Cancelar
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// AI Agents Section
+const AIAgentsSection = () => {
+  const [agents, setAgents] = useState([]);
+  const [selectedAgent, setSelectedAgent] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+
+  useEffect(() => {
+    fetchAgents();
+  }, []);
+
+  const fetchAgents = async () => {
+    try {
+      const response = await axios.get(`${API}/ai-agents`);
+      setAgents(response.data);
+    } catch (error) {
+      console.error('Error fetching AI agents:', error);
+    }
+  };
+
+  const channels = [
+    { id: 'whatsapp', name: 'WhatsApp', icon: '📱', color: 'from-green-500 to-emerald-500' },
+    { id: 'instagram', name: 'Instagram', icon: '📸', color: 'from-pink-500 to-rose-500' },
+    { id: 'facebook', name: 'Facebook', icon: '👥', color: 'from-blue-500 to-indigo-500' },
+    { id: 'tiktok', name: 'TikTok', icon: '🎵', color: 'from-purple-500 to-violet-500' }
+  ];
+
+  const AgentCard = ({ agent, channel }) => (
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all duration-200">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center">
+          <div className={`w-12 h-12 bg-gradient-to-br ${channel.color} rounded-xl flex items-center justify-center mr-4`}>
+            <span className="text-white text-xl">{channel.icon}</span>
+          </div>
+          <div>
+            <h3 className="font-bold text-gray-800">{channel.name}</h3>
+            <p className="text-sm text-gray-600">{agent?.name || 'Asistente IA'}</p>
+          </div>
+        </div>
+        <div className="flex items-center space-x-2">
+          {agent?.is_active && (
+            <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+              🟢 Activo
+            </span>
+          )}
+          {agent?.training_active && (
+            <span className="px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded-full">
+              🔄 Entrenando
+            </span>
+          )}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-3 gap-4 mb-4">
+        <div className="text-center">
+          <div className="text-2xl font-bold text-blue-600">{agent?.total_conversations || 0}</div>
+          <div className="text-xs text-gray-600">Conversaciones</div>
+        </div>
+        <div className="text-center">
+          <div className="text-2xl font-bold text-green-600">{agent?.useful_responses || 0}</div>
+          <div className="text-xs text-gray-600">Respuestas Útiles</div>
+        </div>
+        <div className="text-center">
+          <div className="text-2xl font-bold text-purple-600">{agent?.conversion_rate || 0}%</div>
+          <div className="text-xs text-gray-600">Conversión</div>
+        </div>
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700 mb-2">Prompt Actual</label>
+        <div className="bg-gray-50 rounded-lg p-3">
+          <p className="text-sm text-gray-700">
+            {agent?.prompt || `Eres un asistente de ${channel.name} para IL MANDORLA. Mantén un tono amigable y profesional...`}
+          </p>
+        </div>
+      </div>
+
+      <div className="flex space-x-2">
+        <button 
+          onClick={() => handleEditAgent(agent, channel)}
+          className="flex-1 bg-blue-100 text-blue-700 px-3 py-2 rounded-lg text-sm hover:bg-blue-200 transition-colors"
+        >
+          ✏️ Editar Prompt
+        </button>
+        <button 
+          onClick={() => handleTrainAgent(agent?.id)}
+          className="flex-1 bg-orange-100 text-orange-700 px-3 py-2 rounded-lg text-sm hover:bg-orange-200 transition-colors"
+        >
+          🎯 Entrenar
+        </button>
+      </div>
+    </div>
+  );
+
+  const handleEditAgent = (agent, channel) => {
+    setSelectedAgent({ ...agent, channel });
+    setEditMode(true);
+  };
+
+  const handleTrainAgent = (agentId) => {
+    alert(`Entrenando agente ${agentId}`);
+  };
+
+  const handleSaveAgent = () => {
+    setEditMode(false);
+    setSelectedAgent(null);
+  };
+
+  return (
+    <div id="agent_training_view" className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-gray-800">🤖 Agentes IA</h2>
+        <button className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-4 py-2 rounded-lg hover:from-indigo-600 hover:to-purple-600 transition-all duration-200">
+          Configurar Nuevo Agente
+        </button>
+      </div>
+
+      {/* Agents Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {channels.map(channel => {
+          const agent = agents.find(a => a.channel === channel.id);
+          return (
+            <AgentCard key={channel.id} agent={agent} channel={channel} />
+          );
+        })}
+      </div>
+
+      {/* Training Interface */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-lg font-bold mb-4">🎯 Entrenar Agente IA</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Sugerencias de Prompts</label>
+            <div className="space-y-2">
+              {[
+                'Incrementar conversiones: Menciona ofertas especiales',
+                'Mejorar experiencia: Pregunta sobre preferencias',
+                'Fidelizar clientes: Ofrecer programa de puntos',
+                'Upselling: Sugerir complementos'
+              ].map((suggestion, index) => (
+                <div key={index} className="p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors">
+                  <p className="text-sm text-gray-700">{suggestion}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Métricas de Rendimiento</label>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-600">Tasa de Respuesta</span>
+                <div className="flex items-center">
+                  <div className="w-20 bg-gray-200 rounded-full h-2 mr-2">
+                    <div className="bg-green-500 h-2 rounded-full" style={{ width: '85%' }}></div>
+                  </div>
+                  <span className="text-sm font-medium">85%</span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-600">Satisfacción</span>
+                <div className="flex items-center">
+                  <div className="w-20 bg-gray-200 rounded-full h-2 mr-2">
+                    <div className="bg-blue-500 h-2 rounded-full" style={{ width: '92%' }}></div>
+                  </div>
+                  <span className="text-sm font-medium">92%</span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-600">Conversiones</span>
+                <div className="flex items-center">
+                  <div className="w-20 bg-gray-200 rounded-full h-2 mr-2">
+                    <div className="bg-purple-500 h-2 rounded-full" style={{ width: '78%' }}></div>
+                  </div>
+                  <span className="text-sm font-medium">78%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Edit Modal */}
+      {editMode && selectedAgent && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl p-6">
+            <h3 className="text-lg font-bold mb-4">Editar Agente {selectedAgent.channel}</h3>
+            <textarea
+              className="w-full h-32 p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-orange-500"
+              value={selectedAgent.prompt}
+              onChange={(e) => setSelectedAgent({ ...selectedAgent, prompt: e.target.value })}
+              placeholder="Escribe el prompt del agente..."
+            />
+            <div className="flex justify-end space-x-2 mt-4">
+              <button 
+                onClick={() => setEditMode(false)}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={handleSaveAgent}
+                className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600"
+              >
+                Guardar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Rewards & NFTs Section
+const RewardsNFTsSection = () => {
+  const [rewards, setRewards] = useState([]);
+  const [topClients, setTopClients] = useState([]);
+  const [weeklyRedemptions, setWeeklyRedemptions] = useState([45, 52, 38, 67, 43, 71, 59]);
+
+  useEffect(() => {
+    fetchRewards();
+    fetchTopClients();
+  }, []);
+
+  const fetchRewards = async () => {
+    try {
+      const response = await axios.get(`${API}/nft-rewards`);
+      setRewards(response.data);
+    } catch (error) {
+      console.error('Error fetching rewards:', error);
+    }
+  };
+
+  const fetchTopClients = async () => {
+    try {
+      const response = await axios.get(`${API}/customers`);
+      const sortedClients = response.data.sort((a, b) => (b.points || 0) - (a.points || 0));
+      setTopClients(sortedClients.slice(0, 5));
+    } catch (error) {
+      console.error('Error fetching top clients:', error);
+    }
+  };
+
+  const NFTCard = ({ nft }) => (
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all duration-200">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center">
+          <div className={`w-12 h-12 rounded-xl flex items-center justify-center mr-4 ${
+            nft.level === 'citizen_kumia' ? 'bg-gradient-to-br from-purple-500 to-pink-500' :
+            nft.level === 'oro' ? 'bg-gradient-to-br from-yellow-500 to-orange-500' :
+            nft.level === 'plata' ? 'bg-gradient-to-br from-gray-400 to-gray-500' :
+            'bg-gradient-to-br from-orange-500 to-red-500'
+          }`}>
+            <span className="text-white text-xl">🎁</span>
+          </div>
+          <div>
+            <h3 className="font-bold text-gray-800">{nft.name}</h3>
+            <p className="text-sm text-gray-600">{nft.level}</p>
+          </div>
+        </div>
+        <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">
+          {nft.points_required} pts
+        </span>
+      </div>
+
+      <p className="text-sm text-gray-600 mb-4">{nft.description}</p>
+
+      <div className="mb-4">
+        <h4 className="text-sm font-medium text-gray-700 mb-2">Beneficios</h4>
+        <div className="space-y-1">
+          {Object.entries(nft.attributes || {}).map(([key, value]) => (
+            <div key={key} className="flex justify-between text-sm">
+              <span className="text-gray-600">{key}:</span>
+              <span className="font-medium">{value}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex space-x-2">
+        <button className="flex-1 bg-purple-100 text-purple-700 px-3 py-2 rounded-lg text-sm hover:bg-purple-200 transition-colors">
+          Editar
+        </button>
+        <button className="flex-1 bg-green-100 text-green-700 px-3 py-2 rounded-lg text-sm hover:bg-green-200 transition-colors">
+          Activar
+        </button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-gray-800">🎁 Recompensas & NFTs</h2>
+        <button className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-200">
+          Crear Nueva Campaña de Fidelización
+        </button>
+      </div>
+
+      {/* Weekly Redemptions Chart */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-lg font-bold mb-4">📊 Canjes Semanales</h3>
+        <div className="flex items-end justify-between h-32">
+          {weeklyRedemptions.map((value, index) => (
+            <div key={index} className="flex flex-col items-center">
+              <div 
+                className="bg-gradient-to-t from-purple-400 to-pink-400 rounded-t-lg transition-all duration-500"
+                style={{ height: `${(value / 80) * 100}%`, width: '30px' }}
+              ></div>
+              <span className="text-xs text-gray-600 mt-1">
+                {['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'][index]}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Top Clients Ranking */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-lg font-bold mb-4">🏆 Ranking de Clientes Más Fieles</h3>
+        <div className="space-y-4">
+          {topClients.map((client, index) => (
+            <div key={client.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <div className="flex items-center">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 ${
+                  index === 0 ? 'bg-yellow-500' : 
+                  index === 1 ? 'bg-gray-400' : 
+                  index === 2 ? 'bg-orange-500' : 
+                  'bg-gray-300'
+                }`}>
+                  <span className="text-white font-bold text-sm">#{index + 1}</span>
+                </div>
+                <div>
+                  <h4 className="font-medium text-gray-800">{client.name}</h4>
+                  <p className="text-sm text-gray-600">{client.nft_level}</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-lg font-bold text-purple-600">{client.points || 0}</div>
+                <div className="text-sm text-gray-600">puntos</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* NFTs Grid */}
+      <div>
+        <h3 className="text-lg font-bold mb-4">🎯 NFTs Disponibles</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {rewards.map(nft => (
+            <NFTCard key={nft.id} nft={nft} />
+          ))}
+        </div>
+      </div>
+
+      {/* Create New Reward */}
+      <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 border border-purple-100">
+        <h3 className="text-lg font-bold text-purple-800 mb-4">✨ Crear Nueva Recompensa</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input
+            type="text"
+            placeholder="Nombre de la recompensa"
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+          />
+          <select className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+            <option>Seleccionar nivel</option>
+            <option value="bronce">Bronce</option>
+            <option value="plata">Plata</option>
+            <option value="oro">Oro</option>
+            <option value="citizen_kumia">Citizen KUMIA</option>
+          </select>
+          <input
+            type="number"
+            placeholder="Puntos requeridos"
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+          />
+          <button className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors">
+            Crear Recompensa
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Integrations Section
+const IntegrationsSection = () => {
+  const [integrations, setIntegrations] = useState([
+    { id: 'meta', name: 'Meta Business Suite', type: 'social', status: 'connected', icon: '👥' },
+    { id: 'stripe', name: 'Stripe', type: 'payment', status: 'disconnected', icon: '💳' },
+    { id: 'openai', name: 'OpenAI', type: 'ai', status: 'connected', icon: '🤖' },
+    { id: 'n8n', name: 'n8n Automation', type: 'automation', status: 'disconnected', icon: '🔄' },
+    { id: 'tiktok', name: 'TikTok Business', type: 'social', status: 'disconnected', icon: '🎵' }
+  ]);
+
+  const handleToggleIntegration = (id) => {
+    setIntegrations(prev => 
+      prev.map(integration => 
+        integration.id === id 
+          ? { ...integration, status: integration.status === 'connected' ? 'disconnected' : 'connected' }
+          : integration
+      )
+    );
+  };
+
+  const IntegrationCard = ({ integration }) => (
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all duration-200">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center">
+          <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
+            <span className="text-2xl">{integration.icon}</span>
+          </div>
+          <div>
+            <h3 className="font-bold text-gray-800">{integration.name}</h3>
+            <p className="text-sm text-gray-600 capitalize">{integration.type}</p>
+          </div>
+        </div>
+        <button
+          onClick={() => handleToggleIntegration(integration.id)}
+          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+            integration.status === 'connected' ? 'bg-green-500' : 'bg-gray-300'
+          }`}
+        >
+          <span
+            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+              integration.status === 'connected' ? 'translate-x-6' : 'translate-x-1'
+            }`}
+          />
+        </button>
+      </div>
+
+      <div className="mb-4">
+        <div className="flex items-center mb-2">
+          <div className={`w-3 h-3 rounded-full mr-2 ${
+            integration.status === 'connected' ? 'bg-green-500' : 'bg-red-500'
+          }`}></div>
+          <span className="text-sm font-medium">
+            {integration.status === 'connected' ? '🟢 Conectado' : '🔴 Desconectado'}
+          </span>
+        </div>
+        <p className="text-xs text-gray-600">
+          {integration.status === 'connected' 
+            ? 'Integración activa y funcionando correctamente' 
+            : 'Configurar credenciales para activar'}
+        </p>
+      </div>
+
+      {integration.status === 'disconnected' && (
+        <div className="space-y-3">
+          <input
+            type="text"
+            placeholder="API Key"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+          />
+          <input
+            type="text"
+            placeholder="API Secret"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+          />
+          <button className="w-full bg-orange-500 text-white px-3 py-2 rounded-lg text-sm hover:bg-orange-600 transition-colors">
+            Validar Conexión
+          </button>
+        </div>
+      )}
+
+      <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+        <h4 className="text-sm font-medium text-blue-800 mb-1">¿Qué activa esta integración?</h4>
+        <p className="text-xs text-blue-700">
+          {integration.id === 'meta' && 'Gestión automática de WhatsApp, Instagram y Facebook'}
+          {integration.id === 'stripe' && 'Procesamiento de pagos y suscripciones'}
+          {integration.id === 'openai' && 'Capacidades de IA para chatbots y análisis'}
+          {integration.id === 'n8n' && 'Automatización de workflows y procesos'}
+          {integration.id === 'tiktok' && 'Gestión de contenido y engagement en TikTok'}
+        </p>
+      </div>
+    </div>
+  );
+
+  return (
+    <div id="integration_panel" className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-gray-800">🔗 Configuración / Integraciones</h2>
+        <button className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-4 py-2 rounded-lg hover:from-blue-600 hover:to-indigo-600 transition-all duration-200">
+          Agregar Nueva Integración
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {integrations.map(integration => (
+          <IntegrationCard key={integration.id} integration={integration} />
+        ))}
+      </div>
+
+      {/* Integration Status Overview */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-lg font-bold mb-4">📊 Estado de Integraciones</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="text-center p-4 bg-green-50 rounded-lg">
+            <div className="text-3xl font-bold text-green-600">
+              {integrations.filter(i => i.status === 'connected').length}
+            </div>
+            <div className="text-sm text-green-700">Conectadas</div>
+          </div>
+          <div className="text-center p-4 bg-red-50 rounded-lg">
+            <div className="text-3xl font-bold text-red-600">
+              {integrations.filter(i => i.status === 'disconnected').length}
+            </div>
+            <div className="text-sm text-red-700">Desconectadas</div>
+          </div>
+          <div className="text-center p-4 bg-blue-50 rounded-lg">
+            <div className="text-3xl font-bold text-blue-600">
+              {integrations.length}
+            </div>
+            <div className="text-sm text-blue-700">Total</div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -557,8 +1435,18 @@ const Dashboard = () => {
         return <DashboardSummary metrics={metrics} />;
       case 'clients':
         return <ClientsSection />;
+      case 'feedback':
+        return <FeedbackSection />;
+      case 'reservations':
+        return <ReservationsSection />;
+      case 'ai-agents':
+        return <AIAgentsSection />;
+      case 'rewards':
+        return <RewardsNFTsSection />;
       case 'roi-viewer':
         return <ROIViewer />;
+      case 'integrations':
+        return <IntegrationsSection />;
       default:
         return (
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
