@@ -1,12 +1,120 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
+import { initializeApp } from 'firebase/app';
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
+import { getAuth, connectAuthEmulator } from 'firebase/auth';
+import { getAnalytics } from 'firebase/analytics';
+import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 import axios from 'axios';
 import './App.css';
 import { ROIViewer, RewardsNFTsSection, IntegrationsSection, ConfigurationSection, ClientsSection, ReservationsSection, AIAgentsSection } from './AppComponents';
+import { firebaseConfig, firebaseServices, offlineConfig } from './firebaseConfig';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 const GOOGLE_CLIENT_ID = "711205636822-gnr5u8gumdd6n3h41kauhn6enhbt160d.apps.googleusercontent.com";
+
+// Initialize Firebase
+let app;
+let db;
+let auth;
+let analytics;
+let functions;
+
+try {
+  app = initializeApp(firebaseConfig);
+  
+  // Initialize Firebase services
+  if (firebaseServices.firestore.enabled) {
+    db = getFirestore(app);
+  }
+  
+  if (firebaseServices.auth.enabled) {
+    auth = getAuth(app);
+  }
+  
+  if (firebaseServices.analytics.enabled && typeof window !== 'undefined') {
+    analytics = getAnalytics(app);
+  }
+  
+  if (firebaseServices.functions.enabled) {
+    functions = getFunctions(app);
+  }
+  
+  console.log('✅ Firebase initialized successfully');
+} catch (error) {
+  console.warn('⚠️ Firebase initialization failed, using offline mode:', error);
+  // Fallback to offline mode
+}
+
+// Firebase Context
+const FirebaseContext = createContext();
+
+const FirebaseProvider = ({ children }) => {
+  const [isOnline, setIsOnline] = useState(true);
+  const [firebaseReady, setFirebaseReady] = useState(false);
+
+  useEffect(() => {
+    // Check Firebase connection
+    const checkFirebaseConnection = async () => {
+      try {
+        if (db) {
+          // Test Firestore connection
+          setFirebaseReady(true);
+          setIsOnline(true);
+        }
+      } catch (error) {
+        console.warn('Firebase offline, using fallback mode');
+        setFirebaseReady(false);
+        setIsOnline(false);
+      }
+    };
+
+    checkFirebaseConnection();
+
+    // Listen for online/offline events
+    const handleOnline = () => {
+      setIsOnline(true);
+      checkFirebaseConnection();
+    };
+    
+    const handleOffline = () => {
+      setIsOnline(false);
+    };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  const value = {
+    app,
+    db,
+    auth,
+    analytics,
+    functions,
+    isOnline,
+    firebaseReady
+  };
+
+  return (
+    <FirebaseContext.Provider value={value}>
+      {children}
+    </FirebaseContext.Provider>
+  );
+};
+
+export const useFirebase = () => {
+  const context = useContext(FirebaseContext);
+  if (!context) {
+    throw new Error('useFirebase must be used within a FirebaseProvider');
+  }
+  return context;
+};
 
 // Auth Context
 const AuthContext = createContext();
