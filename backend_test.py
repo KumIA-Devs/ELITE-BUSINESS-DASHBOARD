@@ -703,6 +703,75 @@ class BackendTester:
         
         return False
     
+    def test_analytics_endpoints(self):
+        """Test advanced analytics endpoints"""
+        print("📈 Testing Analytics Endpoints...")
+        
+        if not self.auth_token:
+            self.log_test("Analytics Endpoints", False, "No auth token available")
+            return False
+        
+        try:
+            # Test ROI Analytics
+            roi_response = self.session.get(f"{self.base_url}/analytics/roi")
+            
+            if roi_response.status_code == 200:
+                roi_data = roi_response.json()
+                if "monthly_multiplier" in roi_data and "attributed_revenue" in roi_data:
+                    self.log_test("ROI Analytics", True, f"Monthly multiplier: {roi_data['monthly_multiplier']}x")
+                else:
+                    self.log_test("ROI Analytics", False, "Missing required ROI fields", roi_data)
+                    return False
+            else:
+                self.log_test("ROI Analytics", False, f"HTTP {roi_response.status_code}", roi_response.text)
+                return False
+            
+            # Test AI Recommendations
+            rec_response = self.session.get(f"{self.base_url}/ai/recommendations")
+            
+            if rec_response.status_code == 200:
+                rec_data = rec_response.json()
+                if "recommendations" in rec_data and isinstance(rec_data["recommendations"], list):
+                    self.log_test("AI Recommendations", True, f"Generated {len(rec_data['recommendations'])} recommendations")
+                else:
+                    self.log_test("AI Recommendations", False, "Invalid recommendations response", rec_data)
+                    return False
+            else:
+                self.log_test("AI Recommendations", False, f"HTTP {rec_response.status_code}", rec_response.text)
+                return False
+            
+            # Test Customer Analytics
+            customer_analytics_response = self.session.get(f"{self.base_url}/analytics/customers")
+            
+            if customer_analytics_response.status_code == 200:
+                customer_data = customer_analytics_response.json()
+                if "segments" in customer_data and "total_customers" in customer_data:
+                    self.log_test("Customer Analytics", True, f"Total customers: {customer_data['total_customers']}")
+                else:
+                    self.log_test("Customer Analytics", False, "Invalid customer analytics response", customer_data)
+                    return False
+            else:
+                self.log_test("Customer Analytics", False, f"HTTP {customer_analytics_response.status_code}", customer_analytics_response.text)
+                return False
+            
+            # Test Feedback Analytics
+            feedback_analytics_response = self.session.get(f"{self.base_url}/analytics/feedback")
+            
+            if feedback_analytics_response.status_code == 200:
+                feedback_data = feedback_analytics_response.json()
+                if "nps_score" in feedback_data and "sentiment_analysis" in feedback_data:
+                    self.log_test("Feedback Analytics", True, f"NPS Score: {feedback_data['nps_score']}")
+                    return True
+                else:
+                    self.log_test("Feedback Analytics", False, "Invalid feedback analytics response", feedback_data)
+            else:
+                self.log_test("Feedback Analytics", False, f"HTTP {feedback_analytics_response.status_code}", feedback_analytics_response.text)
+                
+        except Exception as e:
+            self.log_test("Analytics Endpoints", False, f"Exception: {str(e)}")
+        
+        return False
+    
     def run_all_tests(self):
         """Run all backend tests"""
         print("🚀 Starting IL MANDORLA Backend API Tests")
