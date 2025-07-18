@@ -333,20 +333,373 @@ class BackendTester:
             return False
         
         try:
+            # Test GET customers
             response = self.session.get(f"{self.base_url}/customers")
             
             if response.status_code == 200:
                 customers = response.json()
                 if isinstance(customers, list):
-                    self.log_test("Customer Management", True, f"Retrieved {len(customers)} customers")
-                    return True
+                    self.log_test("Customer GET", True, f"Retrieved {len(customers)} customers")
+                    
+                    # Test POST new customer
+                    new_customer = {
+                        "name": "María González",
+                        "email": "maria.gonzalez@email.com",
+                        "phone": "+54911234567",
+                        "nft_level": "bronce",
+                        "points": 150,
+                        "total_spent": 2500.0
+                    }
+                    
+                    post_response = self.session.post(f"{self.base_url}/customers", json=new_customer)
+                    
+                    if post_response.status_code == 200:
+                        created_customer = post_response.json()
+                        if "id" in created_customer and created_customer["name"] == new_customer["name"]:
+                            self.log_test("Customer POST", True, f"Created customer: {created_customer['name']}")
+                            
+                            # Test PUT update
+                            created_customer["points"] = 200
+                            put_response = self.session.put(f"{self.base_url}/customers/{created_customer['id']}", json=created_customer)
+                            
+                            if put_response.status_code == 200:
+                                self.log_test("Customer PUT", True, f"Updated points to {created_customer['points']}")
+                                return True
+                            else:
+                                self.log_test("Customer PUT", False, f"HTTP {put_response.status_code}")
+                        else:
+                            self.log_test("Customer POST", False, "Invalid created customer response", created_customer)
+                    else:
+                        self.log_test("Customer POST", False, f"HTTP {post_response.status_code}", post_response.text)
                 else:
-                    self.log_test("Customer Management", False, "Invalid customers response", customers)
+                    self.log_test("Customer GET", False, "Invalid customers response", customers)
             else:
-                self.log_test("Customer Management", False, f"HTTP {response.status_code}", response.text)
+                self.log_test("Customer GET", False, f"HTTP {response.status_code}", response.text)
                 
         except Exception as e:
             self.log_test("Customer Management", False, f"Exception: {str(e)}")
+        
+        return False
+    
+    def test_reservations_crud(self):
+        """Test reservations CRUD operations"""
+        print("📅 Testing Reservations CRUD...")
+        
+        if not self.auth_token:
+            self.log_test("Reservations CRUD", False, "No auth token available")
+            return False
+        
+        try:
+            # Test GET reservations
+            response = self.session.get(f"{self.base_url}/reservations")
+            
+            if response.status_code == 200:
+                reservations = response.json()
+                if isinstance(reservations, list):
+                    self.log_test("Reservations GET", True, f"Retrieved {len(reservations)} reservations")
+                    
+                    # Test POST new reservation
+                    new_reservation = {
+                        "customer_id": str(uuid.uuid4()),
+                        "customer_name": "Carlos Mendoza",
+                        "date": "2024-12-25T20:00:00",
+                        "time": "20:00",
+                        "guests": 4,
+                        "phone": "+54911234567",
+                        "email": "carlos.mendoza@email.com",
+                        "status": "confirmed",
+                        "special_requests": "Mesa cerca de la ventana"
+                    }
+                    
+                    post_response = self.session.post(f"{self.base_url}/reservations", json=new_reservation)
+                    
+                    if post_response.status_code == 200:
+                        created_reservation = post_response.json()
+                        if "id" in created_reservation and created_reservation["customer_name"] == new_reservation["customer_name"]:
+                            self.log_test("Reservations POST", True, f"Created reservation for: {created_reservation['customer_name']}")
+                            
+                            # Test PUT update
+                            created_reservation["guests"] = 6
+                            put_response = self.session.put(f"{self.base_url}/reservations/{created_reservation['id']}", json=created_reservation)
+                            
+                            if put_response.status_code == 200:
+                                self.log_test("Reservations PUT", True, f"Updated guests to {created_reservation['guests']}")
+                                return True
+                            else:
+                                self.log_test("Reservations PUT", False, f"HTTP {put_response.status_code}")
+                        else:
+                            self.log_test("Reservations POST", False, "Invalid created reservation response", created_reservation)
+                    else:
+                        self.log_test("Reservations POST", False, f"HTTP {post_response.status_code}", post_response.text)
+                else:
+                    self.log_test("Reservations GET", False, "Invalid reservations response", reservations)
+            else:
+                self.log_test("Reservations GET", False, f"HTTP {response.status_code}", response.text)
+                
+        except Exception as e:
+            self.log_test("Reservations CRUD", False, f"Exception: {str(e)}")
+        
+        return False
+    
+    def test_feedback_management(self):
+        """Test feedback management endpoints"""
+        print("💬 Testing Feedback Management...")
+        
+        if not self.auth_token:
+            self.log_test("Feedback Management", False, "No auth token available")
+            return False
+        
+        try:
+            # Test GET feedback
+            response = self.session.get(f"{self.base_url}/feedback")
+            
+            if response.status_code == 200:
+                feedback_list = response.json()
+                if isinstance(feedback_list, list):
+                    self.log_test("Feedback GET", True, f"Retrieved {len(feedback_list)} feedback items")
+                    
+                    # Test POST new feedback
+                    new_feedback = {
+                        "customer_id": str(uuid.uuid4()),
+                        "customer_name": "Ana Rodríguez",
+                        "rating": 5,
+                        "comment": "Excelente experiencia! El brisket estaba perfecto y el servicio impecable.",
+                        "is_approved": True
+                    }
+                    
+                    post_response = self.session.post(f"{self.base_url}/feedback", json=new_feedback)
+                    
+                    if post_response.status_code == 200:
+                        created_feedback = post_response.json()
+                        if "id" in created_feedback and created_feedback["customer_name"] == new_feedback["customer_name"]:
+                            self.log_test("Feedback POST", True, f"Created feedback from: {created_feedback['customer_name']} (Rating: {created_feedback['rating']})")
+                            return True
+                        else:
+                            self.log_test("Feedback POST", False, "Invalid created feedback response", created_feedback)
+                    else:
+                        self.log_test("Feedback POST", False, f"HTTP {post_response.status_code}", post_response.text)
+                else:
+                    self.log_test("Feedback GET", False, "Invalid feedback response", feedback_list)
+            else:
+                self.log_test("Feedback GET", False, f"HTTP {response.status_code}", response.text)
+                
+        except Exception as e:
+            self.log_test("Feedback Management", False, f"Exception: {str(e)}")
+        
+        return False
+    
+    def test_ai_agents_crud(self):
+        """Test AI agents CRUD operations"""
+        print("🤖 Testing AI Agents CRUD...")
+        
+        if not self.auth_token:
+            self.log_test("AI Agents CRUD", False, "No auth token available")
+            return False
+        
+        try:
+            # Test GET AI agents
+            response = self.session.get(f"{self.base_url}/ai-agents")
+            
+            if response.status_code == 200:
+                agents = response.json()
+                if isinstance(agents, list):
+                    self.log_test("AI Agents GET", True, f"Retrieved {len(agents)} AI agents")
+                    
+                    # Test POST new AI agent
+                    new_agent = {
+                        "channel": "whatsapp",
+                        "name": "WhatsApp Assistant",
+                        "prompt": "Eres un asistente especializado en WhatsApp para IL MANDORLA. Responde de manera amigable y concisa.",
+                        "is_active": True
+                    }
+                    
+                    post_response = self.session.post(f"{self.base_url}/ai-agents", json=new_agent)
+                    
+                    if post_response.status_code == 200:
+                        created_agent = post_response.json()
+                        if "id" in created_agent and created_agent["channel"] == new_agent["channel"]:
+                            self.log_test("AI Agents POST", True, f"Created AI agent for: {created_agent['channel']}")
+                            
+                            # Test PUT update
+                            created_agent["is_active"] = False
+                            put_response = self.session.put(f"{self.base_url}/ai-agents/{created_agent['id']}", json=created_agent)
+                            
+                            if put_response.status_code == 200:
+                                self.log_test("AI Agents PUT", True, f"Updated agent status to inactive")
+                                return True
+                            else:
+                                self.log_test("AI Agents PUT", False, f"HTTP {put_response.status_code}")
+                        else:
+                            self.log_test("AI Agents POST", False, "Invalid created agent response", created_agent)
+                    else:
+                        self.log_test("AI Agents POST", False, f"HTTP {post_response.status_code}", post_response.text)
+                else:
+                    self.log_test("AI Agents GET", False, "Invalid agents response", agents)
+            else:
+                self.log_test("AI Agents GET", False, f"HTTP {response.status_code}", response.text)
+                
+        except Exception as e:
+            self.log_test("AI Agents CRUD", False, f"Exception: {str(e)}")
+        
+        return False
+    
+    def test_nft_rewards_crud(self):
+        """Test NFT rewards CRUD operations"""
+        print("🏆 Testing NFT Rewards CRUD...")
+        
+        if not self.auth_token:
+            self.log_test("NFT Rewards CRUD", False, "No auth token available")
+            return False
+        
+        try:
+            # Test GET NFT rewards
+            response = self.session.get(f"{self.base_url}/nft-rewards")
+            
+            if response.status_code == 200:
+                rewards = response.json()
+                if isinstance(rewards, list):
+                    self.log_test("NFT Rewards GET", True, f"Retrieved {len(rewards)} NFT rewards")
+                    
+                    # Test POST new NFT reward
+                    new_reward = {
+                        "name": "Bronce Smokehouse",
+                        "description": "NFT de nivel bronce para clientes leales",
+                        "image_base64": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
+                        "level": "bronce",
+                        "points_required": 100,
+                        "attributes": {
+                            "rarity": "common",
+                            "benefits": ["5% descuento", "acceso prioritario"]
+                        }
+                    }
+                    
+                    post_response = self.session.post(f"{self.base_url}/nft-rewards", json=new_reward)
+                    
+                    if post_response.status_code == 200:
+                        created_reward = post_response.json()
+                        if "id" in created_reward and created_reward["name"] == new_reward["name"]:
+                            self.log_test("NFT Rewards POST", True, f"Created NFT reward: {created_reward['name']} ({created_reward['level']})")
+                            return True
+                        else:
+                            self.log_test("NFT Rewards POST", False, "Invalid created reward response", created_reward)
+                    else:
+                        self.log_test("NFT Rewards POST", False, f"HTTP {post_response.status_code}", post_response.text)
+                else:
+                    self.log_test("NFT Rewards GET", False, "Invalid rewards response", rewards)
+            else:
+                self.log_test("NFT Rewards GET", False, f"HTTP {response.status_code}", response.text)
+                
+        except Exception as e:
+            self.log_test("NFT Rewards CRUD", False, f"Exception: {str(e)}")
+        
+        return False
+    
+    def test_integrations_crud(self):
+        """Test integrations CRUD operations"""
+        print("🔌 Testing Integrations CRUD...")
+        
+        if not self.auth_token:
+            self.log_test("Integrations CRUD", False, "No auth token available")
+            return False
+        
+        try:
+            # Test GET integrations
+            response = self.session.get(f"{self.base_url}/integrations")
+            
+            if response.status_code == 200:
+                integrations = response.json()
+                if isinstance(integrations, list):
+                    self.log_test("Integrations GET", True, f"Retrieved {len(integrations)} integrations")
+                    
+                    # Test POST new integration
+                    new_integration = {
+                        "name": "Stripe Payment",
+                        "type": "stripe",
+                        "api_key": "sk_test_123456789",
+                        "is_active": True,
+                        "config": {
+                            "webhook_url": "https://example.com/webhook",
+                            "currency": "ARS"
+                        }
+                    }
+                    
+                    post_response = self.session.post(f"{self.base_url}/integrations", json=new_integration)
+                    
+                    if post_response.status_code == 200:
+                        created_integration = post_response.json()
+                        if "id" in created_integration and created_integration["name"] == new_integration["name"]:
+                            self.log_test("Integrations POST", True, f"Created integration: {created_integration['name']} ({created_integration['type']})")
+                            
+                            # Test PUT update
+                            created_integration["is_active"] = False
+                            put_response = self.session.put(f"{self.base_url}/integrations/{created_integration['id']}", json=created_integration)
+                            
+                            if put_response.status_code == 200:
+                                self.log_test("Integrations PUT", True, f"Updated integration status to inactive")
+                                return True
+                            else:
+                                self.log_test("Integrations PUT", False, f"HTTP {put_response.status_code}")
+                        else:
+                            self.log_test("Integrations POST", False, "Invalid created integration response", created_integration)
+                    else:
+                        self.log_test("Integrations POST", False, f"HTTP {post_response.status_code}", post_response.text)
+                else:
+                    self.log_test("Integrations GET", False, "Invalid integrations response", integrations)
+            else:
+                self.log_test("Integrations GET", False, f"HTTP {response.status_code}", response.text)
+                
+        except Exception as e:
+            self.log_test("Integrations CRUD", False, f"Exception: {str(e)}")
+        
+        return False
+    
+    def test_settings_management(self):
+        """Test settings management endpoints"""
+        print("⚙️ Testing Settings Management...")
+        
+        if not self.auth_token:
+            self.log_test("Settings Management", False, "No auth token available")
+            return False
+        
+        try:
+            # Test GET settings
+            response = self.session.get(f"{self.base_url}/settings")
+            
+            if response.status_code == 200:
+                settings = response.json()
+                if isinstance(settings, dict) and "name" in settings:
+                    self.log_test("Settings GET", True, f"Retrieved settings for: {settings['name']}")
+                    
+                    # Test PUT update settings
+                    settings["voice_tone"] = "amigable y profesional con toque argentino"
+                    settings["opening_hours"] = {
+                        "monday": "12:00-23:00",
+                        "tuesday": "12:00-23:00",
+                        "wednesday": "12:00-23:00",
+                        "thursday": "12:00-23:00",
+                        "friday": "12:00-24:00",
+                        "saturday": "12:00-24:00",
+                        "sunday": "12:00-22:00"
+                    }
+                    
+                    put_response = self.session.put(f"{self.base_url}/settings", json=settings)
+                    
+                    if put_response.status_code == 200:
+                        updated_settings = put_response.json()
+                        if updated_settings["voice_tone"] == settings["voice_tone"]:
+                            self.log_test("Settings PUT", True, f"Updated voice tone and opening hours")
+                            return True
+                        else:
+                            self.log_test("Settings PUT", False, "Settings not updated correctly", updated_settings)
+                    else:
+                        self.log_test("Settings PUT", False, f"HTTP {put_response.status_code}", put_response.text)
+                else:
+                    self.log_test("Settings GET", False, "Invalid settings response", settings)
+            else:
+                self.log_test("Settings GET", False, f"HTTP {response.status_code}", response.text)
+                
+        except Exception as e:
+            self.log_test("Settings Management", False, f"Exception: {str(e)}")
         
         return False
     
