@@ -801,6 +801,7 @@ class BackendTester:
             self.test_nft_rewards_crud()
             self.test_integrations_crud()
             self.test_settings_management()
+            self.test_analytics_endpoints()
         
         # Print summary
         print("=" * 60)
