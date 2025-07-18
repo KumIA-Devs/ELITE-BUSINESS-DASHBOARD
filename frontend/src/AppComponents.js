@@ -971,416 +971,772 @@ export const IntegrationsSection = () => {
   );
 };
 
-// 🆕 CONFIGURATION SECTION AMPLIADA
+// 🆕 CONFIGURATION SECTION AMPLIADA - KUMIA ELITE
 export const ConfigurationSection = () => {
   const [activeConfigTab, setActiveConfigTab] = useState('general');
-  const [settings, setSettings] = useState({
-    general: {
-      businessName: 'IL MANDORLA SMOKEHOUSE',
-      logo: 'https://images.app.goo.gl/HySig5BgebwJZG6B9',
-      language: 'es',
-      timezone: 'America/Mexico_City',
-      businessHours: {
-        monday: { open: '09:00', close: '22:00', active: true },
-        tuesday: { open: '09:00', close: '22:00', active: true },
-        wednesday: { open: '09:00', close: '22:00', active: true },
-        thursday: { open: '09:00', close: '22:00', active: true },
-        friday: { open: '09:00', close: '23:00', active: true },
-        saturday: { open: '10:00', close: '23:00', active: true },
-        sunday: { open: '10:00', close: '21:00', active: true }
-      }
+  const [businessInfo, setBusinessInfo] = useState({
+    name: 'IL MANDORLA SMOKEHOUSE',
+    address: 'Av. Revolución 1234, Ciudad de México',
+    phone: '+52 55 1234 5678',
+    email: 'info@ilmandorla.com',
+    instagram: '@ilmandorla',
+    facebook: 'IL MANDORLA Official',
+    tiktok: '@ilmandorla',
+    whatsapp: '+52 55 1234 5678',
+    hours: {
+      monday: { open: '09:00', close: '22:00', active: true },
+      tuesday: { open: '09:00', close: '22:00', active: true },
+      wednesday: { open: '09:00', close: '22:00', active: true },
+      thursday: { open: '09:00', close: '22:00', active: true },
+      friday: { open: '09:00', close: '23:00', active: true },
+      saturday: { open: '10:00', close: '23:00', active: true },
+      sunday: { open: '10:00', close: '21:00', active: true }
     },
-    feedback: {
-      autoFeedback: true,
-      feedbackFrequency: 'post_visit',
-      surveyTypes: ['satisfaction', 'nps', 'product_rating'],
-      rewardsFeedback: true
+    cuisineType: 'Smokehouse Premium',
+    logo: 'https://images.app.goo.gl/HySig5BgebwJZG6B9',
+    brandColors: {
+      primary: '#FF6B35',
+      secondary: '#FFFFFF',
+      accent: '#FF8C42'
     },
-    ai: {
-      whatsappActive: true,
-      instagramActive: true,
-      tiktokActive: false,
-      autonomyLevel: 'medium',
-      voiceTone: 'friendly'
+    aiAvatar: 'https://images.app.goo.gl/ai-avatar-example'
+  });
+
+  const [roles, setRoles] = useState([
+    { id: 'admin', name: 'Administrador', permissions: ['all'], users: 2, description: 'Acceso completo al sistema' },
+    { id: 'supervisor', name: 'Supervisor', permissions: ['dashboard', 'menu', 'customers', 'reservations', 'feedback'], users: 3, description: 'Gestión operativa' },
+    { id: 'staff', name: 'Personal', permissions: ['menu', 'reservations'], users: 8, description: 'Acceso básico' }
+  ]);
+
+  const [integrations, setIntegrations] = useState([
+    { id: 'meta', name: 'Meta Business Suite', status: 'active', config: { pageId: 'IL_MANDORLA_PAGE', accessToken: '****' } },
+    { id: 'whatsapp', name: 'WhatsApp Cloud API', status: 'active', config: { phoneNumber: '+525512345678', apiKey: '****' } },
+    { id: 'openai', name: 'OpenAI', status: 'active', config: { model: 'gpt-4o', apiKey: '****' } },
+    { id: 'stripe', name: 'Stripe', status: 'inactive', config: { publicKey: '', secretKey: '' } },
+    { id: 'crm', name: 'CRM Externo', status: 'inactive', config: { endpoint: '', credentials: '' } },
+    { id: 'erp', name: 'ERP Local', status: 'inactive', config: { webhook: '', jsonCredentials: '' } }
+  ]);
+
+  const [notifications, setNotifications] = useState({
+    newFeedback: { whatsapp: true, email: true, telegram: false },
+    newReservation: { whatsapp: true, email: true, telegram: false },
+    campaignActivated: { whatsapp: true, email: false, telegram: false },
+    intervals: {
+      feedback: 'immediate',
+      reservations: 'immediate',
+      reports: 'daily'
     },
-    dashboard: {
-      visibleKPIs: ['revenue', 'customers', 'feedback', 'nfts'],
-      metricsOrder: ['economic', 'engagement', 'brand'],
-      alertsActive: true
-    },
-    notifications: {
-      email: true,
-      whatsapp: true,
-      frequency: 'daily',
-      reportTime: '09:00'
-    }
+    testMode: false
   });
 
   const configTabs = [
-    { id: 'general', label: 'General', icon: '🏢', desc: 'Información básica del negocio' },
+    { id: 'general', label: 'General', icon: '🏢', desc: 'Información del Negocio' },
     { id: 'roles', label: 'Roles y Permisos', icon: '👥', desc: 'Gestión de usuarios y accesos' },
-    { id: 'feedback', label: 'Feedback y Recompensas', icon: '🎁', desc: 'Sistema de recompensas y NFTs' },
-    { id: 'ai', label: 'IA y Automatizaciones', icon: '🤖', desc: 'Configuración de agentes inteligentes' },
-    { id: 'integrations', label: 'Integraciones', icon: '🔗', desc: 'Conexiones con servicios externos' },
-    { id: 'dashboard', label: 'Dashboard', icon: '📊', desc: 'Personalización de métricas' },
-    { id: 'notifications', label: 'Notificaciones', icon: '🔔', desc: 'Alertas y reportes automáticos' }
+    { id: 'integrations', label: 'Integraciones', icon: '🔗', desc: 'Conexiones externas' },
+    { id: 'notifications', label: 'Notificaciones', icon: '🔔', desc: 'Alertas y reportes' }
   ];
 
-  const handleSettingChange = (section, key, value) => {
-    setSettings(prev => ({
+  const handleBusinessInfoChange = (field, value) => {
+    setBusinessInfo(prev => ({
       ...prev,
-      [section]: {
-        ...prev[section],
-        [key]: value
-      }
+      [field]: value
     }));
   };
 
-  // 🆕 SECCIÓN FEEDBACK Y RECOMPENSAS
-  const FeedbackRewardsConfig = () => (
+  const handleSaveBusinessInfo = () => {
+    // Auto-save functionality
+    alert('Información del negocio guardada automáticamente');
+  };
+
+  const handleTestIntegration = (integrationId) => {
+    alert(`Probando integración: ${integrationId}`);
+  };
+
+  const handleTestNotification = (channel, type) => {
+    alert(`Enviando notificación de prueba por ${channel} para ${type}`);
+  };
+
+  // 🆕 GENERAL - INFORMACIÓN DEL NEGOCIO
+  const GeneralConfig = () => (
     <div className="space-y-6">
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h3 className="text-lg font-bold text-gray-800 mb-4">🎯 Configuración de Feedback</h3>
+        <h3 className="text-lg font-bold text-gray-800 mb-4">🏢 Información Básica del Negocio</h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Nombre del Negocio</label>
+            <input
+              type="text"
+              value={businessInfo.name}
+              onChange={(e) => handleBusinessInfoChange('name', e.target.value)}
+              onBlur={handleSaveBusinessInfo}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+              placeholder="IL MANDORLA SMOKEHOUSE"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de Cocina</label>
+            <input
+              type="text"
+              value={businessInfo.cuisineType}
+              onChange={(e) => handleBusinessInfoChange('cuisineType', e.target.value)}
+              onBlur={handleSaveBusinessInfo}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+              placeholder="Smokehouse Premium"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Dirección</label>
+            <input
+              type="text"
+              value={businessInfo.address}
+              onChange={(e) => handleBusinessInfoChange('address', e.target.value)}
+              onBlur={handleSaveBusinessInfo}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+              placeholder="Av. Revolución 1234, Ciudad de México"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
+            <input
+              type="tel"
+              value={businessInfo.phone}
+              onChange={(e) => handleBusinessInfoChange('phone', e.target.value)}
+              onBlur={handleSaveBusinessInfo}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+              placeholder="+52 55 1234 5678"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+            <input
+              type="email"
+              value={businessInfo.email}
+              onChange={(e) => handleBusinessInfoChange('email', e.target.value)}
+              onBlur={handleSaveBusinessInfo}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+              placeholder="info@ilmandorla.com"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">WhatsApp</label>
+            <input
+              type="tel"
+              value={businessInfo.whatsapp}
+              onChange={(e) => handleBusinessInfoChange('whatsapp', e.target.value)}
+              onBlur={handleSaveBusinessInfo}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+              placeholder="+52 55 1234 5678"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Redes Sociales */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-lg font-bold text-gray-800 mb-4">📱 Redes Sociales</h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Instagram</label>
+            <input
+              type="text"
+              value={businessInfo.instagram}
+              onChange={(e) => handleBusinessInfoChange('instagram', e.target.value)}
+              onBlur={handleSaveBusinessInfo}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+              placeholder="@ilmandorla"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Facebook</label>
+            <input
+              type="text"
+              value={businessInfo.facebook}
+              onChange={(e) => handleBusinessInfoChange('facebook', e.target.value)}
+              onBlur={handleSaveBusinessInfo}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+              placeholder="IL MANDORLA Official"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">TikTok</label>
+            <input
+              type="text"
+              value={businessInfo.tiktok}
+              onChange={(e) => handleBusinessInfoChange('tiktok', e.target.value)}
+              onBlur={handleSaveBusinessInfo}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+              placeholder="@ilmandorla"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Horarios */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-lg font-bold text-gray-800 mb-4">🕒 Horarios de Atención</h3>
         
         <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-            <div>
-              <h4 className="font-medium text-gray-800">Feedback Automático</h4>
-              <p className="text-sm text-gray-600">Solicitar feedback automáticamente después de cada visita</p>
+          {Object.entries(businessInfo.hours).map(([day, hours]) => (
+            <div key={day} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={hours.active}
+                  onChange={(e) => handleBusinessInfoChange('hours', {
+                    ...businessInfo.hours,
+                    [day]: { ...hours, active: e.target.checked }
+                  })}
+                  className="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
+                />
+                <span className="ml-3 font-medium text-gray-800 capitalize">{day}</span>
+              </div>
+              <div className="flex items-center space-x-4">
+                <input
+                  type="time"
+                  value={hours.open}
+                  onChange={(e) => handleBusinessInfoChange('hours', {
+                    ...businessInfo.hours,
+                    [day]: { ...hours, open: e.target.value }
+                  })}
+                  className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                />
+                <span className="text-gray-600">-</span>
+                <input
+                  type="time"
+                  value={hours.close}
+                  onChange={(e) => handleBusinessInfoChange('hours', {
+                    ...businessInfo.hours,
+                    [day]: { ...hours, close: e.target.value }
+                  })}
+                  className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                />
+              </div>
             </div>
-            <button
-              onClick={() => handleSettingChange('feedback', 'autoFeedback', !settings.feedback.autoFeedback)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                settings.feedback.autoFeedback ? 'bg-orange-500' : 'bg-gray-300'
-              }`}
+          ))}
+        </div>
+      </div>
+
+      {/* Branding */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-lg font-bold text-gray-800 mb-4">🎨 Branding y Colores</h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Color Primario</label>
+            <div className="flex items-center space-x-3">
+              <input
+                type="color"
+                value={businessInfo.brandColors.primary}
+                onChange={(e) => handleBusinessInfoChange('brandColors', {
+                  ...businessInfo.brandColors,
+                  primary: e.target.value
+                })}
+                className="w-16 h-12 border border-gray-300 rounded-lg cursor-pointer"
+              />
+              <input
+                type="text"
+                value={businessInfo.brandColors.primary}
+                onChange={(e) => handleBusinessInfoChange('brandColors', {
+                  ...businessInfo.brandColors,
+                  primary: e.target.value
+                })}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                placeholder="#FF6B35"
+              />
+            </div>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Color Secundario</label>
+            <div className="flex items-center space-x-3">
+              <input
+                type="color"
+                value={businessInfo.brandColors.secondary}
+                onChange={(e) => handleBusinessInfoChange('brandColors', {
+                  ...businessInfo.brandColors,
+                  secondary: e.target.value
+                })}
+                className="w-16 h-12 border border-gray-300 rounded-lg cursor-pointer"
+              />
+              <input
+                type="text"
+                value={businessInfo.brandColors.secondary}
+                onChange={(e) => handleBusinessInfoChange('brandColors', {
+                  ...businessInfo.brandColors,
+                  secondary: e.target.value
+                })}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                placeholder="#FFFFFF"
+              />
+            </div>
+          </div>
+        </div>
+        
+        <div className="mt-6 p-4 bg-gradient-to-r from-orange-50 to-red-50 rounded-lg">
+          <h4 className="font-medium text-gray-800 mb-2">Vista Previa del Branding</h4>
+          <div className="flex items-center space-x-4">
+            <div 
+              className="w-16 h-16 rounded-xl flex items-center justify-center text-white font-bold text-xl"
+              style={{ backgroundColor: businessInfo.brandColors.primary }}
             >
-              <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                settings.feedback.autoFeedback ? 'translate-x-6' : 'translate-x-1'
-              }`} />
+              IM
+            </div>
+            <div>
+              <h5 className="font-bold text-gray-800">{businessInfo.name}</h5>
+              <p className="text-sm text-gray-600">{businessInfo.cuisineType}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // 🆕 ROLES Y PERMISOS
+  const RolesConfig = () => (
+    <div className="space-y-6">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-lg font-bold text-gray-800 mb-4">👥 Gestión de Roles y Permisos</h3>
+        
+        <div className="space-y-4">
+          {roles.map(role => (
+            <div key={role.id} className="border border-gray-200 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center">
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-400 rounded-full flex items-center justify-center mr-3">
+                    <span className="text-white font-bold">{role.name.charAt(0)}</span>
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-gray-800">{role.name}</h4>
+                    <p className="text-sm text-gray-600">{role.description}</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-4">
+                  <span className="text-sm text-gray-600">{role.users} usuarios</span>
+                  <button className="bg-blue-100 text-blue-700 px-3 py-1 rounded-lg text-sm hover:bg-blue-200 transition-colors">
+                    Editar
+                  </button>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                {['Dashboard', 'Menú', 'Clientes', 'Reservas', 'Feedback', 'IA', 'Recompensas', 'Configuración'].map(permission => (
+                  <div key={permission} className="flex items-center p-2 bg-gray-50 rounded-lg">
+                    <input
+                      type="checkbox"
+                      checked={role.permissions.includes('all') || role.permissions.includes(permission.toLowerCase())}
+                      readOnly
+                      className="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
+                    />
+                    <span className="ml-2 text-sm text-gray-700">{permission}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        <button className="w-full mt-6 bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 px-4 rounded-lg hover:from-orange-600 hover:to-red-600 transition-all duration-200 transform hover:scale-105">
+          + Crear Nuevo Rol
+        </button>
+      </div>
+
+      {/* Historial de Actividad */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-lg font-bold text-gray-800 mb-4">📊 Historial de Actividad</h3>
+        
+        <div className="space-y-3">
+          {[
+            { user: 'Admin Principal', action: 'Creó nuevo usuario', time: 'Hace 2 horas', type: 'create' },
+            { user: 'Supervisor Mesa', action: 'Modificó permisos de rol', time: 'Hace 4 horas', type: 'update' },
+            { user: 'Staff Cocina', action: 'Accedió al módulo de menú', time: 'Hace 6 horas', type: 'access' },
+            { user: 'Admin Principal', action: 'Exportó lista de permisos', time: 'Hace 1 día', type: 'export' }
+          ].map((activity, index) => (
+            <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <div className="flex items-center">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 ${
+                  activity.type === 'create' ? 'bg-green-100 text-green-600' :
+                  activity.type === 'update' ? 'bg-blue-100 text-blue-600' :
+                  activity.type === 'access' ? 'bg-purple-100 text-purple-600' :
+                  'bg-orange-100 text-orange-600'
+                }`}>
+                  <span className="text-sm font-bold">
+                    {activity.type === 'create' ? '+' : activity.type === 'update' ? '✏️' : activity.type === 'access' ? '👁️' : '📤'}
+                  </span>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-800">{activity.user}</p>
+                  <p className="text-xs text-gray-600">{activity.action}</p>
+                </div>
+              </div>
+              <span className="text-xs text-gray-500">{activity.time}</span>
+            </div>
+          ))}
+        </div>
+        
+        <button className="w-full mt-4 bg-blue-100 text-blue-700 py-2 px-4 rounded-lg hover:bg-blue-200 transition-colors">
+          📤 Exportar Permisos Actuales
+        </button>
+      </div>
+    </div>
+  );
+
+  // 🆕 INTEGRACIONES
+  const IntegrationsConfig = () => (
+    <div className="space-y-6">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-lg font-bold text-gray-800 mb-4">🔗 Integraciones Activas</h3>
+        
+        <div className="space-y-4">
+          {integrations.map(integration => (
+            <div key={integration.id} className="border border-gray-200 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 ${
+                    integration.status === 'active' ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-600'
+                  }`}>
+                    <span className="text-sm font-bold">
+                      {integration.id === 'meta' ? '📘' : 
+                       integration.id === 'whatsapp' ? '📱' :
+                       integration.id === 'openai' ? '🤖' :
+                       integration.id === 'stripe' ? '💳' :
+                       integration.id === 'crm' ? '👥' : '🔧'}
+                    </span>
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-gray-800">{integration.name}</h4>
+                    <p className="text-sm text-gray-600">
+                      {integration.status === 'active' ? 'Conectado y funcionando' : 'Pendiente de configuración'}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    integration.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                  }`}>
+                    {integration.status === 'active' ? '🟢 Activo' : '🔴 Inactivo'}
+                  </span>
+                  <button 
+                    onClick={() => handleTestIntegration(integration.id)}
+                    className="bg-blue-100 text-blue-700 px-3 py-1 rounded-lg text-sm hover:bg-blue-200 transition-colors"
+                  >
+                    🧪 Probar
+                  </button>
+                  <button className="bg-gray-100 text-gray-700 px-3 py-1 rounded-lg text-sm hover:bg-gray-200 transition-colors">
+                    ⚙️ Configurar
+                  </button>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                {Object.entries(integration.config).map(([key, value]) => (
+                  <div key={key} className="flex justify-between p-2 bg-gray-50 rounded-lg">
+                    <span className="text-gray-600 capitalize">{key}:</span>
+                    <span className="text-gray-800 font-mono">
+                      {typeof value === 'string' && value.includes('*') ? value : '****'}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* CRM/ERP Externos */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-lg font-bold text-gray-800 mb-4">🔧 Conexiones Externas</h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h4 className="font-medium text-gray-800 mb-3">CRM Externo</h4>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Endpoint de API</label>
+                <input
+                  type="url"
+                  placeholder="https://api.tu-crm.com/webhook"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Token de Autenticación</label>
+                <input
+                  type="password"
+                  placeholder="API Token"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                />
+              </div>
+            </div>
+          </div>
+          
+          <div>
+            <h4 className="font-medium text-gray-800 mb-3">ERP Local</h4>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Webhook URL</label>
+                <input
+                  type="url"
+                  placeholder="https://tu-erp.local/webhook"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Archivo de Credenciales JSON</label>
+                <input
+                  type="file"
+                  accept=".json"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+          <h4 className="font-medium text-blue-800 mb-2">🔧 Webhook Tester</h4>
+          <p className="text-sm text-blue-700 mb-3">Prueba tus webhooks antes de activarlos</p>
+          <div className="flex space-x-2">
+            <input
+              type="url"
+              placeholder="https://tu-webhook.com/test"
+              className="flex-1 px-4 py-2 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+              🧪 Probar Webhook
             </button>
           </div>
+        </div>
+      </div>
+    </div>
+  );
 
+  // 🆕 NOTIFICACIONES
+  const NotificationsConfig = () => (
+    <div className="space-y-6">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-lg font-bold text-gray-800 mb-4">🔔 Configuración de Alertas</h3>
+        
+        <div className="space-y-6">
+          {[
+            { id: 'newFeedback', label: 'Nuevo Feedback', icon: '💬', desc: 'Recibe notificaciones cuando llegue feedback nuevo' },
+            { id: 'newReservation', label: 'Nueva Reserva', icon: '📅', desc: 'Alertas para nuevas reservas' },
+            { id: 'campaignActivated', label: 'Campaña Activada', icon: '🎯', desc: 'Notificaciones de campañas de marketing' }
+          ].map(alert => (
+            <div key={alert.id} className="border border-gray-200 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center">
+                  <span className="text-2xl mr-3">{alert.icon}</span>
+                  <div>
+                    <h4 className="font-medium text-gray-800">{alert.label}</h4>
+                    <p className="text-sm text-gray-600">{alert.desc}</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-3 gap-4">
+                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center">
+                    <span className="text-sm mr-2">📱</span>
+                    <span className="text-sm text-gray-700">WhatsApp</span>
+                  </div>
+                  <button
+                    onClick={() => setNotifications(prev => ({
+                      ...prev,
+                      [alert.id]: {
+                        ...prev[alert.id],
+                        whatsapp: !prev[alert.id].whatsapp
+                      }
+                    }))}
+                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
+                      notifications[alert.id].whatsapp ? 'bg-green-500' : 'bg-gray-300'
+                    }`}
+                  >
+                    <span className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
+                      notifications[alert.id].whatsapp ? 'translate-x-5' : 'translate-x-1'
+                    }`} />
+                  </button>
+                </div>
+                
+                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center">
+                    <span className="text-sm mr-2">📧</span>
+                    <span className="text-sm text-gray-700">Email</span>
+                  </div>
+                  <button
+                    onClick={() => setNotifications(prev => ({
+                      ...prev,
+                      [alert.id]: {
+                        ...prev[alert.id],
+                        email: !prev[alert.id].email
+                      }
+                    }))}
+                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
+                      notifications[alert.id].email ? 'bg-green-500' : 'bg-gray-300'
+                    }`}
+                  >
+                    <span className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
+                      notifications[alert.id].email ? 'translate-x-5' : 'translate-x-1'
+                    }`} />
+                  </button>
+                </div>
+                
+                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center">
+                    <span className="text-sm mr-2">📨</span>
+                    <span className="text-sm text-gray-700">Telegram</span>
+                  </div>
+                  <button
+                    onClick={() => setNotifications(prev => ({
+                      ...prev,
+                      [alert.id]: {
+                        ...prev[alert.id],
+                        telegram: !prev[alert.id].telegram
+                      }
+                    }))}
+                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
+                      notifications[alert.id].telegram ? 'bg-green-500' : 'bg-gray-300'
+                    }`}
+                  >
+                    <span className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
+                      notifications[alert.id].telegram ? 'translate-x-5' : 'translate-x-1'
+                    }`} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Intervalos de Notificación */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-lg font-bold text-gray-800 mb-4">⏰ Intervalos de Notificación</h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Frecuencia de Encuestas</label>
-            <select
-              value={settings.feedback.feedbackFrequency}
-              onChange={(e) => handleSettingChange('feedback', 'feedbackFrequency', e.target.value)}
+            <label className="block text-sm font-medium text-gray-700 mb-2">Feedback</label>
+            <select 
+              value={notifications.intervals.feedback}
+              onChange={(e) => setNotifications(prev => ({
+                ...prev,
+                intervals: { ...prev.intervals, feedback: e.target.value }
+              }))}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
             >
-              <option value="post_visit">Después de cada visita</option>
+              <option value="immediate">Inmediato</option>
+              <option value="hourly">Cada hora</option>
+              <option value="daily">Diario</option>
+            </select>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Reservas</label>
+            <select 
+              value={notifications.intervals.reservations}
+              onChange={(e) => setNotifications(prev => ({
+                ...prev,
+                intervals: { ...prev.intervals, reservations: e.target.value }
+              }))}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+            >
+              <option value="immediate">Inmediato</option>
+              <option value="hourly">Cada hora</option>
+              <option value="daily">Diario</option>
+            </select>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Reportes</label>
+            <select 
+              value={notifications.intervals.reports}
+              onChange={(e) => setNotifications(prev => ({
+                ...prev,
+                intervals: { ...prev.intervals, reports: e.target.value }
+              }))}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+            >
+              <option value="daily">Diario</option>
               <option value="weekly">Semanal</option>
               <option value="monthly">Mensual</option>
-              <option value="custom">Personalizada</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Tipos de Encuestas</label>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {[
-                { id: 'satisfaction', label: 'Satisfacción General', icon: '😊' },
-                { id: 'nps', label: 'NPS Score', icon: '📊' },
-                { id: 'product_rating', label: 'Calificación de Productos', icon: '⭐' }
-              ].map(survey => (
-                <div key={survey.id} className="flex items-center p-3 border border-gray-200 rounded-lg">
-                  <input
-                    type="checkbox"
-                    checked={settings.feedback.surveyTypes.includes(survey.id)}
-                    onChange={(e) => {
-                      const newTypes = e.target.checked 
-                        ? [...settings.feedback.surveyTypes, survey.id]
-                        : settings.feedback.surveyTypes.filter(t => t !== survey.id);
-                      handleSettingChange('feedback', 'surveyTypes', newTypes);
-                    }}
-                    className="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
-                  />
-                  <div className="ml-3">
-                    <span className="mr-2">{survey.icon}</span>
-                    <span className="text-sm text-gray-700">{survey.label}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h3 className="text-lg font-bold text-gray-800 mb-4">🎁 Configuración de NFTs</h3>
-        
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Puntos por Visita</label>
-              <input
-                type="number"
-                placeholder="100"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Puntos por Dólar Gastado</label>
-              <input
-                type="number"
-                placeholder="1"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Niveles de NFT</label>
-            <div className="space-y-2">
-              {[
-                { level: 'Bronce', points: 1000, color: 'bg-orange-100 text-orange-800' },
-                { level: 'Plata', points: 2500, color: 'bg-gray-100 text-gray-800' },
-                { level: 'Oro', points: 5000, color: 'bg-yellow-100 text-yellow-800' },
-                { level: 'Citizen KUMIA', points: 10000, color: 'bg-purple-100 text-purple-800' }
-              ].map(tier => (
-                <div key={tier.level} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div className="flex items-center">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${tier.color}`}>
-                      {tier.level}
-                    </span>
-                    <span className="ml-3 text-sm text-gray-700">{tier.points} puntos</span>
-                  </div>
-                  <button className="text-sm text-blue-600 hover:text-blue-800">
-                    ✏️ Editar
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  // 🆕 SECCIÓN IA Y AUTOMATIZACIONES
-  const AIAutomationConfig = () => (
-    <div className="space-y-6">
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h3 className="text-lg font-bold text-gray-800 mb-4">🤖 Activación de IA por Canal</h3>
-        
-        <div className="space-y-4">
-          {[
-            { id: 'whatsapp', label: 'WhatsApp', icon: '📱', active: settings.ai.whatsappActive },
-            { id: 'instagram', label: 'Instagram', icon: '📸', active: settings.ai.instagramActive },
-            { id: 'tiktok', label: 'TikTok', icon: '🎵', active: settings.ai.tiktokActive }
-          ].map(channel => (
-            <div key={channel.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-              <div className="flex items-center">
-                <span className="text-2xl mr-3">{channel.icon}</span>
-                <div>
-                  <h4 className="font-medium text-gray-800">{channel.label}</h4>
-                  <p className="text-sm text-gray-600">Activar agente IA para {channel.label}</p>
-                </div>
-              </div>
-              <button
-                onClick={() => handleSettingChange('ai', `${channel.id}Active`, !channel.active)}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  channel.active ? 'bg-orange-500' : 'bg-gray-300'
-                }`}
-              >
-                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  channel.active ? 'translate-x-6' : 'translate-x-1'
-                }`} />
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h3 className="text-lg font-bold text-gray-800 mb-4">⚙️ Configuración de Comportamiento</h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Nivel de Autonomía</label>
-            <select
-              value={settings.ai.autonomyLevel}
-              onChange={(e) => handleSettingChange('ai', 'autonomyLevel', e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-            >
-              <option value="low">Bajo - Solo respuestas básicas</option>
-              <option value="medium">Medio - Recomendaciones simples</option>
-              <option value="high">Alto - Iniciativa completa</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Tono de Voz</label>
-            <select
-              value={settings.ai.voiceTone}
-              onChange={(e) => handleSettingChange('ai', 'voiceTone', e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-            >
-              <option value="friendly">Amigable</option>
-              <option value="professional">Profesional</option>
-              <option value="casual">Casual</option>
-              <option value="enthusiastic">Entusiasta</option>
             </select>
           </div>
         </div>
       </div>
 
+      {/* Pruebas en Vivo */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h3 className="text-lg font-bold text-gray-800 mb-4">📝 Historial de Prompts Activos</h3>
+        <h3 className="text-lg font-bold text-gray-800 mb-4">🧪 Pruebas en Vivo</h3>
         
-        <div className="space-y-3">
-          {[
-            { channel: 'WhatsApp', prompt: 'Asistente amigable para reservas y consultas...', updated: '2024-01-15' },
-            { channel: 'Instagram', prompt: 'Respuestas visuales y trendy para engagement...', updated: '2024-01-12' },
-            { channel: 'TikTok', prompt: 'Tono joven y dinámico para audiencia Gen Z...', updated: '2024-01-10' }
-          ].map((item, index) => (
-            <div key={index} className="p-4 bg-gray-50 rounded-lg">
-              <div className="flex items-center justify-between mb-2">
-                <h4 className="font-medium text-gray-800">{item.channel}</h4>
-                <span className="text-xs text-gray-500">{item.updated}</span>
-              </div>
-              <p className="text-sm text-gray-600">{item.prompt}</p>
-              <button className="mt-2 text-sm text-blue-600 hover:text-blue-800">
-                ✏️ Editar Prompt
-              </button>
-            </div>
-          ))}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <button 
+            onClick={() => handleTestNotification('whatsapp', 'feedback')}
+            className="flex items-center justify-center p-4 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 transition-colors"
+          >
+            <span className="text-green-600 mr-2">📱</span>
+            <span className="text-green-800 font-medium">Probar WhatsApp</span>
+          </button>
+          
+          <button 
+            onClick={() => handleTestNotification('email', 'reservations')}
+            className="flex items-center justify-center p-4 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
+          >
+            <span className="text-blue-600 mr-2">📧</span>
+            <span className="text-blue-800 font-medium">Probar Email</span>
+          </button>
+          
+          <button 
+            onClick={() => handleTestNotification('telegram', 'campaigns')}
+            className="flex items-center justify-center p-4 bg-purple-50 border border-purple-200 rounded-lg hover:bg-purple-100 transition-colors"
+          >
+            <span className="text-purple-600 mr-2">📨</span>
+            <span className="text-purple-800 font-medium">Probar Telegram</span>
+          </button>
         </div>
-      </div>
-    </div>
-  );
-
-  // 🆕 SECCIÓN DASHBOARD PERSONALIZABLE
-  const DashboardConfig = () => (
-    <div className="space-y-6">
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h3 className="text-lg font-bold text-gray-800 mb-4">📊 KPIs Visibles en Inicio</h3>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {[
-            { id: 'revenue', label: 'Ingresos Atribuidos', icon: '💰', category: 'economic' },
-            { id: 'customers', label: 'Clientes Activos', icon: '👥', category: 'engagement' },
-            { id: 'feedback', label: 'Feedback Positivo', icon: '💬', category: 'engagement' },
-            { id: 'nfts', label: 'NFTs Entregados', icon: '🎁', category: 'engagement' },
-            { id: 'roi', label: 'ROI Mensual', icon: '📈', category: 'economic' },
-            { id: 'rating', label: 'Rating Promedio', icon: '⭐', category: 'brand' }
-          ].map(kpi => (
-            <div key={kpi.id} className="flex items-center p-3 border border-gray-200 rounded-lg">
-              <input
-                type="checkbox"
-                checked={settings.dashboard.visibleKPIs.includes(kpi.id)}
-                onChange={(e) => {
-                  const newKPIs = e.target.checked 
-                    ? [...settings.dashboard.visibleKPIs, kpi.id]
-                    : settings.dashboard.visibleKPIs.filter(k => k !== kpi.id);
-                  handleSettingChange('dashboard', 'visibleKPIs', newKPIs);
-                }}
-                className="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-500"
-              />
-              <div className="ml-3 flex items-center">
-                <span className="mr-2">{kpi.icon}</span>
-                <span className="text-sm text-gray-700">{kpi.label}</span>
-                <span className={`ml-2 px-2 py-1 rounded-full text-xs ${
-                  kpi.category === 'economic' ? 'bg-green-100 text-green-800' :
-                  kpi.category === 'engagement' ? 'bg-purple-100 text-purple-800' :
-                  'bg-blue-100 text-blue-800'
-                }`}>
-                  {kpi.category}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h3 className="text-lg font-bold text-gray-800 mb-4">🔄 Orden de Métricas</h3>
-        
-        <div className="space-y-3">
-          {[
-            { id: 'economic', label: 'Impacto Económico', desc: 'Ingresos, ROI, conversiones' },
-            { id: 'engagement', label: 'Compromiso del Cliente', desc: 'Clientes, NFTs, puntos' },
-            { id: 'brand', label: 'Impacto de Marca', desc: 'Rating, alcance, NPS' }
-          ].map((section, index) => (
-            <div key={section.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-              <div className="flex items-center">
-                <span className="w-6 h-6 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">
-                  {index + 1}
-                </span>
-                <div>
-                  <h4 className="font-medium text-gray-800">{section.label}</h4>
-                  <p className="text-sm text-gray-600">{section.desc}</p>
-                </div>
-              </div>
-              <div className="flex space-x-2">
-                {index > 0 && (
-                  <button className="text-gray-400 hover:text-gray-600">
-                    ↑
-                  </button>
-                )}
-                {index < 2 && (
-                  <button className="text-gray-400 hover:text-gray-600">
-                    ↓
-                  </button>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h3 className="text-lg font-bold text-gray-800 mb-4">🚨 Alertas Automáticas</h3>
-        
-        <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+        <div className="mt-4 p-4 bg-yellow-50 rounded-lg">
+          <div className="flex items-center justify-between">
             <div>
-              <h4 className="font-medium text-gray-800">Alertas por Variaciones</h4>
-              <p className="text-sm text-gray-600">Notificar cuando las métricas cambien significativamente</p>
+              <h4 className="font-medium text-yellow-800">Modo de Prueba</h4>
+              <p className="text-sm text-yellow-700">Activa para enviar notificaciones solo a administradores</p>
             </div>
             <button
-              onClick={() => handleSettingChange('dashboard', 'alertsActive', !settings.dashboard.alertsActive)}
+              onClick={() => setNotifications(prev => ({
+                ...prev,
+                testMode: !prev.testMode
+              }))}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                settings.dashboard.alertsActive ? 'bg-orange-500' : 'bg-gray-300'
+                notifications.testMode ? 'bg-yellow-500' : 'bg-gray-300'
               }`}
             >
               <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                settings.dashboard.alertsActive ? 'translate-x-6' : 'translate-x-1'
+                notifications.testMode ? 'translate-x-6' : 'translate-x-1'
               }`} />
             </button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Umbral de Alerta (%)</label>
-              <input
-                type="number"
-                placeholder="15"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Período de Comparación</label>
-              <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500">
-                <option value="daily">Diario</option>
-                <option value="weekly">Semanal</option>
-                <option value="monthly">Mensual</option>
-              </select>
-            </div>
           </div>
         </div>
       </div>
     </div>
   );
 
-  // El resto del código de configuración se mantiene igual...
-  
   const renderConfigContent = () => {
     switch (activeConfigTab) {
-      case 'feedback':
-        return <FeedbackRewardsConfig />;
-      case 'ai':
-        return <AIAutomationConfig />;
-      case 'dashboard':
-        return <DashboardConfig />;
+      case 'general':
+        return <GeneralConfig />;
+      case 'roles':
+        return <RolesConfig />;
+      case 'integrations':
+        return <IntegrationsConfig />;
+      case 'notifications':
+        return <NotificationsConfig />;
       default:
         return (
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
@@ -1397,37 +1753,42 @@ export const ConfigurationSection = () => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold text-gray-800">⚙️ Configuración</h2>
-          <p className="text-gray-600 mt-1">Personaliza tu sistema KUMIA</p>
+          <p className="text-gray-600 mt-1">Personaliza tu sistema KUMIA Elite</p>
         </div>
         <button className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-6 py-3 rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all duration-200 transform hover:scale-105 shadow-lg">
           💾 Guardar Cambios
         </button>
       </div>
 
-      <div className="flex space-x-6">
-        <div className="w-80 bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-          <div className="space-y-2">
-            {configTabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveConfigTab(tab.id)}
-                className={`w-full flex items-center px-4 py-3 rounded-lg text-left transition-all duration-200 ${
-                  activeConfigTab === tab.id
-                    ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg'
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`}
-              >
-                <span className="text-xl mr-3">{tab.icon}</span>
-                <div>
-                  <div className="font-medium">{tab.label}</div>
-                  <div className="text-xs opacity-75">{tab.desc}</div>
-                </div>
-              </button>
-            ))}
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Sidebar de Configuración */}
+        <div className="lg:w-1/4">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+            <h3 className="text-lg font-bold text-gray-800 mb-4">Secciones</h3>
+            <div className="space-y-2">
+              {configTabs.map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveConfigTab(tab.id)}
+                  className={`w-full flex items-center p-3 rounded-lg text-left transition-all duration-200 ${
+                    activeConfigTab === tab.id
+                      ? 'bg-orange-500 text-white shadow-lg transform scale-105'
+                      : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  <span className="text-xl mr-3">{tab.icon}</span>
+                  <div>
+                    <div className="font-medium">{tab.label}</div>
+                    <div className="text-xs opacity-75">{tab.desc}</div>
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
-        <div className="flex-1">
+        {/* Contenido Principal */}
+        <div className="lg:w-3/4">
           {renderConfigContent()}
         </div>
       </div>
