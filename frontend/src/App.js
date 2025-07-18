@@ -1117,12 +1117,8 @@ const FeedbackSection = () => {
 
 // 🆕 AGENTES IA SECTION AMPLIADA
 
-// CONTINUAR CON LOS DEMÁS MÓDULOS...
-// (Mantener el resto del código existente y agregar las funcionalidades faltantes)
-
 // Dashboard Component (MANTENER ESTRUCTURA EXISTENTE)
-
-  const channels = [
+const Dashboard = () => {
     { id: 'whatsapp', name: 'WhatsApp', icon: '📱', color: 'from-green-500 to-emerald-500' },
     { id: 'instagram', name: 'Instagram', icon: '📸', color: 'from-pink-500 to-rose-500' },
     { id: 'facebook', name: 'Facebook', icon: '👥', color: 'from-blue-500 to-indigo-500' },
