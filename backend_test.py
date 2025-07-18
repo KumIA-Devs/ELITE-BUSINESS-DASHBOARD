@@ -726,6 +726,12 @@ class BackendTester:
             self.test_dashboard_metrics()
             self.test_menu_crud()
             self.test_customer_management()
+            self.test_reservations_crud()
+            self.test_feedback_management()
+            self.test_ai_agents_crud()
+            self.test_nft_rewards_crud()
+            self.test_integrations_crud()
+            self.test_settings_management()
         
         # Print summary
         print("=" * 60)
