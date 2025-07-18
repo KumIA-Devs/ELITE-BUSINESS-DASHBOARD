@@ -1389,23 +1389,50 @@ const Dashboard = () => {
   );
 };
 
-// Main App Component (MANTENER EXACTAMENTE IGUAL)
+// Main App Component with Firebase Integration
 const App = () => {
   return (
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-      <AuthProvider>
-        <div className="App">
-          <AuthWrapper />
-        </div>
-      </AuthProvider>
+      <FirebaseProvider>
+        <AuthProvider>
+          <div className="App">
+            <AuthWrapper />
+          </div>
+        </AuthProvider>
+      </FirebaseProvider>
     </GoogleOAuthProvider>
   );
 };
 
 const AuthWrapper = () => {
   const { isAuthenticated } = useAuth();
+  const { isOnline, firebaseReady } = useFirebase();
   
-  return isAuthenticated ? <Dashboard /> : <Login />;
+  // Show connection status
+  const connectionStatus = () => {
+    if (!isOnline) {
+      return (
+        <div className="bg-yellow-50 border border-yellow-200 p-3 text-center">
+          <span className="text-yellow-800">⚠️ Modo offline - Funcionalidad limitada</span>
+        </div>
+      );
+    }
+    if (!firebaseReady) {
+      return (
+        <div className="bg-blue-50 border border-blue-200 p-3 text-center">
+          <span className="text-blue-800">🔄 Conectando a Firebase...</span>
+        </div>
+      );
+    }
+    return null;
+  };
+  
+  return (
+    <div>
+      {connectionStatus()}
+      {isAuthenticated ? <Dashboard /> : <Login />}
+    </div>
+  );
 };
 
 export default App;
