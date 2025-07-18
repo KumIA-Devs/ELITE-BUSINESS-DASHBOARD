@@ -2,7 +2,7 @@ import React, { useState, useEffect, createContext, useContext } from 'react';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import './App.css';
-import { ROIViewer, RewardsNFTsSection, IntegrationsSection, ConfigurationSection, ClientsSection } from './AppComponents';
+import { ROIViewer, RewardsNFTsSection, IntegrationsSection, ConfigurationSection, ClientsSection, ReservationsSection, AIAgentsSection } from './AppComponents';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
