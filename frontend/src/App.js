@@ -1024,7 +1024,7 @@ const FeedbackSection = () => {
             </p>
             <div className="bg-yellow-50 p-3 rounded-lg">
               <p className="text-yellow-800 text-sm">
-                <strong>🔍 Recomendación Detectada:</strong> Detectamos quejas sobre espera > activa recordatorio de puntualidad
+                <strong>🔍 Recomendación Detectada:</strong> Detectamos quejas sobre espera → activa recordatorio de puntualidad
               </p>
             </div>
           </div>
