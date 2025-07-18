@@ -1116,13 +1116,9 @@ const FeedbackSection = () => {
 };
 
 // 🆕 AGENTES IA SECTION AMPLIADA
-const AIAgentsSection = () => {
-  const [agents, setAgents] = useState([]);
-  const [selectedAgent, setSelectedAgent] = useState(null);
-  const [editMode, setEditMode] = useState(false);
-  const [testMode, setTestMode] = useState(false);
-  const [testConversation, setTestConversation] = useState([]);
-  const [testInput, setTestInput] = useState('');
+
+// CONTINUAR CON LOS DEMÁS MÓDULOS...
+// (Mantener el resto del código existente y agregar las funcionalidades faltantes)
 
   useEffect(() => {
     fetchAgents();
