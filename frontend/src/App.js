@@ -1120,18 +1120,7 @@ const FeedbackSection = () => {
 // CONTINUAR CON LOS DEMÁS MÓDULOS...
 // (Mantener el resto del código existente y agregar las funcionalidades faltantes)
 
-  useEffect(() => {
-    fetchAgents();
-  }, []);
-
-  const fetchAgents = async () => {
-    try {
-      const response = await axios.get(`${API}/ai-agents`);
-      setAgents(response.data);
-    } catch (error) {
-      console.error('Error fetching AI agents:', error);
-    }
-  };
+// Dashboard Component (MANTENER ESTRUCTURA EXISTENTE)
 
   const channels = [
     { id: 'whatsapp', name: 'WhatsApp', icon: '📱', color: 'from-green-500 to-emerald-500' },
