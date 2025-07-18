@@ -1683,10 +1683,428 @@ export const ClientsSection = () => {
   );
 };
 
+// 🆕 RESERVAS SECTION AMPLIADA
+export const ReservationsSection = () => {
+  const [reservations, setReservations] = useState([]);
+  const [filter, setFilter] = useState('today');
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [attendanceRate, setAttendanceRate] = useState(87.5);
+  const [frequentCustomers, setFrequentCustomers] = useState([]);
+
+  useEffect(() => {
+    fetchReservations();
+    fetchFrequentCustomers();
+  }, []);
+
+  const fetchReservations = async () => {
+    try {
+      const response = await axios.get(`${API}/reservations`);
+      setReservations(response.data);
+    } catch (error) {
+      console.error('Error fetching reservations:', error);
+    }
+  };
+
+  const fetchFrequentCustomers = async () => {
+    try {
+      const response = await axios.get(`${API}/customers`);
+      const frequent = response.data.filter(customer => customer.visit_count > 5);
+      setFrequentCustomers(frequent);
+    } catch (error) {
+      console.error('Error fetching frequent customers:', error);
+    }
+  };
+
+  const filterOptions = [
+    { id: 'today', label: 'Hoy', icon: '📅' },
+    { id: 'week', label: 'Esta semana', icon: '📆' },
+    { id: 'upcoming', label: 'Próximo evento', icon: '🎉' }
+  ];
+
+  const handleConfirmReservation = (id) => {
+    alert(`Confirmando reserva ${id}`);
+  };
+
+  const handleCancelReservation = (id) => {
+    alert(`Cancelando reserva ${id}`);
+  };
+
+  const handleRescheduleReservation = (id) => {
+    alert(`Reagendando reserva ${id}`);
+  };
+
+  const exportCalendar = () => {
+    alert('Exportando calendario a .ics');
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-3xl font-bold text-gray-800">📅 Reservas</h2>
+          <p className="text-gray-600 mt-1">Visualiza y gestiona reservas activas, futuras y canceladas</p>
+        </div>
+        <div className="flex space-x-3">
+          <button 
+            onClick={exportCalendar}
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+          >
+            📤 Exportar Calendario
+          </button>
+          <button className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-lg hover:from-orange-600 hover:to-red-600 transition-all duration-200">
+            + Nueva Reserva
+          </button>
+        </div>
+      </div>
+
+      {/* 🆕 MÉTRICAS DE RESERVAS */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-medium text-gray-600">Tasa de Asistencia</h3>
+              <p className="text-2xl font-bold text-green-600">{attendanceRate}%</p>
+            </div>
+            <div className="text-2xl">✅</div>
+          </div>
+        </div>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-medium text-gray-600">Reservas Hoy</h3>
+              <p className="text-2xl font-bold text-blue-600">{reservations.filter(r => r.date === new Date().toISOString().split('T')[0]).length}</p>
+            </div>
+            <div className="text-2xl">📅</div>
+          </div>
+        </div>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-medium text-gray-600">Clientes Frecuentes</h3>
+              <p className="text-2xl font-bold text-purple-600">{frequentCustomers.length}</p>
+            </div>
+            <div className="text-2xl">🎯</div>
+          </div>
+        </div>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-medium text-gray-600">Revenue Proyectado</h3>
+              <p className="text-2xl font-bold text-orange-600">$15,600</p>
+            </div>
+            <div className="text-2xl">💰</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Filtros */}
+      <div className="flex flex-wrap gap-2">
+        {filterOptions.map(option => (
+          <button
+            key={option.id}
+            onClick={() => setFilter(option.id)}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+              filter === option.id
+                ? 'bg-orange-500 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            {option.icon} {option.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Lista de Reservas */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-lg font-bold text-gray-800 mb-4">Reservas de {filter === 'today' ? 'Hoy' : filter === 'week' ? 'Esta Semana' : 'Próximos Eventos'}</h3>
+        <div className="space-y-4">
+          {reservations.map(reservation => (
+            <div key={reservation.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-400 rounded-full flex items-center justify-center">
+                    <span className="text-white font-bold">{reservation.customer_name.charAt(0)}</span>
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-gray-800">{reservation.customer_name}</h4>
+                    <p className="text-sm text-gray-600">{reservation.date} - {reservation.time}</p>
+                    <p className="text-sm text-gray-600">{reservation.guests} personas</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    reservation.status === 'confirmed' ? 'bg-green-100 text-green-800' :
+                    reservation.status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                    'bg-yellow-100 text-yellow-800'
+                  }`}>
+                    {reservation.status}
+                  </span>
+                  <button 
+                    onClick={() => handleConfirmReservation(reservation.id)}
+                    className="bg-green-100 text-green-700 px-3 py-1 rounded-lg text-sm hover:bg-green-200 transition-colors"
+                  >
+                    ✅ Confirmar
+                  </button>
+                  <button 
+                    onClick={() => handleRescheduleReservation(reservation.id)}
+                    className="bg-blue-100 text-blue-700 px-3 py-1 rounded-lg text-sm hover:bg-blue-200 transition-colors"
+                  >
+                    🔄 Reagendar
+                  </button>
+                  <button 
+                    onClick={() => handleCancelReservation(reservation.id)}
+                    className="bg-red-100 text-red-700 px-3 py-1 rounded-lg text-sm hover:bg-red-200 transition-colors"
+                  >
+                    ❌ Cancelar
+                  </button>
+                </div>
+              </div>
+              {reservation.special_requests && (
+                <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+                  <p className="text-sm text-gray-700"><strong>Solicitudes especiales:</strong> {reservation.special_requests}</p>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// 🆕 AGENTES IA SECTION AMPLIADA
+export const AIAgentsSection = () => {
+  const [agents, setAgents] = useState([]);
+  const [selectedAgent, setSelectedAgent] = useState(null);
+  const [performanceData, setPerformanceData] = useState({
+    totalConversations: 1243,
+    averageResponseTime: 2.3,
+    satisfactionScore: 4.6,
+    conversionRate: 23.4
+  });
+
+  useEffect(() => {
+    fetchAgents();
+  }, []);
+
+  const fetchAgents = async () => {
+    try {
+      const response = await axios.get(`${API}/ai-agents`);
+      setAgents(response.data);
+    } catch (error) {
+      console.error('Error fetching agents:', error);
+    }
+  };
+
+  const handleTrainAgent = (agentId) => {
+    alert(`Entrenando agente ${agentId} con nueva información`);
+  };
+
+  const handleTestAgent = (agentId) => {
+    alert(`Iniciando prueba conversacional con agente ${agentId}`);
+  };
+
+  const handleCloneAgent = (agentId) => {
+    alert(`Clonando configuración del agente ${agentId}`);
+  };
+
+  const handleAnalyzePerformance = (agentId) => {
+    alert(`Analizando rendimiento detallado del agente ${agentId}`);
+  };
+
+  const getChannelIcon = (channel) => {
+    const icons = {
+      whatsapp: '📱',
+      instagram: '📸',
+      facebook: '👥',
+      tiktok: '🎵',
+      general: '💬'
+    };
+    return icons[channel] || '🤖';
+  };
+
+  const getChannelColor = (channel) => {
+    const colors = {
+      whatsapp: 'from-green-400 to-green-600',
+      instagram: 'from-pink-400 to-purple-600',
+      facebook: 'from-blue-400 to-blue-600',
+      tiktok: 'from-gray-800 to-gray-900',
+      general: 'from-indigo-400 to-indigo-600'
+    };
+    return colors[channel] || 'from-gray-400 to-gray-600';
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-3xl font-bold text-gray-800">🤖 Agentes IA</h2>
+          <p className="text-gray-600 mt-1">Gestiona y optimiza tus asistentes de IA</p>
+        </div>
+        <div className="flex space-x-3">
+          <button className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors">
+            📊 Reporte de Rendimiento
+          </button>
+          <button className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-lg hover:from-orange-600 hover:to-red-600 transition-all duration-200">
+            + Nuevo Agente
+          </button>
+        </div>
+      </div>
+
+      {/* 🆕 MÉTRICAS DE RENDIMIENTO */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-medium text-gray-600">Total Conversaciones</h3>
+              <p className="text-2xl font-bold text-blue-600">{performanceData.totalConversations.toLocaleString()}</p>
+            </div>
+            <div className="text-2xl">💬</div>
+          </div>
+        </div>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-medium text-gray-600">Tiempo de Respuesta</h3>
+              <p className="text-2xl font-bold text-green-600">{performanceData.averageResponseTime}s</p>
+            </div>
+            <div className="text-2xl">⚡</div>
+          </div>
+        </div>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-medium text-gray-600">Satisfacción</h3>
+              <p className="text-2xl font-bold text-purple-600">{performanceData.satisfactionScore}/5</p>
+            </div>
+            <div className="text-2xl">⭐</div>
+          </div>
+        </div>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-medium text-gray-600">Conversión</h3>
+              <p className="text-2xl font-bold text-orange-600">{performanceData.conversionRate}%</p>
+            </div>
+            <div className="text-2xl">🎯</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Grid de Agentes */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {agents.map(agent => (
+          <div key={agent.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all duration-200">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center">
+                <div className={`w-12 h-12 bg-gradient-to-br ${getChannelColor(agent.channel)} rounded-xl flex items-center justify-center mr-3`}>
+                  <span className="text-white text-xl">{getChannelIcon(agent.channel)}</span>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-800">{agent.name}</h3>
+                  <p className="text-sm text-gray-600 capitalize">{agent.channel}</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                  agent.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                }`}>
+                  {agent.is_active ? '🟢 Activo' : '🔴 Inactivo'}
+                </span>
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <h4 className="text-sm font-medium text-gray-700 mb-2">Prompt Personalizado:</h4>
+              <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg line-clamp-3">
+                {agent.prompt}
+              </p>
+            </div>
+
+            <div className="flex flex-col space-y-2">
+              <div className="flex space-x-2">
+                <button 
+                  onClick={() => handleTestAgent(agent.id)}
+                  className="flex-1 bg-blue-100 text-blue-700 px-3 py-2 rounded-lg text-sm hover:bg-blue-200 transition-colors"
+                >
+                  🧪 Probar
+                </button>
+                <button 
+                  onClick={() => handleTrainAgent(agent.id)}
+                  className="flex-1 bg-green-100 text-green-700 px-3 py-2 rounded-lg text-sm hover:bg-green-200 transition-colors"
+                >
+                  🎓 Entrenar
+                </button>
+              </div>
+              <div className="flex space-x-2">
+                <button 
+                  onClick={() => handleCloneAgent(agent.id)}
+                  className="flex-1 bg-purple-100 text-purple-700 px-3 py-2 rounded-lg text-sm hover:bg-purple-200 transition-colors"
+                >
+                  📋 Clonar
+                </button>
+                <button 
+                  onClick={() => handleAnalyzePerformance(agent.id)}
+                  className="flex-1 bg-orange-100 text-orange-700 px-3 py-2 rounded-lg text-sm hover:bg-orange-200 transition-colors"
+                >
+                  📊 Analizar
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* 🆕 SECCIÓN DE ENTRENAMIENTO */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-lg font-bold text-gray-800 mb-4">🎓 Centro de Entrenamiento</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <h4 className="font-medium text-gray-700">Datos de Entrenamiento</h4>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <span className="text-sm text-gray-600">Menú actualizado</span>
+                <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Activo</span>
+              </div>
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <span className="text-sm text-gray-600">Políticas de reserva</span>
+                <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Activo</span>
+              </div>
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <span className="text-sm text-gray-600">Información de eventos</span>
+                <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">Pendiente</span>
+              </div>
+            </div>
+          </div>
+          <div className="space-y-4">
+            <h4 className="font-medium text-gray-700">Rendimiento por Canal</h4>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <span className="text-sm text-gray-600">📱 WhatsApp</span>
+                <span className="text-sm font-medium text-green-600">94.2%</span>
+              </div>
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <span className="text-sm text-gray-600">📸 Instagram</span>
+                <span className="text-sm font-medium text-blue-600">88.7%</span>
+              </div>
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <span className="text-sm text-gray-600">👥 Facebook</span>
+                <span className="text-sm font-medium text-purple-600">91.3%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default {
   ROIViewer,
   RewardsNFTsSection,
   IntegrationsSection,
   ConfigurationSection,
-  ClientsSection
+  ClientsSection,
+  ReservationsSection,
+  AIAgentsSection
 };
