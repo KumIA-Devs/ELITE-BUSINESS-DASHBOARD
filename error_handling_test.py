@@ -8,7 +8,7 @@ import requests
 import json
 import sys
 
-BACKEND_URL = "https://fbb32e47-90a2-4ee3-96c2-f8d1b92449da.preview.emergentagent.com/api"
+BACKEND_URL = "https://c4d99afc-2646-4936-8985-48c99260c1d8.preview.emergentagent.com/api"
 
 class ErrorHandlingTester:
     def __init__(self):
