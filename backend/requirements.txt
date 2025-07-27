@@ -28,3 +28,6 @@ typer>=0.9.0
 starlette==0.37.2
 emergentintegrations==0.1.0
 itsdangerous==2.2.0
+firebase-admin>=6.0.0
+google-cloud-firestore>=2.0.0
+google-cloud-functions>=1.0.0
