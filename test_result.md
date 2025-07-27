@@ -537,14 +537,9 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Google OAuth2 Integration"
-    - "OpenAI Chat Integration"
-    - "AI Chat Interface"
-    - "Google OAuth2 Frontend"
-    - "Authentication System with JWT"
-    - "Dashboard Metrics API"
-    - "Restaurant Configuration API"
-  stuck_tasks: []
+    - "Real-time Metrics Display"
+  stuck_tasks:
+    - "Real-time Metrics Display"
   test_all: false
   test_priority: "high_first"
 
