@@ -561,7 +561,10 @@ const DashboardSummary = ({ metrics }) => {
           <p className="text-gray-600 mt-1">Resumen ejecutivo de tu impacto KUMIA</p>
         </div>
         <div className="flex space-x-3">
-          <button className="bg-gradient-to-r from-emerald-500 to-green-500 text-white px-6 py-3 rounded-lg hover:from-emerald-600 hover:to-green-600 transition-all duration-200 transform hover:scale-105 shadow-lg">
+          <button 
+            onClick={handleGenerateReport}
+            className="bg-gradient-to-r from-emerald-500 to-green-500 text-white px-6 py-3 rounded-lg hover:from-emerald-600 hover:to-green-600 transition-all duration-200 transform hover:scale-105 shadow-lg"
+          >
             📊 Reporte Semanal
           </button>
           <button className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-lg hover:from-orange-600 hover:to-red-600 transition-all duration-200 transform hover:scale-105 shadow-lg">
