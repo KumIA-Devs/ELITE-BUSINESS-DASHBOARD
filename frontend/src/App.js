@@ -726,6 +726,181 @@ const DashboardSummary = ({ metrics }) => {
         impact="150"
         action="🚀 Expandir KUMIA a otro local"
       />
+
+      {/* 🆕 MODAL REPORTE SEMANAL */}
+      {showWeeklyReport && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-screen overflow-y-auto">
+            <div className="p-6">
+              {/* Header del Modal */}
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">📊 Reporte Semanal</h2>
+                  <p className="text-gray-600">Semana del {new Date().toLocaleDateString()} - Análisis completo</p>
+                </div>
+                <button 
+                  onClick={() => setShowWeeklyReport(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {(() => {
+                const report = generateWeeklyReport();
+                return (
+                  <div className="space-y-6">
+                    {/* Resumen Ejecutivo */}
+                    <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 border border-emerald-200">
+                      <h3 className="text-lg font-bold text-emerald-800 mb-4">💰 Resumen Ejecutivo</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div className="bg-white rounded-lg p-4 text-center">
+                          <div className="text-2xl font-bold text-emerald-600">${report.totalRevenue.toLocaleString()}</div>
+                          <div className="text-sm text-emerald-700">Ingresos Totales</div>
+                        </div>
+                        <div className="bg-white rounded-lg p-4 text-center">
+                          <div className="text-2xl font-bold text-blue-600">${Math.round(report.avgDailyRevenue).toLocaleString()}</div>
+                          <div className="text-sm text-blue-700">Promedio Diario</div>
+                        </div>
+                        <div className="bg-white rounded-lg p-4 text-center">
+                          <div className="text-2xl font-bold text-orange-600">{report.growth}%</div>
+                          <div className="text-sm text-orange-700">Crecimiento Semanal</div>
+                        </div>
+                        <div className="bg-white rounded-lg p-4 text-center">
+                          <div className="text-2xl font-bold text-purple-600">+4.3x</div>
+                          <div className="text-sm text-purple-700">ROI Actual</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Análisis Diario Detallado */}
+                    <div className="bg-white rounded-xl border border-gray-200 p-6">
+                      <h3 className="text-lg font-bold text-gray-800 mb-4">📈 Análisis Diario Detallado</h3>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left">
+                          <thead>
+                            <tr className="border-b border-gray-200">
+                              <th className="py-3 px-4 font-medium text-gray-700">Día</th>
+                              <th className="py-3 px-4 font-medium text-gray-700">Ingresos</th>
+                              <th className="py-3 px-4 font-medium text-gray-700">Crecimiento</th>
+                              <th className="py-3 px-4 font-medium text-gray-700">Estado</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {report.weeklyData.map((day, index) => (
+                              <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
+                                <td className="py-3 px-4 font-medium">{day.day}</td>
+                                <td className="py-3 px-4">${day.revenue.toLocaleString()}</td>
+                                <td className="py-3 px-4">
+                                  <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                                    parseFloat(day.growth) > 0 ? 'bg-green-100 text-green-800' :
+                                    parseFloat(day.growth) < 0 ? 'bg-red-100 text-red-800' :
+                                    'bg-gray-100 text-gray-800'
+                                  }`}>
+                                    {parseFloat(day.growth) > 0 ? '↗️' : parseFloat(day.growth) < 0 ? '↘️' : '→'} {day.growth}%
+                                  </span>
+                                </td>
+                                <td className="py-3 px-4">
+                                  {day.revenue === report.bestDay.revenue ? (
+                                    <span className="text-green-600 font-medium">🏆 Mejor día</span>
+                                  ) : day.revenue === report.worstDay.revenue ? (
+                                    <span className="text-red-600 font-medium">📉 Día bajo</span>
+                                  ) : (
+                                    <span className="text-gray-600">Normal</span>
+                                  )}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    {/* Gráfica Interactiva Mejorada */}
+                    <div className="bg-white rounded-xl border border-gray-200 p-6">
+                      <h3 className="text-lg font-bold text-gray-800 mb-4">📊 Gráfica de Rendimiento Semanal</h3>
+                      <div className="flex items-end justify-between h-48 bg-gray-50 rounded-lg p-4">
+                        {report.weeklyData.map((day, index) => (
+                          <div key={index} className="flex flex-col items-center group cursor-pointer">
+                            <div className="text-xs text-gray-600 mb-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                              ${day.revenue.toLocaleString()}
+                            </div>
+                            <div 
+                              className={`bg-gradient-to-t from-orange-400 to-red-400 rounded-t-lg transition-all duration-500 w-12 group-hover:w-16 ${
+                                day.revenue === report.bestDay.revenue ? 'from-green-400 to-emerald-500' :
+                                day.revenue === report.worstDay.revenue ? 'from-red-400 to-red-500' : ''
+                              }`}
+                              style={{ height: `${(day.revenue / Math.max(...weeklyRevenue)) * 100}%` }}
+                            ></div>
+                            <span className="text-sm text-gray-600 mt-2 group-hover:font-bold transition-all">
+                              {day.day.substring(0, 3)}
+                            </span>
+                            <span className="text-xs text-gray-500 mt-1">
+                              {day.growth}%
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Insights y Recomendaciones */}
+                    <div className="bg-blue-50 rounded-xl border border-blue-200 p-6">
+                      <h3 className="text-lg font-bold text-blue-800 mb-4">🧠 Insights KUMIA</h3>
+                      <div className="space-y-3">
+                        <div className="flex items-start">
+                          <span className="text-blue-600 mr-2">•</span>
+                          <p className="text-blue-700">
+                            <strong>{report.bestDay.name}</strong> fue tu mejor día con ${report.bestDay.revenue.toLocaleString()} en ingresos.
+                          </p>
+                        </div>
+                        <div className="flex items-start">
+                          <span className="text-blue-600 mr-2">•</span>
+                          <p className="text-blue-700">
+                            El crecimiento semanal de <strong>{report.growth}%</strong> está por encima del promedio de la industria (12%).
+                          </p>
+                        </div>
+                        <div className="flex items-start">
+                          <span className="text-blue-600 mr-2">•</span>
+                          <p className="text-blue-700">
+                            Considera promociones especiales para <strong>{report.worstDay.name}</strong> para mejorar el rendimiento.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Botones de Exportación */}
+                    <div className="flex justify-between items-center pt-4 border-t border-gray-200">
+                      <div className="text-sm text-gray-500">
+                        Reporte generado el {new Date().toLocaleString()}
+                      </div>
+                      <div className="flex space-x-3">
+                        <button 
+                          onClick={() => handleExportReport('excel')}
+                          className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
+                        >
+                          📊 Exportar Excel
+                        </button>
+                        <button 
+                          onClick={() => handleExportReport('pdf')}
+                          className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+                        >
+                          📄 Exportar PDF
+                        </button>
+                        <button 
+                          onClick={() => setShowWeeklyReport(false)}
+                          className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors"
+                        >
+                          Cerrar
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
