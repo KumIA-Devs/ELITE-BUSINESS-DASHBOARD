@@ -348,11 +348,11 @@ frontend:
 
   - task: "Real-time Metrics Display"
     implemented: true
-    working: true
+    working: false
     file: "/app/frontend/src/App.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: "NA"
         agent: "main"
@@ -360,6 +360,9 @@ frontend:
       - working: true
         agent: "testing"
         comment: "✅ TESTED: Real-time metrics display working perfectly. Dashboard shows comprehensive metrics including ROI (+4.3x), revenue ($7,500), conversions (32), ticket promedio ($3,200), customer segments, NFTs delivered, and brand impact metrics. Weekly growth charts and AI recommendations displayed correctly."
+      - working: false
+        agent: "user"
+        comment: "USER REPORTED: 1) Botón 'Reporte semanal' no funciona y no genera ningún reporte ni gráficas. 2) Sección 'Crecimiento semanal de ingresos' solo muestra datos pero no gráficas (aunque técnicamente sí hay gráficas, usuario espera algo más interactivo o detallado)."
 
   - task: "Menu Management Interface"
     implemented: true
