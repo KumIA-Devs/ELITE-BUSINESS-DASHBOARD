@@ -300,20 +300,95 @@ backend:
         agent: "testing"
         comment: "✅ TESTED: Restaurant configuration API works correctly. Returns all required fields: name, logo, brand colors, menu highlights, AI personality. Configuration loaded from environment variables properly."
 
-  - task: "Database Seeding"
+  - task: "KUMIA Table Management APIs"
     implemented: true
     working: true
-    file: "/app/backend/seed_data.py"
+    file: "/app/backend/server.py"
     stuck_count: 0
-    priority: "low"
+    priority: "high"
     needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
-        comment: "Created comprehensive database seeding script with sample menu items, customers, reservations, feedback, AI agents, and NFT rewards."
+        comment: "Implemented KUMIA table management system with GET /api/tables (returns 20 tables: 6 for 2 persons, 12 for 4 persons, 2 for 6 persons) and GET /api/tables/availability with date/time parameters."
       - working: true
         agent: "testing"
-        comment: "✅ TESTED: Database seeding functionality works correctly. All CRUD operations tested successfully indicate proper database connectivity and data persistence."
+        comment: "✅ TESTED: Table management APIs working perfectly. GET /api/tables returns exactly 20 tables with correct configuration (6x2-person, 12x4-person, 2x6-person). Fixed minor backend issue with table availability endpoint - changed from request body to query parameters for proper GET request handling. Table availability endpoint now works correctly with date/time parameters."
+
+  - task: "KUMIA Enhanced Reservation System"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented enhanced reservation system with POST /api/reservations/new supporting complete customer data (name, email, WhatsApp, date/time, guests, table selection, special notes, allergies) with automatic email and WhatsApp confirmations."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Enhanced reservation system working excellently. Successfully created reservation for 'María González' with complete data including special notes 'Aniversario de bodas' and allergies 'Alérgica a mariscos'. Email and WhatsApp confirmations are triggered correctly. All customer data stored properly including table assignment."
+
+  - task: "KUMIA Sync & Customer Activity APIs"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented sync system with POST /api/sync/customer-activity for tracking UserWebApp activities, POST /api/sync/menu for syncing menu changes, and POST /api/sync/promotions for syncing promotions to UserWebApp."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: All sync APIs working perfectly. Customer activity tracking successfully logs activities from UserWebApp (menu views, interactions, etc.). Menu sync successfully syncs 2 menu items to UserWebApp. Promotions sync successfully syncs 2 promotions to UserWebApp. All sync operations work with proper fallback mechanisms."
+
+  - task: "KUMIA Marketing Intelligence APIs"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented marketing intelligence with GET /api/analytics/customer-journey/{user_id} providing comprehensive customer insights for marketing decisions."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Customer journey analytics working correctly. Successfully retrieves customer journey data with activity tracking, marketing segments, and engagement scores. Provides valuable insights for marketing intelligence and customer relationship management."
+
+  - task: "KUMIA Public APIs for UserWebApp"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented public APIs for UserWebApp integration: GET /api/public/restaurant-info, GET /api/public/menu, and GET /api/public/promotions - all accessible without authentication."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: All public APIs working excellently. Restaurant info returns complete details (IL MANDORLA SMOKEHOUSE - smokehouse cuisine). Public menu returns menu items for customer access. Public promotions returns 2 active promotions including 'Bienvenida KUMIA' with proper structure. All endpoints accessible without authentication as intended."
+
+  - task: "KUMIA Firebase Integration & Fallbacks"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented Firebase integration with proper fallback mechanisms for when Firebase services are not available. All KUMIA features work with both Firebase and MongoDB fallbacks."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Firebase integration fallbacks working perfectly. Verified that all KUMIA features work correctly when Firebase is not available (expected in preview environment). Table availability, customer activity tracking, and all sync operations use proper fallback mechanisms. System is resilient and production-ready."
 
 frontend:
   - task: "Authentication UI and Context"
