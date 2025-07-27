@@ -887,7 +887,7 @@ sync_service = get_sync_service() if FIREBASE_AVAILABLE else None
 
 # TABLES MANAGEMENT
 @api_router.get("/tables/availability")
-async def get_table_availability(request: TableAvailabilityRequest, current_user: User = Depends(get_current_user)):
+async def get_table_availability(date: str, time: str, current_user: User = Depends(get_current_user)):
     """Get available tables for specific date and time"""
     if not firebase_service:
         # Fallback to mock data
@@ -896,7 +896,7 @@ async def get_table_availability(request: TableAvailabilityRequest, current_user
             for i in range(1, 21)
         ]
     
-    available_tables = firebase_service.get_table_availability(request.date, request.time)
+    available_tables = firebase_service.get_table_availability(date, time)
     return available_tables
 
 @api_router.get("/tables")
