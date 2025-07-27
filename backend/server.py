@@ -19,6 +19,16 @@ from bson import ObjectId
 from authlib.integrations.starlette_client import OAuth
 from emergentintegrations.llm.chat import LlmChat, UserMessage
 
+# Firebase and Sync Service imports
+try:
+    from firebase_admin_config import get_firebase_service
+    from sync_service import get_sync_service
+    FIREBASE_AVAILABLE = True
+    print("✅ Firebase services loaded successfully")
+except ImportError as e:
+    print(f"⚠️ Firebase services not available: {e}")
+    FIREBASE_AVAILABLE = False
+
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
