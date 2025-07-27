@@ -109,19 +109,18 @@ class KumiaReservationTester:
             return False
             
         try:
-            # Test with specific date and time - this endpoint expects a request body
-            availability_data = {
+            # Test with specific date and time as query parameters
+            params = {
                 "date": "2025-01-25",
                 "time": "20:00"
             }
             
-            # The endpoint expects a request body, not query parameters
-            response = self.session.get(f"{self.base_url}/tables/availability", json=availability_data)
+            response = self.session.get(f"{self.base_url}/tables/availability", params=params)
             
             if response.status_code == 200:
                 available_tables = response.json()
                 if isinstance(available_tables, list):
-                    self.log_test("Table Availability", True, f"Retrieved {len(available_tables)} available tables for {availability_data['date']} at {availability_data['time']}")
+                    self.log_test("Table Availability", True, f"Retrieved {len(available_tables)} available tables for {params['date']} at {params['time']}")
                     return True
                 else:
                     self.log_test("Table Availability", False, "Invalid availability response format", available_tables)
