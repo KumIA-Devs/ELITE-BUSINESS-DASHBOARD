@@ -2383,6 +2383,251 @@ export const ReservationsSection = () => {
           ))}
         </div>
       </div>
+
+      {/* 🆕 MODAL NUEVA RESERVA */}
+      {showNewReservationModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-screen overflow-y-auto">
+            <div className="p-6">
+              {/* Header del Modal */}
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">📅 Nueva Reserva</h2>
+                  <p className="text-gray-600">Sistema completo de reservas KUMIA</p>
+                </div>
+                <button 
+                  onClick={() => setShowNewReservationModal(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* 👆 FORMULARIO DE RESERVA */}
+                <div className="space-y-6">
+                  <div className="bg-gradient-to-r from-orange-50 to-red-50 rounded-xl p-6 border border-orange-200">
+                    <h3 className="text-lg font-bold text-orange-800 mb-4">👤 Datos del Cliente</h3>
+                    
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Nombre completo *</label>
+                        <input
+                          type="text"
+                          value={reservationForm.customer_name}
+                          onChange={(e) => handleFormChange('customer_name', e.target.value)}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          placeholder="Nombre del cliente"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                        <input
+                          type="email"
+                          value={reservationForm.customer_email}
+                          onChange={(e) => handleFormChange('customer_email', e.target.value)}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          placeholder="email@ejemplo.com"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">WhatsApp *</label>
+                        <input
+                          type="tel"
+                          value={reservationForm.whatsapp_phone}
+                          onChange={(e) => handleFormChange('whatsapp_phone', e.target.value)}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          placeholder="+595 21 123 4567"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
+                    <h3 className="text-lg font-bold text-blue-800 mb-4">📅 Detalles de la Reserva</h3>
+                    
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Fecha *</label>
+                          <input
+                            type="date"
+                            value={reservationForm.reservation_date}
+                            onChange={(e) => handleFormChange('reservation_date', e.target.value)}
+                            min={new Date().toISOString().split('T')[0]}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          />
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Hora *</label>
+                          <input
+                            type="time"
+                            value={reservationForm.reservation_time}
+                            onChange={(e) => handleFormChange('reservation_time', e.target.value)}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          />
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Cantidad de personas *</label>
+                        <div className="flex items-center space-x-4">
+                          <input
+                            type="number"
+                            min="1"
+                            max="12"
+                            value={reservationForm.guests}
+                            onChange={(e) => handleFormChange('guests', parseInt(e.target.value))}
+                            className="w-24 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center"
+                          />
+                          <span className="text-sm text-gray-600">👥 personas</span>
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Notas especiales</label>
+                        <textarea
+                          value={reservationForm.special_notes}
+                          onChange={(e) => handleFormChange('special_notes', e.target.value)}
+                          rows="3"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          placeholder="Instrucciones especiales, ocasión especial, etc."
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">⚠️ Alergias alimentarias</label>
+                        <textarea
+                          value={reservationForm.allergies}
+                          onChange={(e) => handleFormChange('allergies', e.target.value)}
+                          rows="2"
+                          className="w-full px-4 py-2 border border-red-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-red-50"
+                          placeholder="Alergias importantes que debemos conocer para preparar el servicio"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 🪑 SELECTOR DE MESAS */}
+                <div className="space-y-6">
+                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
+                    <h3 className="text-lg font-bold text-green-800 mb-4">🪑 Seleccionar Mesa</h3>
+                    
+                    <div className="space-y-4">
+                      {/* Filtros por capacidad */}
+                      <div className="flex gap-2 mb-4">
+                        <span className="text-sm font-medium text-gray-700">Filtrar por capacidad:</span>
+                        <button className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">👫 2 pers</button>
+                        <button className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs">👨‍👩‍👧‍👦 4 pers</button>
+                        <button className="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-xs">👨‍👩‍👧‍👦👫 6 pers</button>
+                      </div>
+
+                      {/* Grid de mesas */}
+                      <div className="grid grid-cols-4 gap-3 max-h-96 overflow-y-auto">
+                        {tables.map(table => (
+                          <div
+                            key={table.id}
+                            onClick={() => handleTableSelect(table)}
+                            className={`
+                              p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 hover:shadow-md
+                              ${selectedTable?.id === table.id 
+                                ? 'border-orange-500 bg-orange-100' 
+                                : getTableStatusColor(table.status)
+                              }
+                              ${table.status !== 'available' ? 'opacity-50 cursor-not-allowed' : ''}
+                            `}
+                          >
+                            <div className="text-center">
+                              <div className="text-2xl mb-1">{getCapacityIcon(table.capacity)}</div>
+                              <div className="text-sm font-bold">Mesa {table.number}</div>
+                              <div className="text-xs text-gray-600">{table.capacity} pers</div>
+                              <div className="text-xs mt-1">
+                                {table.status === 'available' ? '✅ Libre' : 
+                                 table.status === 'occupied' ? '🔴 Ocupada' : 
+                                 table.status === 'reserved' ? '🟡 Reservada' : '⚠️ Mantenimiento'}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Información de mesa seleccionada */}
+                      {selectedTable && (
+                        <div className="bg-white p-4 rounded-lg border border-green-300">
+                          <h4 className="font-bold text-green-800 mb-2">Mesa Seleccionada</h4>
+                          <div className="text-sm text-gray-700">
+                            <p><strong>Mesa:</strong> #{selectedTable.number}</p>
+                            <p><strong>Capacidad:</strong> {selectedTable.capacity} personas</p>
+                            <p><strong>Ubicación:</strong> {selectedTable.location === 'main_floor' ? 'Salón principal' : 'Terraza'}</p>
+                            {reservationForm.guests > selectedTable.capacity && (
+                              <p className="text-red-600 mt-2">
+                                ⚠️ La mesa tiene capacidad para {selectedTable.capacity} personas, pero has indicado {reservationForm.guests} invitados
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Preview de confirmaciones */}
+                  <div className="bg-gradient-to-r from-purple-50 to-violet-50 rounded-xl p-6 border border-purple-200">
+                    <h3 className="text-lg font-bold text-purple-800 mb-4">🚀 Automatizaciones KUMIA</h3>
+                    <div className="space-y-3 text-sm">
+                      <div className="flex items-center space-x-2">
+                        <span className="text-green-500">✅</span>
+                        <span>Email de confirmación automático</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-green-500">📱</span>
+                        <span>WhatsApp con detalles de reserva</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-green-500">🤖</span>
+                        <span>IA conversacional iniciada</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-green-500">🔗</span>
+                        <span>Link a UserWebApp enviado</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Botones de acción */}
+              <div className="flex justify-between items-center pt-6 border-t border-gray-200 mt-8">
+                <div className="text-sm text-gray-500">
+                  * Campos obligatorios
+                </div>
+                <div className="flex space-x-3">
+                  <button 
+                    onClick={() => setShowNewReservationModal(false)}
+                    className="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button 
+                    onClick={submitReservation}
+                    disabled={isSubmitting || !selectedTable}
+                    className={`px-8 py-3 rounded-lg font-bold text-white transition-all duration-200 ${
+                      isSubmitting || !selectedTable
+                        ? 'bg-gray-400 cursor-not-allowed'
+                        : 'bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 transform hover:scale-105 shadow-lg'
+                    }`}
+                  >
+                    {isSubmitting ? '⏳ Creando reserva...' : '📅 Agendar Reserva'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
