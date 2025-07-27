@@ -221,6 +221,42 @@ class DashboardMetrics(BaseModel):
     nfts_delivered: int = 0
     active_ai_agents: int = 0
 
+# New models for enhanced reservation system
+class Table(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    number: int
+    capacity: int  # 2, 4, 6 persons
+    status: str = "available"  # available, occupied, reserved, maintenance
+    location: str = "main_floor"  # main_floor, terrace, private
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class NewReservationRequest(BaseModel):
+    customer_name: str
+    customer_email: str
+    whatsapp_phone: str
+    reservation_date: str  # YYYY-MM-DD format
+    reservation_time: str  # HH:MM format
+    guests: int = Field(ge=1, le=12)
+    table_id: Optional[str] = None
+    special_notes: Optional[str] = None
+    allergies: Optional[str] = None
+
+class TableAvailabilityRequest(BaseModel):
+    date: str  # YYYY-MM-DD
+    time: str  # HH:MM
+
+class CustomerActivityTrack(BaseModel):
+    user_id: str
+    activity_type: str  # login, menu_view, order, game_play, feedback, reservation, etc.
+    activity_data: Dict[str, Any] = {}
+    source: str = "userwebapp"
+
+class SyncMenuRequest(BaseModel):
+    menu_data: Dict[str, Any]
+    
+class SyncPromotionRequest(BaseModel):
+    promotion_data: Dict[str, Any]
+
 # Authentication functions
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
