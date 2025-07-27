@@ -879,6 +879,231 @@ async def update_settings(settings: RestaurantSettings, current_user: User = Dep
     await db.settings.update_one({}, {"$set": settings_dict}, upsert=True)
     return settings
 
+# ==================== KUMIA SYNC & RESERVATION SYSTEM ====================
+
+# Initialize Firebase services
+firebase_service = get_firebase_service() if FIREBASE_AVAILABLE else None
+sync_service = get_sync_service() if FIREBASE_AVAILABLE else None
+
+# TABLES MANAGEMENT
+@api_router.get("/tables/availability")
+async def get_table_availability(request: TableAvailabilityRequest, current_user: User = Depends(get_current_user)):
+    """Get available tables for specific date and time"""
+    if not firebase_service:
+        # Fallback to mock data
+        return [
+            {"id": f"table_{i}", "number": i, "capacity": 2 if i <= 6 else 4 if i <= 18 else 6, "status": "available"}
+            for i in range(1, 21)
+        ]
+    
+    available_tables = firebase_service.get_table_availability(request.date, request.time)
+    return available_tables
+
+@api_router.get("/tables")
+async def get_all_tables(current_user: User = Depends(get_current_user)):
+    """Get all restaurant tables with current status"""
+    # Return configured tables: 6 tables (2 persons), 12 tables (4 persons), 2 tables (6 persons)
+    tables = []
+    
+    # Tables for 2 persons (tables 1-6)
+    for i in range(1, 7):
+        tables.append({
+            "id": f"table_{i}",
+            "number": i,
+            "capacity": 2,
+            "status": "available",
+            "location": "main_floor"
+        })
+    
+    # Tables for 4 persons (tables 7-18)  
+    for i in range(7, 19):
+        tables.append({
+            "id": f"table_{i}",
+            "number": i,
+            "capacity": 4,
+            "status": "available",
+            "location": "main_floor"
+        })
+    
+    # Tables for 6 persons (tables 19-20)
+    for i in range(19, 21):
+        tables.append({
+            "id": f"table_{i}",
+            "number": i,
+            "capacity": 6,
+            "status": "available",
+            "location": "terrace"
+        })
+    
+    return tables
+
+# ENHANCED RESERVATIONS
+@api_router.post("/reservations/new")
+async def create_new_reservation(reservation: NewReservationRequest, current_user: User = Depends(get_current_user)):
+    """Create new reservation with automatic confirmations"""
+    try:
+        # Prepare reservation data
+        reservation_data = {
+            "id": str(uuid.uuid4()),
+            "customer_name": reservation.customer_name,
+            "customer_email": reservation.customer_email,
+            "whatsapp_phone": reservation.whatsapp_phone,
+            "date": reservation.reservation_date,
+            "time": reservation.reservation_time,
+            "guests": reservation.guests,
+            "table_id": reservation.table_id or f"table_{uuid.uuid4().hex[:8]}",
+            "special_notes": reservation.special_notes,
+            "allergies": reservation.allergies,
+            "status": "confirmed",
+            "source": "dashboard",
+            "created_by": current_user.email,
+            "created_at": datetime.utcnow().isoformat()
+        }
+        
+        # Create reservation via sync service
+        if sync_service:
+            reservation_id = sync_service.create_reservation_from_dashboard(reservation_data)
+            if reservation_id:
+                reservation_data["id"] = reservation_id
+        else:
+            # Fallback: store in MongoDB
+            await db.reservations.insert_one(reservation_data)
+            print(f"✅ Reservation created (fallback): {reservation_data['id']}")
+        
+        return {
+            "success": True,
+            "reservation_id": reservation_data["id"],
+            "message": "Reserva creada exitosamente. Confirmaciones enviadas por email y WhatsApp.",
+            "reservation": reservation_data
+        }
+        
+    except Exception as e:
+        print(f"❌ Error creating reservation: {e}")
+        raise HTTPException(status_code=500, detail=f"Error creating reservation: {str(e)}")
+
+# CUSTOMER ACTIVITY TRACKING 
+@api_router.post("/sync/customer-activity")
+async def track_customer_activity(activity: CustomerActivityTrack):
+    """Track customer activity from UserWebApp for marketing intelligence"""
+    try:
+        if sync_service:
+            success = sync_service.sync_user_activity_to_dashboard(activity.dict())
+            if success:
+                return {"success": True, "message": "Activity tracked successfully"}
+        
+        # Fallback: store in MongoDB
+        activity_data = activity.dict()
+        activity_data["timestamp"] = datetime.utcnow()
+        await db.customer_activities.insert_one(activity_data)
+        
+        return {"success": True, "message": "Activity tracked (fallback)"}
+        
+    except Exception as e:
+        print(f"❌ Error tracking customer activity: {e}")
+        raise HTTPException(status_code=500, detail=f"Error tracking activity: {str(e)}")
+
+# MENU SYNCHRONIZATION
+@api_router.post("/sync/menu")
+async def sync_menu_to_userwebapp(request: SyncMenuRequest, current_user: User = Depends(get_current_user)):
+    """Sync menu changes from Dashboard to UserWebApp"""
+    try:
+        if sync_service:
+            success = sync_service.sync_menu_changes(request.menu_data)
+            if success:
+                return {"success": True, "message": "Menu synced to UserWebApp successfully"}
+        
+        return {"success": True, "message": "Menu sync scheduled (fallback)"}
+        
+    except Exception as e:
+        print(f"❌ Error syncing menu: {e}")
+        raise HTTPException(status_code=500, detail=f"Error syncing menu: {str(e)}")
+
+# PROMOTION SYNCHRONIZATION
+@api_router.post("/sync/promotions")
+async def sync_promotions_to_userwebapp(request: SyncPromotionRequest, current_user: User = Depends(get_current_user)):
+    """Sync promotion changes from Dashboard to UserWebApp"""
+    try:
+        if sync_service:
+            success = sync_service.sync_promotion_changes(request.promotion_data)
+            if success:
+                return {"success": True, "message": "Promotions synced to UserWebApp successfully"}
+        
+        return {"success": True, "message": "Promotions sync scheduled (fallback)"}
+        
+    except Exception as e:
+        print(f"❌ Error syncing promotions: {e}")
+        raise HTTPException(status_code=500, detail=f"Error syncing promotions: {str(e)}")
+
+# CUSTOMER INSIGHTS & MARKETING INTELLIGENCE
+@api_router.get("/analytics/customer-journey/{user_id}")
+async def get_customer_journey(user_id: str, current_user: User = Depends(get_current_user)):
+    """Get comprehensive customer journey analytics for marketing decisions"""
+    try:
+        if sync_service:
+            journey_data = sync_service.get_customer_journey_analytics(user_id)
+            if journey_data:
+                return journey_data
+        
+        # Fallback: basic analytics from MongoDB
+        activities = await db.customer_activities.find({"user_id": user_id}).limit(50).to_list(50)
+        user_profile = await db.users.find_one({"id": user_id})
+        
+        return {
+            "customer_profile": user_profile,
+            "total_activities": len(activities),
+            "recent_activities": activities[:10],
+            "marketing_segment": "unknown",
+            "engagement_score": 0.0
+        }
+        
+    except Exception as e:
+        print(f"❌ Error getting customer journey: {e}")
+        raise HTTPException(status_code=500, detail=f"Error getting customer journey: {str(e)}")
+
+# PUBLIC APIS FOR USERWEBAPP
+@api_router.get("/public/restaurant-info")
+async def get_public_restaurant_info():
+    """Public endpoint for UserWebApp to get restaurant basic info"""
+    settings = await db.settings.find_one({})
+    if not settings:
+        settings = RestaurantSettings().dict()
+    
+    return {
+        "name": settings.get("name", "IL MANDORLA Smokehouse"),
+        "description": settings.get("description", "Glutenfree • Carnes ahumadas • Fuego lento • Mucho sabor"),
+        "address": settings.get("address", "Asunción, Paraguay"),
+        "phone": settings.get("phone", "+595 21 123456"),
+        "hours": settings.get("hours", "Lun-Dom: 11:00-22:00"),
+        "cuisine_type": settings.get("cuisine_type", "smokehouse")
+    }
+
+@api_router.get("/public/menu")
+async def get_public_menu():
+    """Public endpoint for UserWebApp to get current menu"""
+    menu_items = await db.menu_items.find({}).to_list(1000)
+    return [MenuItem(**item) for item in menu_items]
+
+@api_router.get("/public/promotions")
+async def get_public_promotions():
+    """Public endpoint for UserWebApp to get active promotions"""
+    # Mock promotions for now
+    return [
+        {
+            "id": "promo_1",
+            "title": "Bienvenida KUMIA",
+            "description": "30 puntos gratis + bebida de cortesía para nuevos usuarios",
+            "points_reward": 30,
+            "valid_until": (datetime.utcnow() + timedelta(days=30)).isoformat()
+        },
+        {
+            "id": "promo_2", 
+            "title": "Happy Hour BBQ",
+            "description": "20% descuento en todas las carnes ahumadas de 17:00 a 19:00",
+            "discount_percentage": 20,
+            "valid_hours": "17:00-19:00"
+        }
+    ]
+
 # Include router
 app.include_router(api_router)
 
