@@ -2051,11 +2051,64 @@ export const ReservationsSection = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [attendanceRate, setAttendanceRate] = useState(87.5);
   const [frequentCustomers, setFrequentCustomers] = useState([]);
+  
+  // 🆕 ESTADO PARA MODAL DE NUEVA RESERVA
+  const [showNewReservationModal, setShowNewReservationModal] = useState(false);
+  const [tables, setTables] = useState([]);
+  const [selectedTable, setSelectedTable] = useState(null);
+  const [reservationForm, setReservationForm] = useState({
+    customer_name: '',
+    customer_email: '',
+    whatsapp_phone: '',
+    reservation_date: new Date().toISOString().split('T')[0],
+    reservation_time: '',
+    guests: 2,
+    special_notes: '',
+    allergies: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     fetchReservations();
     fetchFrequentCustomers();
+    fetchTables();
   }, []);
+
+  const fetchTables = async () => {
+    try {
+      const response = await axios.get(`${API}/tables`);
+      setTables(response.data);
+    } catch (error) {
+      console.error('Error fetching tables:', error);
+      // Fallback mock data
+      setTables([
+        // Tables for 2 persons (1-6)
+        ...Array.from({length: 6}, (_, i) => ({
+          id: `table_${i+1}`,
+          number: i+1,
+          capacity: 2,
+          status: 'available',
+          location: 'main_floor'
+        })),
+        // Tables for 4 persons (7-18)
+        ...Array.from({length: 12}, (_, i) => ({
+          id: `table_${i+7}`,
+          number: i+7,
+          capacity: 4,
+          status: 'available',
+          location: 'main_floor'
+        })),
+        // Tables for 6 persons (19-20)
+        ...Array.from({length: 2}, (_, i) => ({
+          id: `table_${i+19}`,
+          number: i+19,
+          capacity: 6,
+          status: 'available',
+          location: 'terrace'
+        }))
+      ]);
+    }
+  };
 
   const fetchReservations = async () => {
     try {
