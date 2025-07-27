@@ -491,13 +491,66 @@ const AIRecommendationCTA = ({ recommendation, impact, action }) => (
   </div>
 );
 
-// Enhanced Dashboard Summary (MANTENER EXACTAMENTE IGUAL)
+// Enhanced Dashboard Summary with Weekly Report Modal
 const DashboardSummary = ({ metrics }) => {
+  const [showWeeklyReport, setShowWeeklyReport] = useState(false);
   const weeklyRevenue = [85000, 92000, 78000, 95000, 88000, 96000, 102000];
   const roiData = {
     multiplier: 4.3,
     weeklyImpact: 28500,
     monthlyRevenue: 385000
+  };
+
+  // Generate weekly report data
+  const generateWeeklyReport = () => {
+    const totalWeeklyRevenue = weeklyRevenue.reduce((a, b) => a + b, 0);
+    const avgDailyRevenue = totalWeeklyRevenue / 7;
+    const growth = ((weeklyRevenue[6] - weeklyRevenue[0]) / weeklyRevenue[0] * 100).toFixed(1);
+    const bestDay = weeklyRevenue.indexOf(Math.max(...weeklyRevenue));
+    const worstDay = weeklyRevenue.indexOf(Math.min(...weeklyRevenue));
+    const dayNames = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+    
+    return {
+      totalRevenue: totalWeeklyRevenue,
+      avgDailyRevenue,
+      growth,
+      bestDay: { name: dayNames[bestDay], revenue: weeklyRevenue[bestDay] },
+      worstDay: { name: dayNames[worstDay], revenue: weeklyRevenue[worstDay] },
+      weeklyData: weeklyRevenue.map((revenue, index) => ({
+        day: dayNames[index],
+        revenue,
+        growth: index > 0 ? ((revenue - weeklyRevenue[index - 1]) / weeklyRevenue[index - 1] * 100).toFixed(1) : 0
+      }))
+    };
+  };
+
+  const handleGenerateReport = () => {
+    setShowWeeklyReport(true);
+  };
+
+  const handleExportReport = (format) => {
+    const reportData = generateWeeklyReport();
+    const fileName = `reporte_semanal_${new Date().toISOString().split('T')[0]}`;
+    
+    if (format === 'pdf') {
+      // Simulate PDF generation
+      alert('📄 Generando reporte PDF... (Esta funcionalidad requiere integración con jsPDF)');
+    } else if (format === 'excel') {
+      // Simulate Excel export
+      const csvContent = "data:text/csv;charset=utf-8," + 
+        "Día,Ingresos,Crecimiento\n" +
+        reportData.weeklyData.map(d => `${d.day},$${d.revenue},${d.growth}%`).join("\n");
+      
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `${fileName}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      alert('📊 Reporte Excel descargado exitosamente');
+    }
   };
 
   return (
