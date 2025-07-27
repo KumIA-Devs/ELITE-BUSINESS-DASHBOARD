@@ -2151,6 +2151,104 @@ export const ReservationsSection = () => {
     alert('Exportando calendario a .ics');
   };
 
+  // 🆕 FUNCIONES PARA NUEVA RESERVA
+  const openNewReservationModal = () => {
+    setShowNewReservationModal(true);
+    setSelectedTable(null);
+    setReservationForm({
+      customer_name: '',
+      customer_email: '',
+      whatsapp_phone: '',
+      reservation_date: new Date().toISOString().split('T')[0],
+      reservation_time: '',
+      guests: 2,
+      special_notes: '',
+      allergies: ''
+    });
+  };
+
+  const handleTableSelect = (table) => {
+    setSelectedTable(table);
+    setReservationForm(prev => ({
+      ...prev,
+      table_id: table.id
+    }));
+  };
+
+  const handleFormChange = (field, value) => {
+    setReservationForm(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const validateForm = () => {
+    const required = ['customer_name', 'customer_email', 'whatsapp_phone', 'reservation_date', 'reservation_time'];
+    for (let field of required) {
+      if (!reservationForm[field]) {
+        alert(`Por favor completa el campo: ${field.replace('_', ' ')}`);
+        return false;
+      }
+    }
+    
+    if (!selectedTable) {
+      alert('Por favor selecciona una mesa');
+      return false;
+    }
+
+    if (reservationForm.guests > selectedTable.capacity) {
+      alert(`La mesa seleccionada tiene capacidad para ${selectedTable.capacity} personas, pero has indicado ${reservationForm.guests} invitados`);
+      return false;
+    }
+
+    return true;
+  };
+
+  const submitReservation = async () => {
+    if (!validateForm()) return;
+
+    setIsSubmitting(true);
+    try {
+      const reservationData = {
+        ...reservationForm,
+        table_id: selectedTable.id
+      };
+
+      const response = await axios.post(`${API}/reservations/new`, reservationData);
+      
+      if (response.data.success) {
+        alert('🎉 ¡Reserva creada exitosamente!\n\n✅ Confirmación enviada por email\n📱 Mensaje de WhatsApp enviado\n🤖 IA conversacional iniciada');
+        setShowNewReservationModal(false);
+        fetchReservations(); // Refresh reservations list
+      } else {
+        alert('Error al crear la reserva. Intenta de nuevo.');
+      }
+    } catch (error) {
+      console.error('Error creating reservation:', error);
+      alert('Error al crear la reserva. Verifica tu conexión e intenta de nuevo.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const getTableStatusColor = (status) => {
+    switch (status) {
+      case 'available': return 'bg-green-100 border-green-300 text-green-800';
+      case 'occupied': return 'bg-red-100 border-red-300 text-red-800';
+      case 'reserved': return 'bg-yellow-100 border-yellow-300 text-yellow-800';
+      default: return 'bg-gray-100 border-gray-300 text-gray-800';
+    }
+  };
+
+  const getCapacityIcon = (capacity) => {
+    switch (capacity) {
+      case 2: return '👫';
+      case 4: return '👨‍👩‍👧‍👦';
+      case 6: return '👨‍👩‍👧‍👦👫';
+      default: return '🪑';
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
