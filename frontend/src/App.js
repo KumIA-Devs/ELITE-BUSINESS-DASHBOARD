@@ -1935,14 +1935,148 @@ const FeedbackSection = () => {
 
   useEffect(() => {
     fetchFeedback();
+    initializeGoogleReviewsFeedback();
   }, []);
+
+  const initializeGoogleReviewsFeedback = () => {
+    // Feedback diverso incluyendo Google Reviews como canal principal
+    const ilMandorlaFeedback = [
+      {
+        id: 'fb_1',
+        customer_name: 'María López',
+        rating: 5,
+        comment: 'Increíble experiencia! Las carnes ahumadas están espectaculares. Definitivamente volveré.',
+        date: '2025-01-22',
+        channel: 'google_reviews',
+        response_sent: false,
+        sentiment: 'positive'
+      },
+      {
+        id: 'fb_2', 
+        customer_name: 'Carlos Ruiz',
+        rating: 5,
+        comment: 'El Brooklyn sandwich es lo mejor que he probado. Servicio excelente y ambiente perfecto.',
+        date: '2025-01-21',
+        channel: 'google_reviews',
+        response_sent: true,
+        sentiment: 'positive'
+      },
+      {
+        id: 'fb_3',
+        customer_name: 'Ana García',
+        rating: 4,
+        comment: 'Muy buena comida, aunque tuvimos que esperar un poco. Las costillas baby ribs están perfectas.',
+        date: '2025-01-20',
+        channel: 'google_reviews',
+        response_sent: false,
+        sentiment: 'positive'
+      },
+      {
+        id: 'fb_4',
+        customer_name: 'Roberto Silva',
+        rating: 5,
+        comment: 'Trabajo cerca y vengo seguido. Siempre me sorprenden con la calidad y el sabor ahumado.',
+        date: '2025-01-19',
+        channel: 'google_reviews',
+        response_sent: true,
+        sentiment: 'positive'
+      },
+      {
+        id: 'fb_5',
+        customer_name: 'Patricia Méndez',
+        rating: 3,
+        comment: 'La comida está bien, pero el precio me parece un poco alto para la porción.',
+        date: '2025-01-18',
+        channel: 'google_reviews',
+        response_sent: false,
+        sentiment: 'neutral'
+      },
+      {
+        id: 'fb_6',
+        customer_name: 'Diego Paredes',
+        rating: 5,
+        comment: 'Fantástico para reuniones de trabajo. El ambiente es perfecto y la comida increíble.',
+        date: '2025-01-17',
+        channel: 'whatsapp',
+        response_sent: true,
+        sentiment: 'positive'
+      }
+    ];
+
+    setFeedback(ilMandorlaFeedback);
+  };
 
   const fetchFeedback = async () => {
     try {
       const response = await axios.get(`${API}/feedback`);
-      setFeedback(response.data);
+      if (response.data && response.data.length > 0) {
+        setFeedback(response.data);
+      }
     } catch (error) {
       console.error('Error fetching feedback:', error);
+      // Si no hay datos en el backend, usar los datos iniciales
+    }
+  };
+
+  // 🆕 FUNCIONES PARA RESPUESTAS AUTOMÁTICAS
+  const handleAutoResponseConfig = () => {
+    setShowAutoResponseModal(true);
+  };
+
+  const handleSaveAutoResponse = async (channel, sentiment, message) => {
+    try {
+      const updatedResponses = {
+        ...autoResponses,
+        [channel]: {
+          ...autoResponses[channel],
+          [sentiment]: message
+        }
+      };
+      
+      setAutoResponses(updatedResponses);
+      
+      // Guardar en backend
+      await axios.post(`${API}/auto-responses`, {
+        channel,
+        sentiment,
+        message
+      });
+      
+      alert(`✅ Respuesta automática para ${channel} (${sentiment}) guardada exitosamente`);
+    } catch (error) {
+      console.error('Error saving auto response:', error);
+      alert('Error al guardar respuesta automática');
+    }
+  };
+
+  const handleSendAutoResponse = async (feedbackId, channel, sentiment) => {
+    try {
+      const response = autoResponses[channel]?.[sentiment];
+      if (!response) {
+        alert('No hay respuesta automática configurada para este canal y sentimiento');
+        return;
+      }
+
+      // Enviar respuesta
+      await axios.post(`${API}/send-feedback-response`, {
+        feedback_id: feedbackId,
+        channel,
+        message: response
+      });
+
+      // Actualizar estado local
+      setFeedback(prev => 
+        prev.map(f => 
+          f.id === feedbackId 
+            ? { ...f, response_sent: true, auto_response: response }
+            : f
+        )
+      );
+
+      alert(`✅ Respuesta automática enviada exitosamente via ${channel}`);
+    } catch (error) {
+      console.error('Error sending auto response:', error);
+      alert('Error al enviar respuesta automática');
     }
   };
 
