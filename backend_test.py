@@ -772,6 +772,123 @@ class BackendTester:
         
         return False
     
+    def test_basic_health_check(self):
+        """Test basic health check - backend responsiveness"""
+        print("🏥 Testing Basic Health Check...")
+        
+        try:
+            # Test if backend is responding by trying to access any endpoint
+            response = self.session.get(f"{self.base_url.replace('/api', '')}/docs", timeout=10)
+            
+            if response.status_code == 200:
+                self.log_test("Basic Health Check", True, "Backend is responding correctly")
+                return True
+            else:
+                # Try alternative health check
+                response = self.session.get(f"{self.base_url}/auth/google/login", allow_redirects=False, timeout=10)
+                if response.status_code in [302, 307]:
+                    self.log_test("Basic Health Check", True, "Backend is responding (via OAuth endpoint)")
+                    return True
+                else:
+                    self.log_test("Basic Health Check", False, f"Backend not responding properly - HTTP {response.status_code}")
+                    
+        except Exception as e:
+            self.log_test("Basic Health Check", False, f"Backend connection failed: {str(e)}")
+        
+        return False
+
+    def test_kumia_chat_endpoint(self):
+        """Test the new Gemini chat endpoint"""
+        print("🧠 Testing KUMIA Gemini Chat Endpoint...")
+        
+        if not self.auth_token:
+            self.log_test("KUMIA Gemini Chat", False, "No auth token available")
+            return False
+        
+        try:
+            session_id = str(uuid.uuid4())
+            chat_data = {
+                "message": "¿Cuáles son las métricas principales del restaurante y qué recomendaciones tienes para mejorar el ROI?",
+                "session_id": session_id,
+                "channel": "kumia_business_chat"
+            }
+            
+            response = self.session.post(f"{self.base_url}/ai/kumia-chat", json=chat_data, timeout=30)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if "response" in data and "session_id" in data and "channel" in data:
+                    if len(data["response"]) > 50:  # Ensure we got a meaningful response
+                        self.log_test("KUMIA Gemini Chat", True, f"Business intelligence response received (Length: {len(data['response'])} chars)")
+                        return True
+                    else:
+                        self.log_test("KUMIA Gemini Chat", False, "Response too short - may indicate API issue", data)
+                else:
+                    self.log_test("KUMIA Gemini Chat", False, "Missing required fields in response", data)
+            else:
+                self.log_test("KUMIA Gemini Chat", False, f"HTTP {response.status_code}", response.text)
+                
+        except Exception as e:
+            self.log_test("KUMIA Gemini Chat", False, f"Exception: {str(e)}")
+        
+        return False
+
+    def run_focused_tests(self):
+        """Run the specific tests requested by the user"""
+        print("🎯 Starting Focused Backend API Tests")
+        print("=" * 60)
+        print(f"Backend URL: {self.base_url}")
+        print("Testing specific endpoints as requested:")
+        print("1. Basic health check")
+        print("2. Login endpoint (/api/auth/login)")
+        print("3. Dashboard metrics (/api/dashboard/metrics)")
+        print("4. New Gemini chat endpoint (/api/ai/kumia-chat)")
+        print("=" * 60)
+        
+        # 1. Basic health check
+        health_check = self.test_basic_health_check()
+        
+        # 2. Login endpoint with specific credentials
+        auth_success = self.test_legacy_login()
+        
+        # 3. Dashboard metrics (requires auth)
+        dashboard_success = False
+        if auth_success:
+            dashboard_success = self.test_dashboard_metrics()
+        
+        # 4. New Gemini chat endpoint (requires auth)
+        gemini_success = False
+        if auth_success:
+            gemini_success = self.test_kumia_chat_endpoint()
+        
+        # Print focused summary
+        print("=" * 60)
+        print("📋 FOCUSED TEST SUMMARY")
+        print("=" * 60)
+        
+        tests = [
+            ("Basic Health Check", health_check),
+            ("Login Endpoint", auth_success),
+            ("Dashboard Metrics", dashboard_success),
+            ("KUMIA Gemini Chat", gemini_success)
+        ]
+        
+        passed = sum(1 for _, success in tests if success)
+        total = len(tests)
+        
+        for test_name, success in tests:
+            status = "✅" if success else "❌"
+            print(f"{status} {test_name}")
+        
+        print(f"\nResults: {passed}/{total} focused tests passed")
+        
+        if passed == total:
+            print("🎉 All focused tests passed!")
+            return True
+        else:
+            print("⚠️  Some focused tests failed - check details above")
+            return False
+
     def run_all_tests(self):
         """Run all backend tests"""
         print("🚀 Starting IL MANDORLA Backend API Tests")
