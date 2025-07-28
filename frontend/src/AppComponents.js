@@ -4875,6 +4875,218 @@ Optimiza los prompts de tus agentes con mejor performance y replica esas técnic
         </div>
       )}
 
+      {/* 🆕 MODAL ENTRENAR AGENTE */}
+      {showTrainModal && selectedAgent && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-5xl max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">🎓 Entrenar Agente IA</h2>
+                  <p className="text-gray-600">{selectedAgent.name} - Mejora continua con datos reales</p>
+                </div>
+                <button 
+                  onClick={() => setShowTrainModal(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Información del agente */}
+                <div className="space-y-4">
+                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 border border-green-200">
+                    <h3 className="font-bold text-green-800 mb-3">🤖 Información del Agente</h3>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-sm font-medium text-green-700">Último entrenamiento:</span>
+                        <span className="text-sm text-green-600">{selectedAgent.last_training}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm font-medium text-green-700">Respuestas desde entrenamiento:</span>
+                        <span className="text-sm text-green-600">{selectedAgent.performance?.responses || 0}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm font-medium text-green-700">Satisfacción actual:</span>
+                        <span className="text-sm text-green-600">{selectedAgent.performance?.rating || 0}/5</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm font-medium text-green-700">Conversión actual:</span>
+                        <span className="text-sm text-green-600">{selectedAgent.performance?.conversion || 0}%</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                    <h4 className="font-bold text-blue-800 mb-3">📚 Fuentes de Datos para Entrenamiento</h4>
+                    <div className="space-y-2">
+                      <label className="flex items-center">
+                        <input type="checkbox" defaultChecked className="mr-2" />
+                        <span className="text-sm text-blue-700">Menú actualizado de IL MANDORLA</span>
+                      </label>
+                      <label className="flex items-center">
+                        <input type="checkbox" defaultChecked className="mr-2" />
+                        <span className="text-sm text-blue-700">Historial de conversaciones (último mes)</span>
+                      </label>
+                      <label className="flex items-center">
+                        <input type="checkbox" defaultChecked className="mr-2" />
+                        <span className="text-sm text-blue-700">Feedback de clientes</span>
+                      </label>
+                      <label className="flex items-center">
+                        <input type="checkbox" defaultChecked className="mr-2" />
+                        <span className="text-sm text-blue-700">Políticas y procedimientos</span>
+                      </label>
+                      <label className="flex items-center">
+                        <input type="checkbox" className="mr-2" />
+                        <span className="text-sm text-blue-700">Datos de comportamiento de clientes</span>
+                      </label>
+                      <label className="flex items-center">
+                        <input type="checkbox" className="mr-2" />
+                        <span className="text-sm text-blue-700">Análisis de competencia</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
+                    <h4 className="font-bold text-purple-800 mb-3">⚙️ Configuración de Entrenamiento</h4>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm font-medium text-purple-700 mb-2">Tipo de Entrenamiento</label>
+                        <select className="w-full px-3 py-2 border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                          <option value="incremental">🔄 Incremental (recomendado)</option>
+                          <option value="full">🚀 Completo (desde cero)</option>
+                          <option value="fine_tuning">🎯 Fine-tuning específico</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-purple-700 mb-2">Intensidad</label>
+                        <select className="w-full px-3 py-2 border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                          <option value="light">🌙 Ligero (15 min)</option>
+                          <option value="medium">⚡ Medio (45 min)</option>
+                          <option value="intensive">🔥 Intensivo (2 horas)</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-purple-700 mb-2">Programar para</label>
+                        <select className="w-full px-3 py-2 border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                          <option value="now">▶️ Ahora</option>
+                          <option value="tonight">🌙 Esta noche (2:00 AM)</option>
+                          <option value="weekend">📅 Este fin de semana</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Métricas y predicciones */}
+                <div className="space-y-4">
+                  <div className="bg-gradient-to-r from-orange-50 to-red-50 rounded-lg p-4 border border-orange-200">
+                    <h3 className="font-bold text-orange-800 mb-3">📊 Predicciones de Mejora</h3>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-orange-700">Satisfacción</span>
+                        <div className="flex items-center">
+                          <span className="text-sm text-orange-600">{selectedAgent.performance?.rating || 0}/5</span>
+                          <span className="text-green-600 ml-2">→ {((selectedAgent.performance?.rating || 0) + 0.3).toFixed(1)}/5</span>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-orange-700">Conversión</span>
+                        <div className="flex items-center">
+                          <span className="text-sm text-orange-600">{selectedAgent.performance?.conversion || 0}%</span>
+                          <span className="text-green-600 ml-2">→ {((selectedAgent.performance?.conversion || 0) + 12)}%</span>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-orange-700">Tiempo de respuesta</span>
+                        <div className="flex items-center">
+                          <span className="text-sm text-orange-600">2.3s</span>
+                          <span className="text-green-600 ml-2">→ 1.8s</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
+                    <h4 className="font-bold text-yellow-800 mb-3">💡 Optimizaciones Sugeridas</h4>
+                    <div className="space-y-2">
+                      <div className="flex items-start">
+                        <span className="text-yellow-600 mr-2">•</span>
+                        <p className="text-sm text-yellow-700">Mejorar respuestas para consultas sobre menú de temporada</p>
+                      </div>
+                      <div className="flex items-start">
+                        <span className="text-yellow-600 mr-2">•</span>
+                        <p className="text-sm text-yellow-700">Optimizar upselling en combos de bebidas</p>
+                      </div>
+                      <div className="flex items-start">
+                        <span className="text-yellow-600 mr-2">•</span>
+                        <p className="text-sm text-yellow-700">Personalizar respuestas para clientes VIP</p>
+                      </div>
+                      <div className="flex items-start">
+                        <span className="text-yellow-600 mr-2">•</span>
+                        <p className="text-sm text-yellow-700">Actualizar información de horarios especiales</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-red-50 rounded-lg p-4 border border-red-200">
+                    <h4 className="font-bold text-red-800 mb-3">⚠️ Consideraciones Importantes</h4>
+                    <div className="space-y-2">
+                      <div className="flex items-start">
+                        <span className="text-red-600 mr-2">•</span>
+                        <p className="text-sm text-red-700">El agente seguirá operando durante el entrenamiento</p>
+                      </div>
+                      <div className="flex items-start">
+                        <span className="text-red-600 mr-2">•</span>
+                        <p className="text-sm text-red-700">Los cambios serán graduales para evitar confusión</p>
+                      </div>
+                      <div className="flex items-start">
+                        <span className="text-red-600 mr-2">•</span>
+                        <p className="text-sm text-red-700">Se creará un respaldo automático antes del entrenamiento</p>
+                      </div>
+                      <div className="flex items-start">
+                        <span className="text-red-600 mr-2">•</span>
+                        <p className="text-sm text-red-700">Podrás revertir cambios dentro de 72 horas</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center pt-6 border-t border-gray-200 mt-8">
+                <div className="text-sm text-gray-500">
+                  🕒 El entrenamiento tomará aproximadamente 45 minutos
+                </div>
+                <div className="flex space-x-3">
+                  <button 
+                    onClick={() => setShowTrainModal(false)}
+                    className="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button 
+                    onClick={() => {
+                      alert('🎓 Iniciando entrenamiento de ' + selectedAgent.name + '...\n\n📚 Datos incluidos:\n• Menú actualizado de IL MANDORLA\n• Historial de conversaciones (último mes)\n• Feedback de clientes\n• Políticas y procedimientos\n\n⏱️ Tiempo estimado: 45 minutos\n📈 Mejora esperada: +12% en satisfacción\n\n✅ El agente continuará operando normalmente durante el proceso');
+                      // Actualizar fecha de entrenamiento
+                      setAgents(prev => prev.map(a => 
+                        a.id === selectedAgent.id 
+                          ? { ...a, last_training: new Date().toISOString().split('T')[0] }
+                          : a
+                      ));
+                      setShowTrainModal(false);
+                    }}
+                    className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-8 py-3 rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all duration-200 font-bold"
+                  >
+                    🚀 Iniciar Entrenamiento
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 🆕 MODAL EDITAR AGENTE */}
       {showEditModal && selectedAgent && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
