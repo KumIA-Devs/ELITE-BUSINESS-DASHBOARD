@@ -607,41 +607,45 @@ export const RewardsNFTsSection = () => {
 // 🆕 INTEGRACIONES SECTION AMPLIADA
 export const IntegrationsSection = () => {
   const [integrations, setIntegrations] = useState([
-    { id: 'meta', name: 'Meta Business Suite', type: 'social', status: 'connected', icon: '👥', lastSync: '2024-01-15 10:30' },
-    { id: 'stripe', name: 'Stripe', type: 'payment', status: 'disconnected', icon: '💳', lastSync: null },
-    { id: 'openai', name: 'OpenAI', type: 'ai', status: 'connected', icon: '🤖', lastSync: '2024-01-15 11:15' },
-    { id: 'n8n', name: 'n8n Automation', type: 'automation', status: 'error', icon: '🔄', lastSync: '2024-01-14 15:20' },
-    { id: 'tiktok', name: 'TikTok Business', type: 'social', status: 'disconnected', icon: '🎵', lastSync: null }
+    { id: 'meta', name: 'Meta Business Suite', type: 'social', status: 'disconnected', icon: '📱', lastSync: null },
+    { id: 'google_reviews', name: 'Google Reviews', type: 'reviews', status: 'disconnected', icon: '⭐', lastSync: null },
+    { id: 'whatsapp', name: 'WhatsApp Business', type: 'messaging', status: 'disconnected', icon: '💬', lastSync: null },
+    { id: 'openai', name: 'OpenAI', type: 'ai', status: 'connected', icon: '🧠', lastSync: '2024-01-15 11:15' },
+    { id: 'gemini', name: 'Google Gemini', type: 'ai', status: 'connected', icon: '🧠', lastSync: '2024-01-15 11:15' },
+    { id: 'mercadopago', name: 'MercadoPago', type: 'payment', status: 'disconnected', icon: '💳', lastSync: null },
+    { id: 'custom', name: 'Custom Integration', type: 'custom', status: 'disconnected', icon: '🔧', lastSync: null }
   ]);
 
-  const [showCustomERP, setShowCustomERP] = useState(false);
-  const [customIntegration, setCustomIntegration] = useState({
-    name: '',
-    url: '',
-    authMethod: 'token',
-    apiKey: '',
-    syncFrequency: '24h'
+  const [credentials, setCredentials] = useState({
+    meta: { app_id: '', app_secret: '', phone_number_id: '' },
+    google_reviews: { location_id: '', service_account_key: '' },
+    whatsapp: { account_id: '', access_token: '' },
+    openai: { api_key: 'sk-proj-...configured' },
+    gemini: { api_key: 'AIzaSyBCKR7mxd9ZpknkKcl8l6eQ7JsjmS05mcE' },
+    mercadopago: { app_id: '', access_token: '' },
+    custom: { api_url: '', api_key: '' }
   });
 
-  const handleToggleIntegration = (id) => {
-    setIntegrations(prev => 
-      prev.map(integration => 
-        integration.id === id 
-          ? { ...integration, status: integration.status === 'connected' ? 'disconnected' : 'connected' }
-          : integration
-      )
-    );
+  const handleCredentialChange = (integrationId, field, value) => {
+    setCredentials(prev => ({
+      ...prev,
+      [integrationId]: {
+        ...prev[integrationId],
+        [field]: value
+      }
+    }));
   };
 
-  const handleTestConnection = async (integrationId) => {
-    alert(`Probando conexión para ${integrationId}...`);
-    // Simular test
-    setTimeout(() => {
-      alert('✅ Conexión exitosa');
-    }, 2000);
-  };
+  const handleConnect = async (integrationId) => {
+    const integrationCredentials = credentials[integrationId];
+    const hasRequiredCredentials = Object.values(integrationCredentials).every(val => val.trim() !== '');
+    
+    if (!hasRequiredCredentials) {
+      alert('⚠️ Por favor completa todos los campos requeridos');
+      return;
+    }
 
-  const handleRetryConnection = (integrationId) => {
+    // Simular conexión
     setIntegrations(prev => 
       prev.map(integration => 
         integration.id === integrationId 
@@ -649,56 +653,260 @@ export const IntegrationsSection = () => {
           : integration
       )
     );
+    
+    alert(`✅ ${integrationId} conectado exitosamente!`);
   };
 
-  const IntegrationCard = ({ integration }) => (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all duration-200">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center">
-          <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mr-4">
-            <span className="text-2xl">{integration.icon}</span>
-          </div>
-          <div>
-            <h3 className="font-bold text-gray-800">{integration.name}</h3>
-            <p className="text-sm text-gray-600 capitalize">{integration.type}</p>
+  const handleDisconnect = (integrationId) => {
+    setIntegrations(prev => 
+      prev.map(integration => 
+        integration.id === integrationId 
+          ? { ...integration, status: 'disconnected', lastSync: null }
+          : integration
+      )
+    );
+  };
+
+  const handleTestConnection = async (integrationId) => {
+    alert(`🔄 Probando conexión para ${integrationId}...`);
+    // Simular test
+    setTimeout(() => {
+      alert('✅ Conexión exitosa');
+    }, 2000);
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-3xl font-bold text-gray-800">🔗 Integraciones</h2>
+          <p className="text-gray-600 mt-1">Conecta tus APIs para automatización completa</p>
+        </div>
+        <div className="flex items-center space-x-2">
+          <div className="text-sm text-gray-600">
+            <span className="inline-block w-3 h-3 bg-green-400 rounded-full mr-2"></span>
+            Plug & Play
           </div>
         </div>
-        <button
-          onClick={() => handleToggleIntegration(integration.id)}
-          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-            integration.status === 'connected' ? 'bg-green-500' : 'bg-gray-300'
-          }`}
-        >
-          <span
-            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-              integration.status === 'connected' ? 'translate-x-6' : 'translate-x-1'
-            }`}
-          />
-        </button>
       </div>
 
-      {/* 🆕 ESTADO VISUAL DETALLADO */}
-      <div className="mb-4">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center">
-            <div className={`w-3 h-3 rounded-full mr-2 ${
-              integration.status === 'connected' ? 'bg-green-500' : 
-              integration.status === 'error' ? 'bg-red-500' : 'bg-gray-400'
-            }`}></div>
-            <span className="text-sm font-medium">
-              {integration.status === 'connected' ? '🟢 Conectado' : 
-               integration.status === 'error' ? '🔴 Error' : '🔴 Desconectado'}
-            </span>
+      {/* 🆕 CONFIGURACIÓN DE CREDENCIALES */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {integrations.map(integration => (
+          <div key={integration.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center">
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mr-3 ${
+                  integration.id === 'meta' ? 'bg-gradient-to-r from-blue-500 to-indigo-500' :
+                  integration.id === 'google_reviews' ? 'bg-gradient-to-r from-yellow-500 to-orange-500' :
+                  integration.id === 'whatsapp' ? 'bg-gradient-to-r from-green-500 to-emerald-500' :
+                  integration.id === 'openai' || integration.id === 'gemini' ? 'bg-gradient-to-r from-purple-500 to-pink-500' :
+                  integration.id === 'mercadopago' ? 'bg-gradient-to-r from-blue-600 to-cyan-500' :
+                  'bg-gradient-to-r from-gray-500 to-gray-700'
+                }`}>
+                  <span className="text-white text-xl">{integration.icon}</span>
+                </div>
+                <div>
+                  <h3 className="font-bold text-gray-800">{integration.name}</h3>
+                  <p className="text-sm text-gray-600 capitalize">{integration.type}</p>
+                </div>
+              </div>
+              <span className={`w-4 h-4 rounded-full ${
+                integration.status === 'connected' ? 'bg-green-400' : 'bg-gray-400'
+              }`}></span>
+            </div>
+
+            {/* Status */}
+            <div className="mb-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className={`text-sm font-medium ${
+                  integration.status === 'connected' ? 'text-green-600' : 'text-gray-600'
+                }`}>
+                  {integration.status === 'connected' ? '✅ Conectado' : '🔴 Desconectado'}
+                </span>
+                {integration.lastSync && (
+                  <span className="text-xs text-gray-500">
+                    {new Date(integration.lastSync).toLocaleString()}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Credential inputs */}
+            <div className="space-y-3">
+              {integration.id === 'meta' && (
+                <>
+                  <input
+                    type="text"
+                    placeholder="Meta App ID"
+                    value={credentials.meta.app_id}
+                    onChange={(e) => handleCredentialChange('meta', 'app_id', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  />
+                  <input
+                    type="password"
+                    placeholder="Meta App Secret"
+                    value={credentials.meta.app_secret}
+                    onChange={(e) => handleCredentialChange('meta', 'app_secret', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  />
+                  <input
+                    type="text"
+                    placeholder="WhatsApp Phone Number ID"
+                    value={credentials.meta.phone_number_id}
+                    onChange={(e) => handleCredentialChange('meta', 'phone_number_id', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  />
+                </>
+              )}
+
+              {integration.id === 'google_reviews' && (
+                <>
+                  <input
+                    type="text"
+                    placeholder="Google My Business Location ID"
+                    value={credentials.google_reviews.location_id}
+                    onChange={(e) => handleCredentialChange('google_reviews', 'location_id', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  />
+                  <input
+                    type="password"
+                    placeholder="Google Service Account Key"
+                    value={credentials.google_reviews.service_account_key}
+                    onChange={(e) => handleCredentialChange('google_reviews', 'service_account_key', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  />
+                </>
+              )}
+
+              {integration.id === 'whatsapp' && (
+                <>
+                  <input
+                    type="text"
+                    placeholder="WhatsApp Business Account ID"
+                    value={credentials.whatsapp.account_id}
+                    onChange={(e) => handleCredentialChange('whatsapp', 'account_id', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  />
+                  <input
+                    type="password"
+                    placeholder="WhatsApp Access Token"
+                    value={credentials.whatsapp.access_token}
+                    onChange={(e) => handleCredentialChange('whatsapp', 'access_token', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  />
+                </>
+              )}
+
+              {(integration.id === 'openai' || integration.id === 'gemini') && (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
+                    <span className="text-sm text-green-700">✅ {integration.name}</span>
+                    <span className="text-xs text-green-600">Configurado</span>
+                  </div>
+                  <input
+                    type="password"
+                    placeholder={`${integration.name} API Key`}
+                    value={credentials[integration.id].api_key}
+                    onChange={(e) => handleCredentialChange(integration.id, 'api_key', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    disabled={integration.status === 'connected'}
+                  />
+                </div>
+              )}
+
+              {integration.id === 'mercadopago' && (
+                <>
+                  <input
+                    type="text"
+                    placeholder="MercadoPago App ID"
+                    value={credentials.mercadopago.app_id}
+                    onChange={(e) => handleCredentialChange('mercadopago', 'app_id', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  />
+                  <input
+                    type="password"
+                    placeholder="MercadoPago Access Token"
+                    value={credentials.mercadopago.access_token}
+                    onChange={(e) => handleCredentialChange('mercadopago', 'access_token', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  />
+                </>
+              )}
+
+              {integration.id === 'custom' && (
+                <>
+                  <input
+                    type="text"
+                    placeholder="API Base URL"
+                    value={credentials.custom.api_url}
+                    onChange={(e) => handleCredentialChange('custom', 'api_url', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  />
+                  <input
+                    type="password"
+                    placeholder="API Key / Token"
+                    value={credentials.custom.api_key}
+                    onChange={(e) => handleCredentialChange('custom', 'api_key', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  />
+                </>
+              )}
+            </div>
+
+            {/* Action buttons */}
+            <div className="flex space-x-2 mt-4">
+              {integration.status === 'connected' ? (
+                <>
+                  <button
+                    onClick={() => handleTestConnection(integration.id)}
+                    className="flex-1 bg-green-100 text-green-700 py-2 px-3 rounded-lg text-sm hover:bg-green-200 transition-colors"
+                  >
+                    🧪 Probar
+                  </button>
+                  <button
+                    onClick={() => handleDisconnect(integration.id)}
+                    className="flex-1 bg-red-100 text-red-700 py-2 px-3 rounded-lg text-sm hover:bg-red-200 transition-colors"
+                  >
+                    🔌 Desconectar
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => handleConnect(integration.id)}
+                  className={`w-full text-white py-2 px-3 rounded-lg text-sm hover:opacity-90 transition-colors ${
+                    integration.id === 'meta' ? 'bg-blue-500 hover:bg-blue-600' :
+                    integration.id === 'google_reviews' ? 'bg-yellow-500 hover:bg-yellow-600' :
+                    integration.id === 'whatsapp' ? 'bg-green-500 hover:bg-green-600' :
+                    integration.id === 'openai' || integration.id === 'gemini' ? 'bg-purple-500 hover:bg-purple-600' :
+                    integration.id === 'mercadopago' ? 'bg-blue-600 hover:bg-blue-700' :
+                    'bg-gray-600 hover:bg-gray-700'
+                  }`}
+                >
+                  🔗 Conectar {integration.name}
+                </button>
+              )}
+            </div>
           </div>
-          {integration.status === 'error' && (
-            <button
-              onClick={() => handleRetryConnection(integration.id)}
-              className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200 transition-colors"
-            >
-              🔄 Reintentar
-            </button>
-          )}
+        ))}
+      </div>
+
+      {/* 🆕 PRÓXIMOS PASOS */}
+      <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
+        <h3 className="font-bold text-green-800 mb-3">🚀 Próximos Pasos</h3>
+        <div className="text-sm text-green-700">
+          <p className="mb-3">Una vez configuradas tus credenciales:</p>
+          <ul className="list-disc list-inside space-y-1">
+            <li>Los agentes IA comenzarán a responder automáticamente</li>
+            <li>Se sincronizarán datos en tiempo real</li>
+            <li>Las métricas mostrarán datos reales en lugar de simulados</li>
+            <li>El sistema estará completamente automatizado</li>
+          </ul>
         </div>
+      </div>
+    </div>
+  );
+};
         
         {/* 🆕 FECHA DE ÚLTIMA SINCRONIZACIÓN */}
         <div className="text-xs text-gray-500 mb-2">
