@@ -12,7 +12,7 @@ import { firebaseConfig, firebaseServices, offlineConfig } from './firebaseConfi
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
-const GOOGLE_CLIENT_ID = "711205636822-gnr5u8gumdd6n3h41kauhn6enhbt160d.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID = "284445869651-ets9s29v4f3ljj02qveq9lqlmj88npkl.apps.googleusercontent.com";
 
 // Initialize Firebase
 let app;
