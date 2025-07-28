@@ -1839,14 +1839,152 @@ export const ClientsSection = () => {
 
   useEffect(() => {
     fetchClients();
+    initializeIlMandorlaClients();
   }, []);
+
+  const initializeIlMandorlaClients = () => {
+    // Clientes diversos de IL MANDORLA con datos realistas
+    const ilMandorlaClients = [
+      {
+        id: 'client_1',
+        name: 'Carlos Mendoza',
+        email: 'carlos.mendoza@gmail.com',
+        phone: '+595 21 456789',
+        visit_count: 12,
+        points: 2450,
+        feedback_count: 4,
+        nft_level: 'oro',
+        last_visit: '2025-01-15',
+        birthday: '1985-03-15',
+        allergies: 'Ninguna',
+        special_date: 'Aniversario 2023-06-10',
+        total_spent: 145000,
+        avg_ticket: 12083,
+        status: 'ambassador',
+        acquisition_date: '2023-08-15',
+        referrals_made: 3,
+        favorite_dishes: ['Brooklyn', 'Baby Ribs', 'Cerveza Artesanal'],
+        engagement_score: 95
+      },
+      {
+        id: 'client_2', 
+        name: 'Sofia Rodriguez',
+        email: 'sofia.rodriguez@hotmail.com',
+        phone: '+595 21 987654',
+        visit_count: 8,
+        points: 1680,
+        feedback_count: 6,
+        nft_level: 'plata',
+        last_visit: '2025-01-20',
+        birthday: '1992-11-22',
+        allergies: 'Lactosa',
+        special_date: 'Cumpleaños hija 2024-05-14',
+        total_spent: 89500,
+        avg_ticket: 11187,
+        status: 'recurrent',
+        acquisition_date: '2024-02-10',
+        referrals_made: 2,
+        favorite_dishes: ['Pulled Pork', 'Nachos', 'Jugos Naturales'],
+        engagement_score: 87
+      },
+      {
+        id: 'client_3',
+        name: 'Roberto Silva',
+        email: 'roberto.silva@empresa.com.py',
+        phone: '+595 21 345678',
+        visit_count: 15,
+        points: 3250,
+        feedback_count: 8,
+        nft_level: 'citizen_kumia',
+        last_visit: '2025-01-22',
+        birthday: '1978-07-30',
+        allergies: 'Mariscos',
+        special_date: 'Almuerzo ejecutivo mensual',
+        total_spent: 198000,
+        avg_ticket: 13200,
+        status: 'ambassador',
+        acquisition_date: '2023-11-05',
+        referrals_made: 5,
+        favorite_dishes: ['Plato de Carne Individual', 'Para Compartir x4', 'Vinos'],
+        engagement_score: 98
+      },
+      {
+        id: 'client_4',
+        name: 'Ana Gutierrez',
+        email: 'ana.gutierrez@universidad.edu.py',
+        phone: '+595 21 567890',
+        visit_count: 4,
+        points: 820,
+        feedback_count: 2,
+        nft_level: 'bronce',
+        last_visit: '2025-01-18',
+        birthday: '1995-12-03',
+        allergies: 'Gluten',
+        special_date: 'No especificado',
+        total_spent: 34500,
+        avg_ticket: 8625,
+        status: 'new',
+        acquisition_date: '2024-12-15',
+        referrals_made: 0,
+        favorite_dishes: ['Ensalada', 'Jugos Naturales'],
+        engagement_score: 65
+      },
+      {
+        id: 'client_5',
+        name: 'Diego Paredes',
+        email: 'diego.paredes@startup.com',
+        phone: '+595 21 234567',
+        visit_count: 6,
+        points: 1340,
+        feedback_count: 3,
+        nft_level: 'plata',
+        last_visit: '2025-01-19',
+        birthday: '1988-09-17',
+        allergies: 'Ninguna',
+        special_date: 'Reuniones de trabajo',
+        total_spent: 67800,
+        avg_ticket: 11300,
+        status: 'recurrent',
+        acquisition_date: '2024-07-20',
+        referrals_made: 1,
+        favorite_dishes: ['Choripán', 'Cerveza Artesanal', 'Empanadas'],
+        engagement_score: 78
+      },
+      {
+        id: 'client_6',
+        name: 'Patricia Benitez',
+        email: 'patricia.benitez@consultora.py',
+        phone: '+595 21 876543',
+        visit_count: 2,
+        points: 380,
+        feedback_count: 1,
+        nft_level: 'bronce',
+        last_visit: '2024-12-28',
+        birthday: '1980-04-25',
+        allergies: 'Frutos secos',
+        special_date: 'No especificado',
+        total_spent: 18900,
+        avg_ticket: 9450,
+        status: 'inactive',
+        acquisition_date: '2024-11-10',
+        referrals_made: 0,
+        favorite_dishes: ['Pizza 4 Quesos'],
+        engagement_score: 45
+      }
+    ];
+
+    setClients(ilMandorlaClients);
+  };
 
   const fetchClients = async () => {
     try {
       const response = await axios.get(`${API}/customers`);
-      setClients(response.data);
+      if (response.data && response.data.length > 0) {
+        setClients(response.data);
+      }
     } catch (error) {
       console.error('Error fetching clients:', error);
+      // Si no hay datos en el backend, usar los datos iniciales
     }
   };
 
