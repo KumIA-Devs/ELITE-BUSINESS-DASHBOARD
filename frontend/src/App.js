@@ -1347,22 +1347,59 @@ const MenuSection = () => {
   const handleDuplicateItem = (item) => {
     const duplicatedItem = {
       ...item,
-      id: Date.now(),
+      id: `${item.category.toLowerCase()}_${Date.now()}`,
       name: `${item.name} (Copia)`,
-      is_active: false
+      is_active: false,
+      sales_count: 0
     };
     setMenuItems(prev => [...prev, duplicatedItem]);
+    alert('Item duplicado exitosamente');
   };
 
-  const handleToggleActive = (itemId) => {
-    setMenuItems(prev => 
-      prev.map(item => 
-        item.id === itemId 
-          ? { ...item, is_active: !item.is_active }
-          : item
-      )
-    );
+  const handleToggleActive = async (itemId) => {
+    try {
+      const item = menuItems.find(item => item.id === itemId);
+      const updatedItem = { ...item, is_active: !item.is_active };
+      
+      // Actualizar en backend
+      await axios.put(`${API}/menu/${itemId}`, updatedItem);
+      
+      // Actualizar estado local
+      setMenuItems(prev => 
+        prev.map(item => 
+          item.id === itemId 
+            ? { ...item, is_active: !item.is_active }
+            : item
+        )
+      );
+    } catch (error) {
+      console.error('Error toggling item status:', error);
+      // Actualizar solo localmente si el backend falla
+      setMenuItems(prev => 
+        prev.map(item => 
+          item.id === itemId 
+            ? { ...item, is_active: !item.is_active }
+            : item
+        )
+      );
+    }
   };
+
+  const handleViewModeToggle = () => {
+    setViewMode(viewMode === 'admin' ? 'customer' : 'admin');
+  };
+
+  const handleAnalyticsToggle = () => {
+    setShowAnalytics(!showAnalytics);
+  };
+
+  const handleNewItemClick = () => {
+    setShowNewItemModal(true);
+  };
+
+  const filteredItems = selectedCategory === 'all' 
+    ? menuItems 
+    : menuItems.filter(item => item.category === selectedCategory);
 
   return (
     <div className="space-y-6">
