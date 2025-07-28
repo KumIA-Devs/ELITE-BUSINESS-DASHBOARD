@@ -1043,11 +1043,25 @@ const DashboardSummary = ({ metrics }) => {
 // 🆕 RESTAURAR MÓDULO MENÚ COMPLETO
 const MenuSection = () => {
   const [menuItems, setMenuItems] = useState([]);
-  const [categories, setCategories] = useState(['Entradas', 'Principales', 'Postres', 'Bebidas']);
+  const [categories, setCategories] = useState(['Entradas', 'Sandwiches', 'Parrillas', 'Pizzas', 'Bebidas']);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [editingItem, setEditingItem] = useState(null);
   const [viewMode, setViewMode] = useState('admin'); // admin, customer
   const [showAnalytics, setShowAnalytics] = useState(false);
+  const [showNewItemModal, setShowNewItemModal] = useState(false);
+  const [newItem, setNewItem] = useState({
+    name: '',
+    description: '',
+    price: '',
+    category: 'Entradas',
+    image: '',
+    video: '',
+    is_active: true,
+    high_margin: false,
+    popularity: 3,
+    upselling_suggestions: '',
+    sales_count: 0
+  });
 
   useEffect(() => {
     fetchMenuItems();
