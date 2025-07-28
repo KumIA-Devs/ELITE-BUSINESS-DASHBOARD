@@ -1,77 +1,71 @@
 <analysis>
-The AI engineer's work transitioned from building the IL MANDORLA administrative dashboard (MVP to feature-rich) to proposing a Super App ecosystem. Initially, development focused on a React/FastAPI/MongoDB stack with Google OAuth and OpenAI. Significant effort went into UI/UX redesign and module expansion, notably restoring the Menu module and completing a Configuration panel. Despite a declared completion after comprehensive backend and frontend testing, the user immediately shifted focus to connecting the dashboard with a separate UserApp to create a fully AI-powered, gamified, and integrated hospitality platform. The current phase involves a detailed architectural discussion, identifying numerous third-party integrations and pre-configuration steps the user needs to complete before further coding can commence. This highlights a shift from feature implementation to strategic ecosystem design and external dependency management.
+The AI engineer successfully transitioned the IL MANDORLA dashboard from MVP to a comprehensive application, then pivoted to building a Super App ecosystem. Initial work focused on fixing UI/UX bugs in existing modules like Reporte Semanal and Crecimiento Semanal de Ingresos, adding interactive charts and export. A major focus was the new Reservas system, including real-time table management, automated confirmations, and integrating a separate Next.js UserWebApp via a shared Firebase backend. The AI engineer also resolved Google OAuth  issues. Subsequent efforts involved completely revamping the Menu section (full CRUD, analytics, image/video uploads), enhancing the Clientes section with diverse data and functional action buttons/modals (NFTs, history, referrals), and integrating Google Reviews as a primary channel in the Feedback section with automated responses. The current task is transforming the Agentes IA section into a full AI marketing agency, replacing generic assistants with specialized agents, and implementing an in-dashboard Gemini chat. The immediate action is adding modals for agent functionalities.
 </analysis>
 
 <product_requirements>
-The IL MANDORLA Smokehouse dashboard, part of the KUMIA ELITE system, aims to be a central control for restaurant owners. Initially, it required secure Google OAuth2, a general dashboard for real-time metrics, menu, reservations, feedback, rewards/NFTs, client/wallet, AI agent training, and external connections (Meta, TikTok, OpenAI, Stripe), all with an elegant, mobile-first UI. A Master Prompt demanded a complete redesign, focusing on ROI visualization, AI-driven insights, and functional expansion across all modules (Dashboard General, Clients, Feedback, Reservations, AI Agents, Rewards & NFTs, ROI Viewer, Configuration). Crucially, the Menu module required full restoration with new features like upselling suggestions. Post-dashboard completion, the user now requests connecting this admin dashboard with a separate UserApp for consumers. This expanded vision includes: fully AI-powered customer service (replacing human chat), Google Reviews integration with gamified rewards, multiplayer games for customers waiting for food, and in-app payment processing (MercadoPago focus). The revenue model is based on restaurant subscriptions and transaction fees, with no consumer charges.
+The IL MANDORLA Smokehouse dashboard, part of the KUMIA ELITE system, centralizes restaurant operations. Core requirements included secure Google OAuth2, real-time metrics, menu, reservations, feedback, rewards/NFTs, client/wallet, and AI agent training, all with a mobile-first UI focused on ROI and AI-driven insights. The Menu module specifically needed full restoration with upselling features. The expanded vision introduces a Super App ecosystem, connecting this admin dashboard with a separate UserApp for consumers. This involves fully AI-powered customer service, Google Reviews integration with gamified rewards, multiplayer games, and in-app payment processing (MercadoPago). The platform's revenue model is based on restaurant subscriptions and transaction fees, without consumer charges. A key focus is a 100% AI marketing agency, where specialized AI agents manage all digital channels, responding to comments, DMs, and reviews, replacing human community managers. An in-dashboard Gemini chat is required for business intelligence, guiding owners on prompt modification, analytics, and strategic decisions based on dashboard data.
 </product_requirements>
 
 <key_technical_concepts>
--   **Full-Stack Development:** React (Frontend), FastAPI (Backend), MongoDB (Database).
+-   **Full-Stack Development:** React (Frontend), FastAPI (Backend), MongoDB (Database), Next.js (UserApp).
 -   **Authentication:** Google OAuth2, JWT tokens, Firebase Authentication.
--   **Cloud & Serverless:** Firebase (Realtime Database/Firestore, Cloud Functions), AWS SES.
--   **AI Integration:** OpenAI API, Google Gemini API.
--   **Third-Party Integrations:** Meta Business Suite (WhatsApp, Instagram, Facebook), Google My Business API, MercadoPago, Sentry, Cloudflare.
--   **UI/UX:** Mobile-First Design, Tailwind CSS, Modular Components.
--   **Security:** Environment variables.
+-   **Cloud & Serverless:** Firebase (Firestore, Cloud Functions), AWS SES (planned).
+-   **AI Integration:** OpenAI API (initial), Google Gemini API.
+-   **Third-Party Integrations:** Meta Business Suite (WhatsApp, Instagram, Facebook), Google My Business API, MercadoPago (planned), Sentry, Cloudflare (planned), Gmail API.
+-   **UI/UX:** Mobile-First Design, Tailwind CSS, Radix UI, Modular Components.
+-   **Database:** MongoDB (existing), Firestore (for shared data/real-time).
 </key_technical_concepts>
 
 <code_architecture>
-The application employs a standard full-stack setup: React frontend, FastAPI backend, and MongoDB database.
+The application employs a standard full-stack setup: React frontend, FastAPI backend, and MongoDB database. A separate Next.js UserApp is part of the broader ecosystem, analyzed but not directly modified within the  directory.
 
 
 
 -   ****:
-    -   **Importance**: Core FastAPI application, handling API routes, database interactions, and business logic.
-    -   **Changes Made**: Substantially modified to integrate Google OAuth2 and OpenAI API calls. New endpoints for dashboard metrics, ROI analysis, and advanced functionalities were added. Duplicate CORS middleware was fixed.
+    -   **Importance**: Core FastAPI application, handling API routes and business logic.
+    -   **Changes Made**: Extended with new API routes and Pydantic models for the enhanced reservation system (, , etc.). It now imports  and integrates reservation logic.
 -   ****:
     -   **Importance**: Populates MongoDB with initial sample data.
-    -   **Changes Made**: Created as a new file, no explicit modifications recorded in the trajectory.
+    -   **Changes Made**: Modified to include seed data for the menu based on the provided PDF and for diverse client profiles.
 -   ****:
-    -   **Importance**: Main React component, defining overall UI, routing, and integrating dashboard modules.
-    -   **Changes Made**: Heavily rewritten to incorporate Google OAuth2 and an  component. Extensive modifications implemented the KUMIA redesign, reorganizing the dashboard and adding module layouts. It underwent significant refactoring to import components from  and integrate Firebase. Orphaned or duplicate code related to , , and  components was identified and removed.
--   ****:
-    -   **Importance**: Main CSS styles, leveraging Tailwind CSS.
-    -   **Changes Made**: Updated for the KUMIA redesign, incorporating new color schemes and UI/UX elements.
+    -   **Importance**: Main React component for UI and routing.
+    -   **Changes Made**: Updated to integrate new components and functionalities like  improvements and . The Google Client ID for OAuth was also updated.
 -   ****:
     -   **Importance**: Lists Python dependencies.
-    -   **Changes Made**: Updated to include , , and .
+    -   **Changes Made**: Updated to include  for Firebase integration.
 -   ****:
-    -   **Importance**: Manages Node.js dependencies and scripts.
-    -   **Changes Made**: Updated to include  and .
+    -   **Importance**: Contains reusable React components for various dashboard sections.
+    -   **Changes Made**: Heavily refactored. The  now includes the  and its logic. The  has new modals and functions for client management (NFT rewards, history, contact, referrals, auto-rewards). The  was revamped to integrate Google Reviews prominently and includes a comprehensive auto-response configuration modal. The  was completely replaced with specialized AI agents, an in-dashboard Gemini chat, and improved training section. Further changes are ongoing to implement modals for all AI agent actions.
 -   ** (NEW)**:
-    -   **Importance**: Created to modularize the frontend. Contains reusable React components for various dashboard sections.
-    -   **Changes Made**: Initial implementation included , .  and  were later extracted and moved into this file from .
+    -   **Importance**: Centralized Firebase Admin SDK configuration for backend services.
+    -   **Changes Made**: Created to initialize Firebase Admin SDK using the provided service account credentials.
 -   ** (NEW)**:
-    -   **Importance**: Stores Firebase project configuration.
-    -   **Changes Made**: Created to hold the Firebase configuration object provided by the user.
--   ** (NEW)** & ** (NEW)**:
-    -   **Importance**: Documentation files summarizing the completed project status and release details.
-    -   **Changes Made**: Created by the AI engineer at the end of the dashboard assembly phase.
+    -   **Importance**: Handles data synchronization between Dashboard and UserWebApp via Firebase.
+    -   **Changes Made**: Created to manage shared data architecture and expose public APIs for the UserWebApp.
 </code_architecture>
 
 <pending_tasks>
-The core dashboard assembly (UI/UX, module restoration) is declared complete and tested. The current pending tasks revolve around the new Super App ecosystem:
--   Connect the Dashboard with a separate UserApp via Firebase.
--   Integrate WhatsApp Business API, Meta Business Suite, Google My Business API for full AI automation.
--   Implement Google Reviews integration with gamified rewards.
--   Develop multiplayer games for customer entertainment.
--   Integrate in-app payment processing (MercadoPago).
--   Set up comprehensive AI Content Factory features and Predictive Business Intelligence (non-ERP and ERP integration).
--   Integrate competitive intelligence monitoring from public sources.
+-   Implement remaining modals for AI Agents section actions (e.g., test, analysis, create new agent).
+-   Full integration of WhatsApp Business API (currently mocked).
+-   Implementation of multiplayer games for customers.
+-   MercadoPago integration for in-app payment processing.
+-   Full AI Content Factory and Predictive Business Intelligence (non-ERP and ERP integration).
+-   Competitive intelligence monitoring from public sources.
+-   Deployment of UserWebApp.
 </pending_tasks>
 
 <current_work>
-Immediately before this summary request, the previous AI engineer declared the KUMIA ELITE DASHBOARD ASSEMBLY complete and production-ready, having passed all backend (37/37) and frontend (14/14) tests. This included the full restoration and enhancement of all 12 major modules (Dashboard General, Menu, Customer, Feedback, Reservations, AI Agents, Rewards & NFTs, ROI Viewer, Integrations, Configuration, Authentication, Navigation), as well as Firebase integration, AI integration (OpenAI, though discussion shifted to Gemini), and demonstration of ROI.
+Immediately before this summary request, the previous AI engineer was focused on transforming the Agentes IA (AI Agents) section within the dashboard. The user explicitly requested to make all action buttons fully functional, including: Reporte de Rendimiento, + Nuevo Agente, Probar, Entrenar, Clonar, and Analizar. The AI engineer confirmed the task to implement these 6 missing modals.
 
-However, the user then introduced a new, expanded vision: connecting this dashboard with a separate UserApp to create a unified, AI-powered Super App ecosystem. The current work is focused on the *planning and pre-configuration* phase for this new set of integrations. The AI engineer has extensively detailed:
-1.  **Why** various third-party services (Firebase, WhatsApp Business API, Meta Business Suite, Google My Business API, Google Gemini API, Amazon SES, MercadoPago, Sentry, Cloudflare) are needed, their costs, and potential replacements.
-2.  **What** specific pre-configurations the user needs to perform *outside* the Emergent environment (e.g., purchasing domains, setting up Cloudflare, creating Firebase projects, verifying business accounts with WhatsApp/Meta/MercadoPago, generating API keys, setting up AWS SES).
-3.  **What information** (API keys, JSON files, IDs) the user needs to provide back to the AI engineer for the actual coding to begin.
+The AI Agents section has already undergone a significant transformation:
+-   Generic WhatsApp Assistant duplicates were replaced by 8 specialized AI agents (e.g., Google Reviews Manager, WhatsApp Concierge IA, IA Garzon Virtual, KUMIA Loyalty IA).
+-   Advanced metrics for AI performance are displayed.
+-   An in-dashboard Gemini chat (🧠 KUMIA Business IA) is implemented, designed for business intelligence and strategic guidance using dashboard data.
+-   The Centro de Entrenamiento has been improved, showing active data sources and agent performance.
 
-The product's current state is that the admin dashboard is assembled and functional according to the previous requirements, but the new, ambitious ecosystem integration is entirely pending the user's provision of necessary third-party credentials and completion of external setup steps.
+The current, precise state is that the code for these remaining modals has just been added (likely within  due to its length), and the next immediate step is to restart the frontend to apply these changes. The AI Agents section is intended to be the heart of your operation 100% automatizada, replacing human community managers.
 </current_work>
 
 <optional_next_step>
-The next step is to wait for the user to provide all the required credentials and confirm external pre-configurations are complete.
+Restart the frontend service to apply the newly added modals for the AI Agents section.
 </optional_next_step>
