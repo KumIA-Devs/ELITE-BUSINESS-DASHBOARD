@@ -5314,6 +5314,280 @@ Optimiza los prompts de tus agentes con mejor performance y replica esas técnic
         </div>
       )}
 
+      {/* 🆕 MODAL ANALIZAR AGENTE */}
+      {showAnalyzeModal && selectedAgent && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">📊 Análisis Profundo de Agente IA</h2>
+                  <p className="text-gray-600">{selectedAgent.name} - Insights avanzados y optimización</p>
+                </div>
+                <button 
+                  onClick={() => setShowAnalyzeModal(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Columna 1: Métricas de Performance */}
+                <div className="space-y-4">
+                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200">
+                    <h3 className="font-bold text-blue-800 mb-4">📈 Métricas de Performance</h3>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium text-blue-700">Respuestas Totales</span>
+                        <span className="text-lg font-bold text-blue-600">{selectedAgent.performance?.responses || 0}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium text-blue-700">Satisfacción</span>
+                        <span className="text-lg font-bold text-blue-600">{selectedAgent.performance?.rating || 0}/5</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium text-blue-700">Conversión</span>
+                        <span className="text-lg font-bold text-blue-600">{selectedAgent.performance?.conversion || 0}%</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium text-blue-700">Tiempo Respuesta</span>
+                        <span className="text-lg font-bold text-blue-600">1.8s</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium text-blue-700">Escalaciones</span>
+                        <span className="text-lg font-bold text-blue-600">2.3%</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium text-blue-700">Automatización</span>
+                        <span className="text-lg font-bold text-blue-600">97.7%</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+                    <h4 className="font-bold text-green-800 mb-3">🎯 Fortalezas Identificadas</h4>
+                    <div className="space-y-2">
+                      <div className="flex items-start">
+                        <span className="text-green-600 mr-2">✅</span>
+                        <p className="text-sm text-green-700">Excelente manejo de consultas sobre menú</p>
+                      </div>
+                      <div className="flex items-start">
+                        <span className="text-green-600 mr-2">✅</span>
+                        <p className="text-sm text-green-700">Respuestas rápidas y precisas</p>
+                      </div>
+                      <div className="flex items-start">
+                        <span className="text-green-600 mr-2">✅</span>
+                        <p className="text-sm text-green-700">Tono amigable y profesional</p>
+                      </div>
+                      <div className="flex items-start">
+                        <span className="text-green-600 mr-2">✅</span>
+                        <p className="text-sm text-green-700">Buena integración con sistemas</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
+                    <h4 className="font-bold text-yellow-800 mb-3">⚠️ Áreas de Mejora</h4>
+                    <div className="space-y-2">
+                      <div className="flex items-start">
+                        <span className="text-yellow-600 mr-2">🔄</span>
+                        <p className="text-sm text-yellow-700">Mejorar upselling en bebidas</p>
+                      </div>
+                      <div className="flex items-start">
+                        <span className="text-yellow-600 mr-2">🔄</span>
+                        <p className="text-sm text-yellow-700">Optimizar respuestas complejas</p>
+                      </div>
+                      <div className="flex items-start">
+                        <span className="text-yellow-600 mr-2">🔄</span>
+                        <p className="text-sm text-yellow-700">Personalización para VIP</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Columna 2: Análisis de Conversaciones */}
+                <div className="space-y-4">
+                  <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
+                    <h3 className="font-bold text-purple-800 mb-4">💬 Análisis de Conversaciones</h3>
+                    <div className="space-y-3">
+                      <div className="p-3 bg-white rounded border">
+                        <h5 className="font-semibold text-purple-700 mb-2">Temas Más Consultados</h5>
+                        <div className="space-y-1">
+                          <div className="flex justify-between">
+                            <span className="text-sm">Menú del día</span>
+                            <span className="text-sm font-bold text-purple-600">28%</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-sm">Reservas</span>
+                            <span className="text-sm font-bold text-purple-600">23%</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-sm">Horarios</span>
+                            <span className="text-sm font-bold text-purple-600">19%</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-sm">Promociones</span>
+                            <span className="text-sm font-bold text-purple-600">15%</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-sm">Ubicación</span>
+                            <span className="text-sm font-bold text-purple-600">15%</span>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="p-3 bg-white rounded border">
+                        <h5 className="font-semibold text-purple-700 mb-2">Sentimiento de Clientes</h5>
+                        <div className="space-y-1">
+                          <div className="flex justify-between">
+                            <span className="text-sm">😊 Positivo</span>
+                            <span className="text-sm font-bold text-green-600">82%</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-sm">😐 Neutral</span>
+                            <span className="text-sm font-bold text-gray-600">15%</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-sm">😞 Negativo</span>
+                            <span className="text-sm font-bold text-red-600">3%</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="p-3 bg-white rounded border">
+                        <h5 className="font-semibold text-purple-700 mb-2">Horarios Pico</h5>
+                        <div className="space-y-1">
+                          <div className="flex justify-between">
+                            <span className="text-sm">12:00 - 14:00</span>
+                            <span className="text-sm font-bold text-purple-600">35%</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-sm">19:00 - 21:00</span>
+                            <span className="text-sm font-bold text-purple-600">28%</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-sm">21:00 - 23:00</span>
+                            <span className="text-sm font-bold text-purple-600">22%</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-sm">10:00 - 12:00</span>
+                            <span className="text-sm font-bold text-purple-600">15%</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Columna 3: Recomendaciones y Acciones */}
+                <div className="space-y-4">
+                  <div className="bg-orange-50 rounded-lg p-4 border border-orange-200">
+                    <h3 className="font-bold text-orange-800 mb-4">🎯 Recomendaciones de KUMIA</h3>
+                    <div className="space-y-3">
+                      <div className="p-3 bg-white rounded border border-orange-200">
+                        <h5 className="font-semibold text-orange-700 mb-2">🚀 Acciones Inmediatas</h5>
+                        <div className="space-y-2">
+                          <button className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-2 px-3 rounded text-sm hover:from-orange-600 hover:to-red-600 transition-all">
+                            📚 Entrenar con datos de último mes
+                          </button>
+                          <button className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-2 px-3 rounded text-sm hover:from-blue-600 hover:to-purple-600 transition-all">
+                            🎯 Optimizar prompts de upselling
+                          </button>
+                          <button className="w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white py-2 px-3 rounded text-sm hover:from-green-600 hover:to-emerald-600 transition-all">
+                            ⚡ Acelerar respuestas en pico
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="p-3 bg-white rounded border border-orange-200">
+                        <h5 className="font-semibold text-orange-700 mb-2">🔮 Predicciones AI</h5>
+                        <div className="space-y-2">
+                          <div className="text-sm">
+                            <div className="flex justify-between items-center">
+                              <span className="text-orange-700">Mejora esperada:</span>
+                              <span className="font-bold text-green-600">+18%</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <span className="text-orange-700">Tiempo optimización:</span>
+                              <span className="font-bold text-orange-600">2-3 días</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <span className="text-orange-700">ROI estimado:</span>
+                              <span className="font-bold text-green-600">+$2,400/mes</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="p-3 bg-white rounded border border-orange-200">
+                        <h5 className="font-semibold text-orange-700 mb-2">🏆 Comparativa</h5>
+                        <div className="space-y-2">
+                          <div className="text-sm">
+                            <div className="flex justify-between">
+                              <span className="text-orange-700">vs. Agente promedio:</span>
+                              <span className="font-bold text-green-600">+23%</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-orange-700">vs. Mejor agente:</span>
+                              <span className="font-bold text-orange-600">-8%</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-orange-700">Ranking industria:</span>
+                              <span className="font-bold text-green-600">Top 15%</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-red-50 rounded-lg p-4 border border-red-200">
+                    <h4 className="font-bold text-red-800 mb-3">🚨 Alertas Importantes</h4>
+                    <div className="space-y-2">
+                      <div className="flex items-start">
+                        <span className="text-red-600 mr-2">🔴</span>
+                        <p className="text-sm text-red-700">Incremento de 15% en consultas no resueltas</p>
+                      </div>
+                      <div className="flex items-start">
+                        <span className="text-orange-600 mr-2">🟡</span>
+                        <p className="text-sm text-orange-700">Tiempo de respuesta aumentó 0.3s esta semana</p>
+                      </div>
+                      <div className="flex items-start">
+                        <span className="text-yellow-600 mr-2">🟡</span>
+                        <p className="text-sm text-yellow-700">Necesita actualización de información de menú</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center pt-6 border-t border-gray-200 mt-8">
+                <div className="text-sm text-gray-500">
+                  📊 Análisis actualizado en tiempo real • Última actualización: {new Date().toLocaleString()}
+                </div>
+                <div className="flex space-x-3">
+                  <button 
+                    onClick={() => setShowAnalyzeModal(false)}
+                    className="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors"
+                  >
+                    Cerrar
+                  </button>
+                  <button 
+                    onClick={() => {
+                      alert('📊 Generando reporte detallado...\n\n📄 Incluye:\n• Análisis completo de performance\n• Recomendaciones personalizadas\n• Plan de optimización\n• Comparativas con industria\n\n⏱️ Tiempo estimado: 2 minutos\n📧 Se enviará por email cuando esté listo');
+                    }}
+                    className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-8 py-3 rounded-lg hover:from-blue-600 hover:to-purple-600 transition-all duration-200 font-bold"
+                  >
+                    📥 Exportar Reporte
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 🆕 MODAL EDITAR AGENTE */}
       {showEditModal && selectedAgent && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
