@@ -4202,44 +4202,152 @@ Optimiza los prompts de tus agentes con mejor performance y replica esas técnic
         ))}
       </div>
 
-      {/* 🆕 SECCIÓN DE ENTRENAMIENTO */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h3 className="text-lg font-bold text-gray-800 mb-4">🎓 Centro de Entrenamiento</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* 🆕 CENTRO DE ENTRENAMIENTO AVANZADO + CHAT GEMINI */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Centro de Entrenamiento */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <h3 className="text-lg font-bold text-gray-800 mb-4">🎓 Centro de Entrenamiento IA</h3>
           <div className="space-y-4">
-            <h4 className="font-medium text-gray-700">Datos de Entrenamiento</h4>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <span className="text-sm text-gray-600">Menú actualizado</span>
-                <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Activo</span>
-              </div>
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <span className="text-sm text-gray-600">Políticas de reserva</span>
-                <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Activo</span>
-              </div>
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <span className="text-sm text-gray-600">Información de eventos</span>
-                <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">Pendiente</span>
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
+              <h4 className="font-medium text-blue-800 mb-3">📚 Fuentes de Datos Activas</h4>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-blue-700">🍽️ Menú IL MANDORLA (28 items)</span>
+                  <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">✅ Sincronizado</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-blue-700">👥 Base de clientes (6 perfiles)</span>
+                  <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">✅ Actualizado</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-blue-700">💬 Conversaciones históricas</span>
+                  <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">✅ 15K+ mensajes</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-blue-700">⭐ Google Reviews (234 reviews)</span>
+                  <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">✅ Tiempo real</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-blue-700">📋 Políticas IL MANDORLA</span>
+                  <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">⏳ Actualizar</span>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="space-y-4">
-            <h4 className="font-medium text-gray-700">Rendimiento por Canal</h4>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <span className="text-sm text-gray-600">📱 WhatsApp</span>
-                <span className="text-sm font-medium text-green-600">94.2%</span>
-              </div>
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <span className="text-sm text-gray-600">📸 Instagram</span>
-                <span className="text-sm font-medium text-blue-600">88.7%</span>
-              </div>
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <span className="text-sm text-gray-600">👥 Facebook</span>
-                <span className="text-sm font-medium text-purple-600">91.3%</span>
+
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border border-green-200">
+              <h4 className="font-medium text-green-800 mb-3">🚀 Performance por Canal</h4>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-green-700">🌟 Google Reviews Manager</span>
+                  <span className="text-sm font-bold text-green-600">97.2% efectividad</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-green-700">📱 WhatsApp Concierge</span>
+                  <span className="text-sm font-bold text-blue-600">94.7% satisfacción</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-green-700">🍽️ IA Garzon Virtual</span>
+                  <span className="text-sm font-bold text-purple-600">82% upselling</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-green-700">🏆 KUMIA Loyalty</span>
+                  <span className="text-sm font-bold text-orange-600">94% retención</span>
+                </div>
               </div>
             </div>
+
+            <div className="bg-gradient-to-r from-orange-50 to-red-50 p-4 rounded-lg border border-orange-200">
+              <h4 className="font-medium text-orange-800 mb-2">⚡ Próximo Entrenamiento Programado</h4>
+              <p className="text-sm text-orange-700">
+                🗓️ <strong>Hoy 18:00</strong> - Actualización con nuevos reviews y feedback
+              </p>
+              <p className="text-sm text-orange-700 mt-1">
+                📈 Mejora esperada: +5% en precisión de respuestas
+              </p>
+            </div>
           </div>
+        </div>
+
+        {/* Chat con Gemini */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-bold text-gray-800">🧠 KUMIA Business Intelligence</h3>
+            <button 
+              onClick={() => setShowKumiaChat(!showKumiaChat)}
+              className={`px-3 py-1 rounded-lg text-sm transition-colors ${
+                showKumiaChat 
+                  ? 'bg-red-100 text-red-700 hover:bg-red-200' 
+                  : 'bg-green-100 text-green-700 hover:bg-green-200'
+              }`}
+            >
+              {showKumiaChat ? '👁️ Ocultar' : '💬 Expandir'}
+            </button>
+          </div>
+
+          {showKumiaChat ? (
+            <div className="space-y-4">
+              {/* Chat messages */}
+              <div className="h-96 overflow-y-auto bg-gray-50 rounded-lg p-4 space-y-3">
+                {chatMessages.map(message => (
+                  <div key={message.id} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`max-w-sm p-3 rounded-lg ${
+                      message.type === 'user' 
+                        ? 'bg-blue-500 text-white' 
+                        : 'bg-white border border-gray-200 text-gray-800'
+                    }`}>
+                      <div className="text-sm whitespace-pre-line">{message.content}</div>
+                      <div className="text-xs opacity-70 mt-1">
+                        {new Date(message.timestamp).toLocaleTimeString()}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {isTyping && (
+                  <div className="flex justify-start">
+                    <div className="bg-white border border-gray-200 text-gray-800 p-3 rounded-lg">
+                      <div className="text-sm">🤖 KUMIA está analizando...</div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Chat input */}
+              <div className="flex space-x-2">
+                <input
+                  type="text"
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                  placeholder="Pregúntame sobre tus agentes, métricas, estrategias..."
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+                <button 
+                  onClick={handleSendMessage}
+                  disabled={!chatInput.trim() || isTyping}
+                  className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors disabled:opacity-50"
+                >
+                  📤
+                </button>
+              </div>
+
+              <div className="text-xs text-gray-500 text-center">
+                💡 Puedo analizar todos tus datos del dashboard para ayudarte con decisiones estratégicas
+              </div>
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <div className="text-4xl mb-3">🧠</div>
+              <h4 className="font-bold text-gray-800 mb-2">Asistente de Business Intelligence</h4>
+              <p className="text-gray-600 text-sm mb-4">
+                Acceso completo a todos los datos del dashboard para análisis estratégico
+              </p>
+              <div className="text-xs text-gray-500">
+                ✅ {performanceData.totalConversations.toLocaleString()} conversaciones analizadas<br/>
+                ✅ {agents.length} agentes monitoreados<br/>
+                ✅ {performanceData.automationLevel}% automatización actual
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
