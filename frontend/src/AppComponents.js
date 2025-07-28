@@ -629,7 +629,10 @@ export const IntegrationsSection = () => {
       oauth_token: '',
       location_id: '',
       pos_profile: '',
-      test_mode: true
+      test_mode: true,
+      sync_frequency: 'realtime', // realtime, 1min, 5min, 15min, 30min, 1hour
+      webhook_url: '',
+      enable_webhooks: false
     }
   });
 
