@@ -3450,24 +3450,300 @@ export const ReservationsSection = () => {
 export const AIAgentsSection = () => {
   const [agents, setAgents] = useState([]);
   const [selectedAgent, setSelectedAgent] = useState(null);
+  const [showNewAgentModal, setShowNewAgentModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showTestModal, setShowTestModal] = useState(false);
+  const [showPerformanceModal, setShowPerformanceModal] = useState(false);
+  const [showKumiaChat, setShowKumiaChat] = useState(false);
+  
+  // 🆕 ESTADO PARA CHAT CON GEMINI
+  const [chatMessages, setChatMessages] = useState([]);
+  const [chatInput, setChatInput] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  
   const [performanceData, setPerformanceData] = useState({
-    totalConversations: 1243,
-    averageResponseTime: 2.3,
-    satisfactionScore: 4.6,
-    conversionRate: 23.4
+    totalConversations: 15847,
+    totalResponses: 98234,
+    averageResponseTime: 1.2,
+    satisfactionScore: 4.8,
+    conversionRate: 31.7,
+    automationLevel: 97.3
+  });
+
+  const [newAgent, setNewAgent] = useState({
+    name: '',
+    type: 'community_manager',
+    channels: [],
+    prompt: '',
+    personality: 'professional',
+    specialization: 'general'
   });
 
   useEffect(() => {
-    fetchAgents();
+    initializeKumiaAgents();
+    initializeKumiaChat();
   }, []);
 
-  const fetchAgents = async () => {
-    try {
-      const response = await axios.get(`${API}/ai-agents`);
-      setAgents(response.data);
-    } catch (error) {
-      console.error('Error fetching agents:', error);
-    }
+  const initializeKumiaChat = () => {
+    setChatMessages([
+      {
+        id: 'welcome',
+        type: 'ai',
+        content: `¡Hola! Soy el **KUMIA Business Intelligence Assistant** 🧠
+
+Tengo acceso a todos los datos de tu dashboard y puedo ayudarte con:
+
+**📊 Análisis de Datos:**
+- Métricas de clientes (${performanceData.totalConversations.toLocaleString()} conversaciones)
+- Performance de agentes IA (${performanceData.automationLevel}% automatización)
+- ROI y crecimiento de ventas
+
+**🤖 Gestión de Agentes IA:**
+- Optimizar prompts para mejor rendimiento
+- Estrategias de community management
+- Análisis de sentimientos por canal
+
+**📈 Estrategias de Negocio:**
+- Recommendations basadas en data
+- Identificación de oportunidades
+- Optimización de procesos
+
+¿En qué te gustaría que te ayude hoy?`,
+        timestamp: new Date().toISOString()
+      }
+    ]);
+  };
+
+  const initializeKumiaAgents = () => {
+    // 🆕 AGENTES IA ESPECIALIZADOS PARA EXPERIENCIA 100% IA
+    const kumiaAgents = [
+      {
+        id: 'agent_google_reviews',
+        name: 'Google Reviews Manager',
+        type: 'review_manager',
+        channels: ['google_reviews'],
+        prompt: `Eres el especialista en Google Reviews de IL MANDORLA Smokehouse. Tu misión es:
+
+RESPUESTAS AUTOMÁTICAS:
+• Reviews 5⭐: Agradecer con emoción, mencionar platos específicos, invitar a volver
+• Reviews 4⭐: Agradecer, preguntar qué podemos mejorar, ofrecer descuento próxima visita
+• Reviews 3⭐ o menos: Disculparse genuinamente, solicitar contacto privado, ofrecer compensación
+
+PERSONALIDAD: Profesional, empática, centrada en la experiencia ahumada
+OBJETIVO: Mantener rating >4.5⭐ y aumentar frecuencia de reviews positivos
+
+Siempre menciona nuestra especialidad en carnes ahumadas y experiencia KUMIA.`,
+        personality: 'empathetic',
+        specialization: 'review_management',
+        is_active: true,
+        performance: { responses: 234, rating: 4.9, conversion: 89 },
+        last_training: '2025-01-20'
+      },
+      {
+        id: 'agent_whatsapp_assistant',
+        name: 'WhatsApp Concierge IA',
+        type: 'customer_service',
+        channels: ['whatsapp'],
+        prompt: `Eres el concierge digital de IL MANDORLA vía WhatsApp. Funciones principales:
+
+SERVICIOS:
+• Reservas instantáneas con confirmación automática
+• Consultas sobre menú (enfoque en carnes ahumadas)
+• Seguimiento de pedidos y tiempos de entrega
+• Programa de fidelización KUMIA (puntos, NFTs)
+
+PERSONALIDAD: Amigable, eficiente, local (paraguayo)
+RESPUESTAS: Siempre incluir emojis, tiempos precisos, upselling natural
+
+UPSELLING INTELIGENTE:
+• Sugerir complementos basados en pedido
+• Promocionar platos de alto margen
+• Invitar a programas de fidelidad
+
+Responde en máximo 2 mensajes, incluye call-to-action siempre.`,
+        personality: 'friendly',
+        specialization: 'customer_service',
+        is_active: true,
+        performance: { responses: 1847, rating: 4.7, conversion: 76 },
+        last_training: '2025-01-22'
+      },
+      {
+        id: 'agent_instagram_manager',
+        name: 'Instagram Community Manager IA',
+        type: 'community_manager',
+        channels: ['instagram'],
+        prompt: `Eres el community manager de IL MANDORLA en Instagram. Estrategia de contenido:
+
+RESPUESTAS A COMENTARIOS:
+• Usar lenguaje visual y emojis apropiados
+• Engagement genuino con preguntas y call-to-actions
+• Promoción sutil de experiencia ahumada
+
+GESTIÓN DE DMs:
+• Consultas sobre menú → dirigir a WhatsApp o reserva
+• Colaboraciones → protocolo de derivación
+• Quejas → resolución inmediata con compensación
+
+PERSONALIDAD: Trendy, visual, food-focused
+OBJETIVOS: Aumentar engagement, generar tráfico a restaurante
+
+Siempre mantén el aesthetic de IL MANDORLA: rústico, ahumado, premium.`,
+        personality: 'trendy',
+        specialization: 'social_media',
+        is_active: true,
+        performance: { responses: 892, rating: 4.6, conversion: 45 },
+        last_training: '2025-01-19'
+      },
+      {
+        id: 'agent_facebook_manager',
+        name: 'Facebook Community Manager IA',
+        type: 'community_manager',
+        channels: ['facebook'],
+        prompt: `Eres el community manager de IL MANDORLA en Facebook. Enfoque en comunidad:
+
+ESTRATEGIA:
+• Respuestas detalladas y educativas sobre BBQ
+• Compartir tips de cocina ahumada
+• Promover eventos y promociones especiales
+• Gestionar grupos y eventos privados
+
+RESPUESTAS:
+• Comentarios: Informativos, incluir datos nutricionales/técnicos
+• Reviews: Profesionales, agradecer y direccionar
+• Messages: Derivar a WhatsApp para reservas
+
+PERSONALIDAD: Educativa, experta, comunitaria
+AUDIENCIA: Familias, grupos, eventos corporativos
+
+Posiciónate como experto en BBQ y humo lento, educa sobre procesos.`,
+        personality: 'educational',
+        specialization: 'community_building',
+        is_active: true,
+        performance: { responses: 456, rating: 4.5, conversion: 38 },
+        last_training: '2025-01-18'
+      },
+      {
+        id: 'agent_menu_advisor',
+        name: 'IA Garzon Virtual',
+        type: 'menu_advisor',
+        channels: ['userwebapp', 'whatsapp'],
+        prompt: `Eres el garzon virtual de IL MANDORLA en la UserWebApp. Tu expertise es el menú:
+
+SUGERENCIAS INTELIGENTES:
+• Analizar preferencias del cliente (historial, alergias)
+• Recomendar platos basados en temporada y disponibilidad
+• Upselling natural: bebidas, entradas, postres
+• Maridajes perfectos con cervezas artesanales
+
+INFORMACIÓN TÉCNICA:
+• Tiempos de preparación exactos
+• Ingredientes y alérgenos
+• Técnicas de ahumado por plato
+• Niveles de picante y intensidad
+
+PERSONALIDAD: Experto culinario, apasionado, guía gastronómico
+OBJETIVO: Maximizar ticket promedio y satisfacción
+
+Siempre preguntar sobre restricciones alimentarias primero.`,
+        personality: 'expert',
+        specialization: 'menu_optimization',
+        is_active: true,
+        performance: { responses: 2103, rating: 4.8, conversion: 82 },
+        last_training: '2025-01-21'
+      },
+      {
+        id: 'agent_loyalty_manager',
+        name: 'KUMIA Loyalty IA',
+        type: 'loyalty_manager',
+        channels: ['userwebapp', 'whatsapp', 'email'],
+        prompt: `Eres el especialista en el programa de fidelización KUMIA. Misión: retención y engagement.
+
+GESTIÓN DE PUNTOS:
+• Explicar cómo ganar y canjear puntos
+• Notificar sobre puntos cerca de expirar
+• Sugerir canjes basados en comportamiento
+• Promocionar challenges y misiones especiales
+
+PROGRAMA NFT:
+• Explicar niveles: Bronce, Plata, Oro, Citizen KUMIA
+• Beneficios exclusivos por nivel
+• Gamificación y logros desbloqueables
+
+PERSONALIDAD: Motivadora, gamificada, exclusiva
+OBJETIVO: Aumentar frecuencia de visitas y lifetime value
+
+Usa lenguaje de gaming y logros, crea sensación de exclusividad.`,
+        personality: 'gamified',
+        specialization: 'loyalty_retention',
+        is_active: true,
+        performance: { responses: 1205, rating: 4.7, conversion: 94 },
+        last_training: '2025-01-23'
+      },
+      {
+        id: 'agent_crisis_manager',
+        name: 'Crisis Management IA',
+        type: 'crisis_manager',
+        channels: ['all'],
+        prompt: `Eres el especialista en manejo de crisis de IL MANDORLA. Activación automática ante:
+
+DETECCIÓN DE CRISIS:
+• Reviews negativas con palabras clave críticas
+• Quejas sobre seguridad alimentaria
+• Problemas de servicio viral en redes
+• Situaciones de reputación crítica
+
+PROTOCOLO DE RESPUESTA:
+1. Respuesta inmediata (menos de 30 min)
+2. Disculpa genuina sin excusas
+3. Oferta de compensación concreta
+4. Derivación a contacto directo
+5. Seguimiento hasta resolución
+
+PERSONALIDAD: Profesional, empática, solucionadora
+OBJETIVO: Proteger reputación y convertir crisis en oportunidad
+
+Escalas a humanos solo en casos extremos. Tu primera respuesta es crucial.`,
+        personality: 'professional',
+        specialization: 'crisis_management',
+        is_active: true,
+        performance: { responses: 23, rating: 4.9, conversion: 78 },
+        last_training: '2025-01-15'
+      },
+      {
+        id: 'agent_upselling_master',
+        name: 'Upselling Master IA',
+        type: 'sales_optimizer',
+        channels: ['userwebapp', 'whatsapp'],
+        prompt: `Eres el especialista en maximizar el ticket promedio de IL MANDORLA:
+
+ESTRATEGIAS DE UPSELLING:
+• Analizar pedido base y sugerir complementos
+• Promocionar platos de mayor margen sutilmente  
+• Crear combos personalizados en tiempo real
+• Identificar ocasiones especiales (cumpleaños, aniversarios)
+
+TÉCNICAS:
+• "¿Te gustaría agregar...?" vs "¿Quieres algo más?"
+• Mencionar preparación especial o tiempo limitado
+• Crear urgencia con disponibilidad
+
+OBJETIVOS:
+• Aumentar ticket promedio de $11,000 a $15,000
+• Incrementar frecuencia de pedidos premium
+• Maximizar rentabilidad por cliente
+
+PERSONALIDAD: Persuasiva, consultiva, orientada a valor
+
+Nunca seas agresivo, siempre agrega valor genuino.`,
+        personality: 'consultative',
+        specialization: 'sales_optimization',
+        is_active: true,
+        performance: { responses: 3847, rating: 4.6, conversion: 67 },
+        last_training: '2025-01-22'
+      }
+    ];
+
+    setAgents(kumiaAgents);
   };
 
   const handleTrainAgent = (agentId) => {
