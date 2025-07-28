@@ -1370,7 +1370,12 @@ Saludos,
                   {/* ERP Details */}
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-bold text-gray-800">📖 {getSelectedERPInfo()?.name}</h3>
+                      <div className="flex items-center">
+                        <div className="w-10 h-10 flex items-center justify-center mr-3 bg-gray-100 rounded-lg">
+                          <span className="text-xl">{getSelectedERPInfo()?.logo}</span>
+                        </div>
+                        <h3 className="text-lg font-bold text-gray-800">📖 {getSelectedERPInfo()?.name}</h3>
+                      </div>
                       <button
                         onClick={() => setSelectedERP('')}
                         className="text-orange-600 hover:text-orange-800 text-sm"
