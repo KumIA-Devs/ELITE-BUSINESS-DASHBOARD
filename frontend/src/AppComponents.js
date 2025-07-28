@@ -3746,20 +3746,204 @@ Nunca seas agresivo, siempre agrega valor genuino.`,
     setAgents(kumiaAgents);
   };
 
+  // 🆕 FUNCIONES COMPLETAS PARA GESTIÓN DE AGENTES
+
   const handleTrainAgent = (agentId) => {
-    alert(`Entrenando agente ${agentId} con nueva información`);
+    const agent = agents.find(a => a.id === agentId);
+    setSelectedAgent(agent);
+    // Simular proceso de entrenamiento
+    alert(`🎓 Iniciando entrenamiento de ${agent.name}...
+
+📚 Datos incluidos:
+• Menú actualizado de IL MANDORLA
+• Historial de conversaciones (último mes)
+• Feedback de clientes
+• Políticas y procedimientos
+
+⏱️ Tiempo estimado: 15 minutos
+📈 Mejora esperada: +12% en satisfacción`);
+    
+    // Actualizar fecha de entrenamiento
+    setAgents(prev => prev.map(a => 
+      a.id === agentId 
+        ? { ...a, last_training: new Date().toISOString().split('T')[0] }
+        : a
+    ));
   };
 
   const handleTestAgent = (agentId) => {
-    alert(`Iniciando prueba conversacional con agente ${agentId}`);
+    const agent = agents.find(a => a.id === agentId);
+    setSelectedAgent(agent);
+    setShowTestModal(true);
   };
 
   const handleCloneAgent = (agentId) => {
-    alert(`Clonando configuración del agente ${agentId}`);
+    const agent = agents.find(a => a.id === agentId);
+    const clonedAgent = {
+      ...agent,
+      id: `${agent.id}_clone_${Date.now()}`,
+      name: `${agent.name} (Copia)`,
+      is_active: false
+    };
+    
+    setAgents(prev => [...prev, clonedAgent]);
+    alert(`📋 Agente clonado exitosamente: ${clonedAgent.name}
+    
+✅ Configuración copiada:
+• Prompt personalizado
+• Canales asignados  
+• Personalidad y especialización
+• Configuraciones avanzadas
+
+⚠️ Nota: El agente clonado está inactivo. Actívalo cuando esté listo.`);
   };
 
   const handleAnalyzePerformance = (agentId) => {
-    alert(`Analizando rendimiento detallado del agente ${agentId}`);
+    const agent = agents.find(a => a.id === agentId);
+    setSelectedAgent(agent);
+    setShowPerformanceModal(true);
+  };
+
+  const handleEditAgent = (agentId) => {
+    const agent = agents.find(a => a.id === agentId);
+    setSelectedAgent(agent);
+    setShowEditModal(true);
+  };
+
+  const handleNewAgent = () => {
+    setShowNewAgentModal(true);
+  };
+
+  const handleShowPerformanceReport = () => {
+    setShowPerformanceModal(true);
+  };
+
+  const handleCreateAgent = async () => {
+    if (!newAgent.name || !newAgent.prompt) {
+      alert('Por favor completa el nombre y prompt del agente');
+      return;
+    }
+
+    const agentToCreate = {
+      ...newAgent,
+      id: `agent_custom_${Date.now()}`,
+      is_active: false,
+      performance: { responses: 0, rating: 0, conversion: 0 },
+      last_training: new Date().toISOString().split('T')[0]
+    };
+
+    setAgents(prev => [...prev, agentToCreate]);
+    setShowNewAgentModal(false);
+    setNewAgent({
+      name: '',
+      type: 'community_manager',
+      channels: [],
+      prompt: '',
+      personality: 'professional',
+      specialization: 'general'
+    });
+
+    alert('🤖 Agente creado exitosamente! Recuerda activarlo cuando esté listo.');
+  };
+
+  // 🆕 CHAT CON GEMINI - BUSINESS INTELLIGENCE
+  const handleSendMessage = async () => {
+    if (!chatInput.trim()) return;
+
+    const userMessage = {
+      id: Date.now(),
+      type: 'user',
+      content: chatInput,
+      timestamp: new Date().toISOString()
+    };
+
+    setChatMessages(prev => [...prev, userMessage]);
+    setChatInput('');
+    setIsTyping(true);
+
+    // Simular respuesta de Gemini con datos del dashboard
+    setTimeout(() => {
+      const dashboardData = getDashboardContextForAI();
+      const aiResponse = generateAIResponse(chatInput, dashboardData);
+      
+      setChatMessages(prev => [...prev, {
+        id: Date.now() + 1,
+        type: 'ai',
+        content: aiResponse,
+        timestamp: new Date().toISOString()
+      }]);
+      setIsTyping(false);
+    }, 2000);
+  };
+
+  const getDashboardContextForAI = () => {
+    return {
+      agents: agents.length,
+      totalConversations: performanceData.totalConversations,
+      automationLevel: performanceData.automationLevel,
+      satisfaction: performanceData.satisfactionScore,
+      conversionRate: performanceData.conversionRate,
+      responseTime: performanceData.averageResponseTime
+    };
+  };
+
+  const generateAIResponse = (question, context) => {
+    // Simulación inteligente de respuestas basadas en contexto
+    const lowerQuestion = question.toLowerCase();
+    
+    if (lowerQuestion.includes('agente') || lowerQuestion.includes('bot') || lowerQuestion.includes('ia')) {
+      return `📊 **Análisis de Agentes IA:**
+
+Tienes **${context.agents} agentes activos** con estas métricas:
+• **${context.automationLevel}% de automatización** (excelente nivel)
+• **${context.totalConversations.toLocaleString()} conversaciones** gestionadas
+• **${context.satisfaction}/5 satisfacción** promedio
+
+**Recomendación:** Tu Google Reviews Manager tiene el mejor performance (4.9/5). Considera replicar su enfoque en otros canales.
+
+¿Te gustaría que analice algún agente específico?`;
+    }
+    
+    if (lowerQuestion.includes('venta') || lowerQuestion.includes('revenue') || lowerQuestion.includes('dinero')) {
+      return `💰 **Análisis de Ventas:**
+
+Con **${context.conversionRate}% de conversión** y **${context.responseTime}s de respuesta**, tus agentes están optimizando bien.
+
+**Oportunidades detectadas:**
+• El Upselling Master puede incrementar ticket promedio un 35%
+• WhatsApp Concierge tiene potencial de +15% en reservas
+• Loyalty IA puede aumentar retención en 28%
+
+**Acción sugerida:** Entrena al Upselling Master con datos de platos de mayor margen.`;
+    }
+
+    if (lowerQuestion.includes('cliente') || lowerQuestion.includes('customer') || lowerQuestion.includes('satisfaccion')) {
+      return `👥 **Análisis de Clientes:**
+
+**Satisfacción actual: ${context.satisfaction}/5** - ¡Excelente nivel!
+
+**Insights clave:**
+• Crisis Manager mantiene 78% de recuperación en quejas
+• Menu Advisor logra 82% de conversión en sugerencias
+• Loyalty Manager impulsa 94% de retención
+
+**Recomendación:** Implementa el programa de referidos automático para amplificar la satisfacción actual.`;
+    }
+
+    // Respuesta general inteligente
+    return `🧠 **Análisis General:**
+
+Basado en tu pregunta sobre "${question}", aquí está mi análisis:
+
+**Estado actual:**
+• ${context.agents} agentes IA operativos
+• ${context.automationLevel}% automatización
+• ${context.totalConversations.toLocaleString()} interacciones exitosas
+
+**Siguiente paso recomendado:**
+Optimiza los prompts de tus agentes con mejor performance y replica esas técnicas en los demás.
+
+¿Hay algún aspecto específico que te gustaría explorar más?`;
   };
 
   const getChannelIcon = (channel) => {
