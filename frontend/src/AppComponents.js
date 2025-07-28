@@ -944,6 +944,10 @@ export const IntegrationsSection = () => {
     }, 2000);
   };
 
+  const getSelectedERPInfo = () => {
+    return restaurantERPs.find(erp => erp.id === selectedERP);
+  };
+
   const handleContactSupport = () => {
     const subject = encodeURIComponent('Solicitud de integración ERP - KUMIA');
     const body = encodeURIComponent(`Hola equipo de soporte KUMIA,
