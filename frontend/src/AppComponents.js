@@ -3946,26 +3946,57 @@ Optimiza los prompts de tus agentes con mejor performance y replica esas técnic
 ¿Hay algún aspecto específico que te gustaría explorar más?`;
   };
 
-  const getChannelIcon = (channel) => {
-    const icons = {
-      whatsapp: '📱',
-      instagram: '📸',
-      facebook: '👥',
-      tiktok: '🎵',
-      general: '💬'
-    };
-    return icons[channel] || '🤖';
+  const getChannelIcon = (channels) => {
+    if (Array.isArray(channels)) {
+      if (channels.includes('google_reviews')) return '🌟';
+      if (channels.includes('whatsapp')) return '📱';
+      if (channels.includes('instagram')) return '📷';
+      if (channels.includes('facebook')) return '👥';
+      if (channels.includes('userwebapp')) return '🍽️';
+      if (channels.includes('email')) return '📧';
+      if (channels.includes('all')) return '🌐';
+    }
+    return '🤖';
   };
 
-  const getChannelColor = (channel) => {
-    const colors = {
-      whatsapp: 'from-green-400 to-green-600',
-      instagram: 'from-pink-400 to-purple-600',
-      facebook: 'from-blue-400 to-blue-600',
-      tiktok: 'from-gray-800 to-gray-900',
-      general: 'from-indigo-400 to-indigo-600'
+  const getChannelColor = (channels) => {
+    if (Array.isArray(channels)) {
+      if (channels.includes('google_reviews')) return 'from-yellow-400 to-amber-500';
+      if (channels.includes('whatsapp')) return 'from-green-400 to-green-600';
+      if (channels.includes('instagram')) return 'from-pink-400 to-purple-600';
+      if (channels.includes('facebook')) return 'from-blue-400 to-blue-600';
+      if (channels.includes('userwebapp')) return 'from-orange-400 to-red-500';
+      if (channels.includes('email')) return 'from-indigo-400 to-indigo-600';
+      if (channels.includes('all')) return 'from-gray-700 to-gray-900';
+    }
+    return 'from-gray-400 to-gray-600';
+  };
+
+  const getAgentTypeIcon = (type) => {
+    const types = {
+      review_manager: '⭐',
+      customer_service: '🎧',
+      community_manager: '👥',
+      menu_advisor: '🍽️',
+      loyalty_manager: '🏆',
+      crisis_manager: '🚨',
+      sales_optimizer: '💰'
     };
-    return colors[channel] || 'from-gray-400 to-gray-600';
+    return types[type] || '🤖';
+  };
+
+  const getAgentSpecialization = (specialization) => {
+    const specializations = {
+      review_management: 'Gestión de Reviews',
+      customer_service: 'Atención al Cliente', 
+      social_media: 'Redes Sociales',
+      community_building: 'Community Building',
+      menu_optimization: 'Optimización de Menú',
+      loyalty_retention: 'Fidelización',
+      crisis_management: 'Manejo de Crisis',
+      sales_optimization: 'Optimización de Ventas'
+    };
+    return specializations[specialization] || specialization;
   };
 
   return (
