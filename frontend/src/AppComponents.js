@@ -637,11 +637,14 @@ export const IntegrationsSection = () => {
   const [selectedERP, setSelectedERP] = useState('');
 
   const restaurantERPs = [
+    // 🧠 Open Source / Flexible
     {
       id: 'erpnext',
       name: 'ERPNext',
-      description: 'API REST completa para pedidos, clientes, inventario',
+      category: 'Open Source',
+      description: 'Sistema ERP open-source con API REST completa',
       region: 'Global',
+      complexity: 'Medium',
       features: ['Orders API', 'Inventory Sync', 'Kitchen Status', 'OAuth Support'],
       endpoints: {
         orders: '/api/resource/Sales Order',
@@ -654,8 +657,10 @@ export const IntegrationsSection = () => {
     {
       id: 'odoo',
       name: 'Odoo POS Restaurant',
+      category: 'Open Source',
       description: 'Módulo POS Restaurant con flujo completo sala-cocina',
       region: 'Global',
+      complexity: 'Medium',
       features: ['Real-time Orders', 'Kitchen Display', 'Inventory Integration', 'JSON-RPC API'],
       endpoints: {
         orders: '/api/pos/orders',
@@ -666,10 +671,30 @@ export const IntegrationsSection = () => {
       documentation: 'https://www.odoo.com/documentation/14.0/webservices/odoo_api.html'
     },
     {
+      id: 'metasfresh',
+      name: 'Metasfresh',
+      category: 'Open Source',
+      description: 'ERP open-source con API REST y enfoque en automatización',
+      region: 'Global',
+      complexity: 'High',
+      features: ['REST API', 'Order Management', 'Inventory Control', 'Workflow Automation'],
+      endpoints: {
+        orders: '/api/v1/orders',
+        products: '/api/v1/products',
+        business_partners: '/api/v1/bpartners'
+      },
+      auth_method: 'API Key',
+      documentation: 'https://docs.metasfresh.org/webui_api/'
+    },
+
+    // 🏢 Enterprise / Corporativo
+    {
       id: 'oracle_simphony',
       name: 'Oracle Simphony POS',
-      description: 'APIs RESTful Next-Gen Simphony Transaction Services',
+      category: 'Enterprise',
+      description: 'Sistema enterprise con APIs RESTful avanzadas',
       region: 'Global',
+      complexity: 'High',
       features: ['Real-time Orders', 'Bidirectional Status', 'Delivery Integration', 'Secure Auth'],
       endpoints: {
         orders: '/api/v1/transactions',
@@ -680,10 +705,78 @@ export const IntegrationsSection = () => {
       documentation: 'https://docs.oracle.com/en/industries/hospitality/simphony.html'
     },
     {
+      id: 'sap_s4hana',
+      name: 'SAP S/4HANA F&B',
+      category: 'Enterprise',
+      description: 'SAP S/4HANA con módulo Food & Beverage',
+      region: 'Global',
+      complexity: 'Very High',
+      features: ['OData Services', 'ABAP RESTful Services', 'Business Events', 'Integration Suite'],
+      endpoints: {
+        orders: '/sap/opu/odata/sap/API_SALES_ORDER_SRV',
+        products: '/sap/opu/odata/sap/API_PRODUCT_SRV',
+        business_partner: '/sap/opu/odata/sap/API_BUSINESS_PARTNER'
+      },
+      auth_method: 'OAuth 2.0 + SAML',
+      documentation: 'https://api.sap.com/'
+    },
+    {
+      id: 'netsuite',
+      name: 'Oracle NetSuite',
+      category: 'Enterprise',
+      description: 'ERP en la nube con SuiteScript y REST APIs',
+      region: 'Global',
+      complexity: 'High',
+      features: ['SuiteScript', 'RESTlets', 'SuiteTalk', 'Workflow Automation'],
+      endpoints: {
+        orders: '/app/common/entity/salesord.nl',
+        items: '/app/common/item/item.nl',
+        customers: '/app/common/entity/custjob.nl'
+      },
+      auth_method: 'OAuth 2.0 + Token',
+      documentation: 'https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/book_1559132836.html'
+    },
+    {
+      id: 'infor_cloudsuite',
+      name: 'Infor CloudSuite F&B',
+      category: 'Enterprise',
+      description: 'Suite especializada para Food & Beverage con APIs robustas',
+      region: 'Global',
+      complexity: 'High',
+      features: ['ION API', 'Recipe Management', 'Cost Control', 'Multi-location'],
+      endpoints: {
+        orders: '/IONAPI/LN/orders',
+        recipes: '/IONAPI/LN/recipes',
+        inventory: '/IONAPI/LN/inventory'
+      },
+      auth_method: 'OAuth 2.0',
+      documentation: 'https://docs.infor.com/cloudsuite/'
+    },
+    {
+      id: 'dynamics_365',
+      name: 'Microsoft Dynamics 365',
+      category: 'Enterprise',
+      description: 'Business Central con módulos de restaurante',
+      region: 'Global',
+      complexity: 'High',
+      features: ['Web API', 'OData v4', 'Power Platform Integration', 'AI Insights'],
+      endpoints: {
+        orders: '/api/v2.0/companies/orders',
+        items: '/api/v2.0/companies/items',
+        customers: '/api/v2.0/companies/customers'
+      },
+      auth_method: 'OAuth 2.0 + Azure AD',
+      documentation: 'https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/'
+    },
+
+    // 🌎 Cloud POS / Multiplataforma
+    {
       id: 'soft_restaurant',
       name: 'Soft Restaurant',
-      description: 'ERP latinoamericano con módulo técnico ERP-POS',
+      category: 'Cloud POS',
+      description: 'ERP latinoamericano líder con módulo técnico ERP-POS',
       region: 'LATAM',
+      complexity: 'Medium',
       features: ['Orders API', 'Kitchen Status', 'Inventory Sync', 'POS Integration'],
       endpoints: {
         orders: '/api/orders',
@@ -696,8 +789,10 @@ export const IntegrationsSection = () => {
     {
       id: 'restroworks',
       name: 'Restroworks Platform',
-      description: 'Plataforma cloud para restaurantes con API abierta',
+      category: 'Cloud POS',
+      description: 'Plataforma cloud india con API abierta y multi-ERP',
       region: 'Global',
+      complexity: 'Medium',
       features: ['Real-time Orders', 'Kitchen Monitoring', 'Multi-ERP Integration', 'SFTP Support'],
       endpoints: {
         orders: '/api/v2/orders',
@@ -708,10 +803,158 @@ export const IntegrationsSection = () => {
       documentation: 'https://api.restroworks.com/docs'
     },
     {
+      id: 'toteat',
+      name: 'Toteat',
+      category: 'Cloud POS',
+      description: 'Plataforma cloud española especializada en restauración',
+      region: 'Europe',
+      complexity: 'Low',
+      features: ['Orders API', 'Kitchen Display', 'Menu Management', 'Real-time Sync'],
+      endpoints: {
+        orders: '/api/v1/orders',
+        menu: '/api/v1/menu',
+        tables: '/api/v1/tables'
+      },
+      auth_method: 'API Key + Bearer Token',
+      documentation: 'https://developers.toteat.es/'
+    },
+    {
+      id: 'poster_pos',
+      name: 'Poster POS (JoinPoster)',
+      category: 'Cloud POS',
+      description: 'POS europeo popular con API REST completa',
+      region: 'Europe',
+      complexity: 'Medium',
+      features: ['Orders API', 'Menu Sync', 'Analytics', 'Multi-location'],
+      endpoints: {
+        orders: '/api/v3/transactions',
+        menu: '/api/v3/menu',
+        spots: '/api/v3/spots'
+      },
+      auth_method: 'API Key',
+      documentation: 'https://api.joinposter.com/'
+    },
+    {
+      id: 'rkeeper',
+      name: 'R-Keeper',
+      category: 'Cloud POS',
+      description: 'Sistema hospitalario con integración API especializada',
+      region: 'Global',
+      complexity: 'High',
+      features: ['Order Management', 'Kitchen Integration', 'Multi-concept', 'Enterprise Features'],
+      endpoints: {
+        orders: '/rk7api/v1/orders',
+        menu: '/rk7api/v1/menu',
+        stations: '/rk7api/v1/stations'
+      },
+      auth_method: 'API Key + Session',
+      documentation: 'https://www.ucs.ru/en/rkeeper-integration/'
+    },
+    {
+      id: 'revel_systems',
+      name: 'Revel Systems',
+      category: 'Cloud POS',
+      description: 'POS estadounidense con API REST y integración nativa',
+      region: 'US',
+      complexity: 'Medium',
+      features: ['Orders API', 'Inventory Management', 'Reporting', 'Third-party Integration'],
+      endpoints: {
+        orders: '/api/v1/orders/',
+        products: '/api/v1/products/',
+        customers: '/api/v1/customers/'
+      },
+      auth_method: 'API Key + Secret',
+      documentation: 'https://revelsystems.com/developers/'
+    },
+    {
+      id: 'lightspeed_restaurant',
+      name: 'Lightspeed Restaurant POS',
+      category: 'Cloud POS',
+      description: 'Lightspeed especializado en restaurantes con API robusta',
+      region: 'Global',
+      complexity: 'Medium',
+      features: ['Orders API', 'Menu Management', 'Kitchen Display', 'Analytics'],
+      endpoints: {
+        orders: '/API/Account/{accountID}/Order',
+        menu: '/API/Account/{accountID}/Item',
+        tables: '/API/Account/{accountID}/Table'
+      },
+      auth_method: 'OAuth 2.0',
+      documentation: 'https://developers.lightspeedpos.com/'
+    },
+    {
+      id: 'square_restaurants',
+      name: 'Square for Restaurants',
+      category: 'Cloud POS',
+      description: 'Square especializado en restaurantes con API excelente',
+      region: 'Global',
+      complexity: 'Low',
+      features: ['Orders API', 'Payments', 'Menu Sync', 'Real-time Updates'],
+      endpoints: {
+        orders: '/v2/orders',
+        catalog: '/v2/catalog',
+        locations: '/v2/locations'
+      },
+      auth_method: 'OAuth 2.0 + Bearer Token',
+      documentation: 'https://developer.squareup.com/docs/'
+    },
+    {
+      id: 'touchbistro',
+      name: 'TouchBistro',
+      category: 'Cloud POS',
+      description: 'POS canadiense especializado en restaurantes',
+      region: 'North America',
+      complexity: 'Medium',
+      features: ['Orders API', 'Table Management', 'Kitchen Display', 'Staff Management'],
+      endpoints: {
+        orders: '/api/v1/orders',
+        menu: '/api/v1/menu',
+        tables: '/api/v1/tables'
+      },
+      auth_method: 'API Key',
+      documentation: 'https://www.touchbistro.com/developers/'
+    },
+    {
+      id: 'toast_pos',
+      name: 'Toast POS',
+      category: 'Cloud POS',
+      description: 'POS estadounidense líder con API comprehensiva',
+      region: 'US',
+      complexity: 'Medium',
+      features: ['Orders API', 'Menu Management', 'Kitchen Display', 'Advanced Analytics'],
+      endpoints: {
+        orders: '/orders/v2/orders',
+        menu: '/config/v2/menuitems',
+        restaurants: '/config/v2/restaurants'
+      },
+      auth_method: 'OAuth 2.0',
+      documentation: 'https://doc.toasttab.com/'
+    },
+    {
+      id: 'lavu_pos',
+      name: 'Lavu POS',
+      category: 'Cloud POS',
+      description: 'POS con API REST y enfoque en integración',
+      region: 'US',
+      complexity: 'Medium',
+      features: ['Orders API', 'Menu Sync', 'Reporting', 'Third-party Apps'],
+      endpoints: {
+        orders: '/api/v1/orders',
+        menu: '/api/v1/menu',
+        customers: '/api/v1/customers'
+      },
+      auth_method: 'API Key + Token',
+      documentation: 'https://www.lavu.com/api-documentation/'
+    },
+
+    // 🧬 Kitchen Management & CRP
+    {
       id: 'apicbase',
       name: 'Apicbase CRP',
+      category: 'Kitchen Management',
       description: 'Culinary Resource Planning especializada en trazabilidad',
       region: 'Global',
+      complexity: 'High',
       features: ['Recipe Management', 'Kitchen Traceability', 'Multi-site Support', 'Production Estimates'],
       endpoints: {
         orders: '/api/v1/orders',
@@ -720,8 +963,139 @@ export const IntegrationsSection = () => {
       },
       auth_method: 'API Key + OAuth',
       documentation: 'https://developers.apicbase.com'
+    },
+    {
+      id: 'marketman',
+      name: 'MarketMan',
+      category: 'Kitchen Management',
+      description: 'Gestión de inventarios con API para automatización',
+      region: 'Global',
+      complexity: 'Medium',
+      features: ['Inventory API', 'Cost Control', 'Supplier Integration', 'Analytics'],
+      endpoints: {
+        inventory: '/api/v1/inventory',
+        suppliers: '/api/v1/suppliers',
+        orders: '/api/v1/purchase-orders'
+      },
+      auth_method: 'API Key',
+      documentation: 'https://marketman.com/api-docs/'
+    },
+    {
+      id: 'chowly',
+      name: 'Chowly',
+      category: 'Kitchen Management',
+      description: 'Plataforma de integración especializada en delivery',
+      region: 'US',
+      complexity: 'Low',
+      features: ['Order Aggregation', 'POS Integration', 'Menu Sync', 'Real-time Updates'],
+      endpoints: {
+        orders: '/api/v1/orders',
+        menus: '/api/v1/menus',
+        locations: '/api/v1/locations'
+      },
+      auth_method: 'API Key',
+      documentation: 'https://chowly.com/developers/'
+    },
+
+    // 📊 Omnicanal & Retail
+    {
+      id: 'openbravo',
+      name: 'Openbravo Commerce Cloud',
+      category: 'Omnichannel',
+      description: 'Plataforma omnicanal con vertical Ho-Re-Ca',
+      region: 'Global',
+      complexity: 'High',
+      features: ['REST API', 'Omnichannel', 'Retail Integration', 'Cloud Native'],
+      endpoints: {
+        orders: '/openbravo/ws/dal/Order',
+        products: '/openbravo/ws/dal/Product',
+        business_partner: '/openbravo/ws/dal/BusinessPartner'
+      },
+      auth_method: 'Basic Auth + API Key',
+      documentation: 'https://wiki.openbravo.com/wiki/Web_Services'
+    },
+    {
+      id: 'hiopos',
+      name: 'HIOPOS Cloud',
+      category: 'Omnichannel',
+      description: 'POS español con capacidades omnicanal',
+      region: 'Spain',
+      complexity: 'Medium',
+      features: ['Cloud API', 'Multi-device', 'Inventory Sync', 'Customer Management'],
+      endpoints: {
+        orders: '/api/v1/orders',
+        articles: '/api/v1/articles',
+        customers: '/api/v1/customers'
+      },
+      auth_method: 'API Key + Token',
+      documentation: 'https://www.hiopos.com/api-documentation/'
+    },
+
+    // 🧑‍🍳 Reservations & Kitchen Flow
+    {
+      id: 'sevenrooms',
+      name: 'SevenRooms',
+      category: 'Reservations',
+      description: 'Plataforma de reservas con API de gestión completa',
+      region: 'Global',
+      complexity: 'Medium',
+      features: ['Reservations API', 'Guest Management', 'Table Management', 'Event Planning'],
+      endpoints: {
+        reservations: '/api/v1/reservations',
+        guests: '/api/v1/guests',
+        venues: '/api/v1/venues'
+      },
+      auth_method: 'OAuth 2.0',
+      documentation: 'https://developers.sevenrooms.com/'
+    },
+    {
+      id: 'zenchef',
+      name: 'Zenchef',
+      category: 'Reservations',
+      description: 'Sistema de reservas europeo con API REST',
+      region: 'Europe',
+      complexity: 'Low',
+      features: ['Booking API', 'Table Management', 'Customer Data', 'Marketing Tools'],
+      endpoints: {
+        bookings: '/api/v1/bookings',
+        tables: '/api/v1/tables',
+        customers: '/api/v1/customers'
+      },
+      auth_method: 'API Key',
+      documentation: 'https://developers.zenchef.com/'
+    },
+    {
+      id: 'resy',
+      name: 'Resy (OpenTable API)',
+      category: 'Reservations',
+      description: 'Reservas con API de OpenTable integrada',
+      region: 'Global',
+      complexity: 'Medium',
+      features: ['Reservations API', 'Availability Check', 'Guest Profiles', 'Waitlist Management'],
+      endpoints: {
+        reservations: '/api/v2/reservations',
+        availability: '/api/v2/availability',
+        restaurants: '/api/v2/restaurants'
+      },
+      auth_method: 'OAuth 2.0',
+      documentation: 'https://platform.opentable.com/documentation/'
     }
   ];
+
+  const groupedERPs = restaurantERPs.reduce((acc, erp) => {
+    if (!acc[erp.category]) acc[erp.category] = [];
+    acc[erp.category].push(erp);
+    return acc;
+  }, {});
+
+  const categoryIcons = {
+    'Open Source': '🧠',
+    'Enterprise': '🏢',
+    'Cloud POS': '🌎',
+    'Kitchen Management': '🧬',
+    'Omnichannel': '📊',
+    'Reservations': '🧑‍🍳'
+  };
 
   const handleCredentialChange = (integrationId, field, value) => {
     setCredentials(prev => ({
