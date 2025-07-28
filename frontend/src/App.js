@@ -2190,18 +2190,71 @@ const FeedbackSection = () => {
         </div>
       </div>
 
-      {/* 🆕 NPS POR CANAL */}
+      {/* 🆕 NPS POR CANAL CON GOOGLE REVIEWS DESTACADO */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <h3 className="text-lg font-bold text-gray-800 mb-4">📊 NPS General + Por Canal</h3>
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+          {/* Google Reviews destacado */}
+          <div className="bg-gradient-to-r from-yellow-50 to-amber-50 p-4 rounded-lg text-center border-2 border-yellow-300">
+            <div className="text-xl mb-1">🌟</div>
+            <div className="text-3xl font-bold text-amber-600">{feedbackStats.npsChannels.google_reviews}</div>
+            <div className="text-sm text-amber-700 font-medium">Google Reviews</div>
+            <div className="text-xs text-amber-600 mt-1">Canal Principal</div>
+          </div>
+          
+          {/* NPS General */}
           <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg text-center">
             <div className="text-3xl font-bold text-green-600">{feedbackStats.npsScore}</div>
             <div className="text-sm text-green-700">NPS General</div>
           </div>
-          {Object.entries(feedbackStats.npsChannels).map(([channel, score]) => (
+          
+          {/* Otros canales */}
+          {Object.entries(feedbackStats.npsChannels)
+            .filter(([channel]) => channel !== 'google_reviews' && channel !== 'general')
+            .map(([channel, score]) => (
             <div key={channel} className="bg-blue-50 p-4 rounded-lg text-center">
               <div className="text-2xl font-bold text-blue-600">{score}</div>
               <div className="text-sm text-blue-700 capitalize">{channel}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 🆕 ESTADÍSTICAS DETALLADAS POR CANAL */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-lg font-bold text-gray-800 mb-4">📈 Estadísticas Detalladas por Canal</h3>
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+          {Object.entries(feedbackStats.channelStats).map(([channel, stats]) => (
+            <div key={channel} className={`p-4 rounded-lg border-l-4 ${
+              channel === 'google_reviews' 
+                ? 'bg-yellow-50 border-yellow-400' 
+                : 'bg-gray-50 border-gray-300'
+            }`}>
+              <div className="flex items-center mb-2">
+                <span className="text-lg mr-2">
+                  {channel === 'google_reviews' ? '🌟' : 
+                   channel === 'whatsapp' ? '📱' :
+                   channel === 'instagram' ? '📷' :
+                   channel === 'facebook' ? '👥' : '🌐'}
+                </span>
+                <h4 className="font-medium text-gray-800 capitalize">
+                  {channel === 'google_reviews' ? 'Google Reviews' : channel}
+                </h4>
+              </div>
+              <div className="space-y-1 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Reviews:</span>
+                  <span className="font-bold">{stats.count}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Rating:</span>
+                  <span className="font-bold text-yellow-600">{stats.avg_rating} ⭐</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Crecimiento:</span>
+                  <span className="font-bold text-green-600">{stats.growth}</span>
+                </div>
+              </div>
             </div>
           ))}
         </div>
