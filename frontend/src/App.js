@@ -2348,83 +2348,167 @@ const FeedbackSection = () => {
         </div>
       </div>
 
-      {/* 🆕 ESTADÍSTICAS DETALLADAS */}
+      {/* 🆕 FEEDBACKS INDIVIDUALES CON RESPUESTAS AUTOMÁTICAS */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h3 className="text-lg font-bold text-gray-800 mb-4">📈 Estadísticas Detalladas</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="text-center">
-            <div className="text-3xl font-bold text-blue-600">4.2/5</div>
-            <div className="text-sm text-gray-600">Promedio General</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-green-600">4.5/5</div>
-            <div className="text-sm text-gray-600">Promedio Semanal</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-purple-600">4.1/5</div>
-            <div className="text-sm text-gray-600">Promedio Mensual</div>
-          </div>
-        </div>
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-green-50 p-4 rounded-lg">
-            <h4 className="font-medium text-green-800 mb-2">Feedbacks Positivos</h4>
-            <div className="text-2xl font-bold text-green-600">77</div>
-            <div className="text-sm text-green-700">77% del total</div>
-          </div>
-          <div className="bg-red-50 p-4 rounded-lg">
-            <h4 className="font-medium text-red-800 mb-2">Feedbacks Negativos</h4>
-            <div className="text-2xl font-bold text-red-600">11</div>
-            <div className="text-sm text-red-700">11% del total</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Recent Feedback (MANTENER EXISTENTE + 🆕 RESPUESTAS RÁPIDAS) */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h3 className="text-lg font-bold text-gray-800 mb-4">📝 Feedback Reciente</h3>
+        <h3 className="text-lg font-bold text-gray-800 mb-4">💬 Feedback Reciente</h3>
         <div className="space-y-4">
-          {feedback.slice(0, 5).map((item, index) => (
-            <div key={index} className="flex items-start justify-between p-4 bg-gray-50 rounded-lg">
-              <div className="flex-1">
-                <div className="flex items-center mb-2">
-                  <span className="font-medium text-gray-800">{item.customer_name}</span>
-                  <div className="flex ml-2">
-                    {[...Array(5)].map((_, i) => (
-                      <span key={i} className={`text-sm ${i < item.rating ? 'text-yellow-400' : 'text-gray-300'}`}>
-                        ⭐
-                      </span>
-                    ))}
+          {feedback
+            .filter(f => selectedChannel === 'all' || f.channel === selectedChannel)
+            .slice(0, 6)
+            .map(feedbackItem => (
+            <div key={feedbackItem.id} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center">
+                  <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-red-400 rounded-full flex items-center justify-center mr-3">
+                    <span className="text-white font-bold text-sm">{feedbackItem.customer_name.charAt(0)}</span>
                   </div>
-                  <span className="ml-2 text-xs text-gray-500">{item.channel}</span>
+                  <div>
+                    <h4 className="font-medium text-gray-800">{feedbackItem.customer_name}</h4>
+                    <div className="flex items-center">
+                      <div className="flex mr-2">
+                        {[...Array(5)].map((_, i) => (
+                          <span key={i} className={`text-sm ${i < feedbackItem.rating ? 'text-yellow-400' : 'text-gray-300'}`}>
+                            ⭐
+                          </span>
+                        ))}
+                      </div>
+                      <span className="text-xs text-gray-500">{feedbackItem.date}</span>
+                    </div>
+                  </div>
                 </div>
-                <p className="text-gray-600 text-sm">{item.comment}</p>
+                <div className="flex items-center space-x-2">
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    feedbackItem.channel === 'google_reviews' ? 'bg-yellow-100 text-yellow-800' :
+                    feedbackItem.channel === 'whatsapp' ? 'bg-green-100 text-green-800' :
+                    feedbackItem.channel === 'instagram' ? 'bg-pink-100 text-pink-800' :
+                    feedbackItem.channel === 'facebook' ? 'bg-blue-100 text-blue-800' :
+                    'bg-gray-100 text-gray-800'
+                  }`}>
+                    {feedbackItem.channel === 'google_reviews' ? '🌟 Google' :
+                     feedbackItem.channel === 'whatsapp' ? '📱 WhatsApp' :
+                     feedbackItem.channel === 'instagram' ? '📷 Instagram' :
+                     feedbackItem.channel === 'facebook' ? '👥 Facebook' : '🌐 Web'}
+                  </span>
+                  {feedbackItem.response_sent && (
+                    <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                      ✅ Respondido
+                    </span>
+                  )}
+                </div>
               </div>
-              <div className="flex flex-col space-y-2">
-                <button 
-                  onClick={() => handleRespondWithReward(item.id)}
-                  className="bg-green-100 text-green-700 px-3 py-1 rounded-lg text-sm hover:bg-green-200 transition-colors"
-                >
-                  🎁 Responder con Recompensa
-                </button>
-                <div className="flex space-x-1">
+              
+              <p className="text-gray-700 text-sm mb-3">{feedbackItem.comment}</p>
+              
+              {!feedbackItem.response_sent && (
+                <div className="flex space-x-2">
                   <button 
-                    onClick={() => handleQuickResponse(item.id, 'Gracias')}
-                    className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs hover:bg-blue-200"
+                    onClick={() => handleSendAutoResponse(
+                      feedbackItem.id, 
+                      feedbackItem.channel, 
+                      feedbackItem.rating >= 4 ? 'positive' : feedbackItem.rating === 3 ? 'neutral' : 'negative'
+                    )}
+                    className="bg-green-100 text-green-700 px-3 py-1 rounded-lg text-sm hover:bg-green-200 transition-colors"
                   >
-                    👍 Gracias
+                    🤖 Respuesta Automática
                   </button>
                   <button 
-                    onClick={() => handleQuickResponse(item.id, 'Mejora')}
-                    className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs hover:bg-yellow-200"
+                    onClick={() => handleRespondWithReward(feedbackItem.id)}
+                    className="bg-purple-100 text-purple-700 px-3 py-1 rounded-lg text-sm hover:bg-purple-200 transition-colors"
                   >
-                    📈 Mejora
+                    🎁 Responder + Recompensa
                   </button>
                 </div>
-              </div>
+              )}
+              
+              {feedbackItem.auto_response && (
+                <div className="mt-3 bg-green-50 p-3 rounded-lg border-l-4 border-green-400">
+                  <p className="text-green-800 text-sm">
+                    <strong>Respuesta enviada:</strong> {feedbackItem.auto_response}
+                  </p>
+                </div>
+              )}
             </div>
           ))}
         </div>
       </div>
+
+      {/* 🆕 MODAL CONFIGURAR RESPUESTAS AUTOMÁTICAS */}
+      {showAutoResponseModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">⚙️ Configurar Respuestas Automáticas</h2>
+                  <p className="text-gray-600">Personaliza las respuestas automáticas por canal y tipo de sentimiento</p>
+                </div>
+                <button 
+                  onClick={() => setShowAutoResponseModal(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                {Object.entries(autoResponses).map(([channel, responses]) => (
+                  <div key={channel} className="border border-gray-200 rounded-xl p-6">
+                    <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                      <span className="mr-2">
+                        {channel === 'google_reviews' ? '🌟' :
+                         channel === 'whatsapp' ? '📱' :
+                         channel === 'instagram' ? '📷' :
+                         channel === 'facebook' ? '👥' : '🌐'}
+                      </span>
+                      {channel === 'google_reviews' ? 'Google Reviews' : 
+                       channel.charAt(0).toUpperCase() + channel.slice(1)}
+                    </h3>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {Object.entries(responses).map(([sentiment, message]) => (
+                        <div key={sentiment} className="space-y-2">
+                          <label className="block text-sm font-medium text-gray-700">
+                            {sentiment === 'positive' ? '😊 Positivo (4-5⭐)' :
+                             sentiment === 'neutral' ? '😐 Neutral (3⭐)' :
+                             '😞 Negativo (1-2⭐)'}
+                          </label>
+                          <textarea
+                            value={message}
+                            onChange={(e) => setAutoResponses(prev => ({
+                              ...prev,
+                              [channel]: {
+                                ...prev[channel],
+                                [sentiment]: e.target.value
+                              }
+                            }))}
+                            rows="4"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
+                          />
+                          <button
+                            onClick={() => handleSaveAutoResponse(channel, sentiment, autoResponses[channel][sentiment])}
+                            className="w-full bg-blue-100 text-blue-700 px-3 py-2 rounded-lg text-sm hover:bg-blue-200 transition-colors"
+                          >
+                            💾 Guardar
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex justify-center pt-6 border-t border-gray-200 mt-8">
+                <button 
+                  onClick={() => setShowAutoResponseModal(false)}
+                  className="bg-gray-500 text-white px-8 py-3 rounded-lg hover:bg-gray-600 transition-colors"
+                >
+                  Cerrar Configuración
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
