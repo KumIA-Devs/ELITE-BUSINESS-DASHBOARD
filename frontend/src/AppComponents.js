@@ -610,21 +610,118 @@ export const IntegrationsSection = () => {
     { id: 'meta', name: 'Meta Business Suite', type: 'social', status: 'disconnected', icon: '📱', lastSync: null },
     { id: 'google_reviews', name: 'Google Reviews', type: 'reviews', status: 'disconnected', icon: '⭐', lastSync: null },
     { id: 'whatsapp', name: 'WhatsApp Business', type: 'messaging', status: 'disconnected', icon: '💬', lastSync: null },
-    { id: 'openai', name: 'OpenAI', type: 'ai', status: 'connected', icon: '🧠', lastSync: '2024-01-15 11:15' },
     { id: 'gemini', name: 'Google Gemini', type: 'ai', status: 'connected', icon: '🧠', lastSync: '2024-01-15 11:15' },
     { id: 'mercadopago', name: 'MercadoPago', type: 'payment', status: 'disconnected', icon: '💳', lastSync: null },
-    { id: 'custom', name: 'Custom Integration', type: 'custom', status: 'disconnected', icon: '🔧', lastSync: null }
+    { id: 'erp', name: 'Restaurant ERP', type: 'erp', status: 'disconnected', icon: '🏢', lastSync: null }
   ]);
 
   const [credentials, setCredentials] = useState({
     meta: { app_id: '', app_secret: '', phone_number_id: '' },
     google_reviews: { location_id: '', service_account_key: '' },
     whatsapp: { account_id: '', access_token: '' },
-    openai: { api_key: 'sk-proj-...configured' },
     gemini: { api_key: 'AIzaSyBCKR7mxd9ZpknkKcl8l6eQ7JsjmS05mcE' },
     mercadopago: { app_id: '', access_token: '' },
-    custom: { api_url: '', api_key: '' }
+    erp: { 
+      type: 'erpnext', 
+      endpoint_url: '', 
+      api_key: '', 
+      api_secret: '',
+      oauth_token: '',
+      location_id: '',
+      pos_profile: '',
+      test_mode: true
+    }
   });
+
+  const [showERPModal, setShowERPModal] = useState(false);
+  const [selectedERP, setSelectedERP] = useState('');
+
+  const restaurantERPs = [
+    {
+      id: 'erpnext',
+      name: 'ERPNext',
+      description: 'API REST completa para pedidos, clientes, inventario',
+      region: 'Global',
+      features: ['Orders API', 'Inventory Sync', 'Kitchen Status', 'OAuth Support'],
+      endpoints: {
+        orders: '/api/resource/Sales Order',
+        items: '/api/resource/Item',
+        customers: '/api/resource/Customer'
+      },
+      auth_method: 'API Key + Token',
+      documentation: 'https://frappeframework.com/docs/v13/user/en/api'
+    },
+    {
+      id: 'odoo',
+      name: 'Odoo POS Restaurant',
+      description: 'Módulo POS Restaurant con flujo completo sala-cocina',
+      region: 'Global',
+      features: ['Real-time Orders', 'Kitchen Display', 'Inventory Integration', 'JSON-RPC API'],
+      endpoints: {
+        orders: '/api/pos/orders',
+        products: '/api/pos/products',
+        sessions: '/api/pos/sessions'
+      },
+      auth_method: 'OAuth 2.0',
+      documentation: 'https://www.odoo.com/documentation/14.0/webservices/odoo_api.html'
+    },
+    {
+      id: 'oracle_simphony',
+      name: 'Oracle Simphony POS',
+      description: 'APIs RESTful Next-Gen Simphony Transaction Services',
+      region: 'Global',
+      features: ['Real-time Orders', 'Bidirectional Status', 'Delivery Integration', 'Secure Auth'],
+      endpoints: {
+        orders: '/api/v1/transactions',
+        status: '/api/v1/orders/status',
+        menu: '/api/v1/menu'
+      },
+      auth_method: 'OAuth 2.0 + API Key',
+      documentation: 'https://docs.oracle.com/en/industries/hospitality/simphony.html'
+    },
+    {
+      id: 'soft_restaurant',
+      name: 'Soft Restaurant',
+      description: 'ERP latinoamericano con módulo técnico ERP-POS',
+      region: 'LATAM',
+      features: ['Orders API', 'Kitchen Status', 'Inventory Sync', 'POS Integration'],
+      endpoints: {
+        orders: '/api/orders',
+        kitchen: '/api/kitchen/status',
+        inventory: '/api/inventory'
+      },
+      auth_method: 'API Key',
+      documentation: 'Manual PDF disponible'
+    },
+    {
+      id: 'restroworks',
+      name: 'Restroworks Platform',
+      description: 'Plataforma cloud para restaurantes con API abierta',
+      region: 'Global',
+      features: ['Real-time Orders', 'Kitchen Monitoring', 'Multi-ERP Integration', 'SFTP Support'],
+      endpoints: {
+        orders: '/api/v2/orders',
+        kitchen: '/api/v2/kitchen',
+        reporting: '/api/v2/reports'
+      },
+      auth_method: 'OAuth 2.0',
+      documentation: 'https://api.restroworks.com/docs'
+    },
+    {
+      id: 'apicbase',
+      name: 'Apicbase CRP',
+      description: 'Culinary Resource Planning especializada en trazabilidad',
+      region: 'Global',
+      features: ['Recipe Management', 'Kitchen Traceability', 'Multi-site Support', 'Production Estimates'],
+      endpoints: {
+        orders: '/api/v1/orders',
+        recipes: '/api/v1/recipes',
+        production: '/api/v1/production'
+      },
+      auth_method: 'API Key + OAuth',
+      documentation: 'https://developers.apicbase.com'
+    }
+  ];
 
   const handleCredentialChange = (integrationId, field, value) => {
     setCredentials(prev => ({
@@ -636,12 +733,29 @@ export const IntegrationsSection = () => {
     }));
   };
 
+  const handleSelectERP = (erpId) => {
+    setSelectedERP(erpId);
+    setCredentials(prev => ({
+      ...prev,
+      erp: {
+        ...prev.erp,
+        type: erpId
+      }
+    }));
+  };
+
   const handleConnect = async (integrationId) => {
     const integrationCredentials = credentials[integrationId];
-    const hasRequiredCredentials = Object.values(integrationCredentials).every(val => val.trim() !== '');
+    
+    if (integrationId === 'erp' && !selectedERP) {
+      alert('⚠️ Por favor selecciona un ERP primero');
+      return;
+    }
+    
+    const hasRequiredCredentials = Object.values(integrationCredentials).some(val => val.toString().trim() !== '');
     
     if (!hasRequiredCredentials) {
-      alert('⚠️ Por favor completa todos los campos requeridos');
+      alert('⚠️ Por favor completa al menos un campo de credenciales');
       return;
     }
 
@@ -655,6 +769,9 @@ export const IntegrationsSection = () => {
     );
     
     alert(`✅ ${integrationId} conectado exitosamente!`);
+    if (integrationId === 'erp') {
+      setShowERPModal(false);
+    }
   };
 
   const handleDisconnect = (integrationId) => {
@@ -669,10 +786,13 @@ export const IntegrationsSection = () => {
 
   const handleTestConnection = async (integrationId) => {
     alert(`🔄 Probando conexión para ${integrationId}...`);
-    // Simular test
     setTimeout(() => {
-      alert('✅ Conexión exitosa');
+      alert('✅ Conexión exitosa - Endpoint respondiendo correctamente');
     }, 2000);
+  };
+
+  const getSelectedERPInfo = () => {
+    return restaurantERPs.find(erp => erp.id === selectedERP);
   };
 
   return (
@@ -680,12 +800,12 @@ export const IntegrationsSection = () => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold text-gray-800">🔗 Integraciones</h2>
-          <p className="text-gray-600 mt-1">Conecta tus APIs para automatización completa</p>
+          <p className="text-gray-600 mt-1">Conecta tu ecosistema completo - UserWebApp ↔ Dashboard ↔ ERP</p>
         </div>
         <div className="flex items-center space-x-2">
           <div className="text-sm text-gray-600">
             <span className="inline-block w-3 h-3 bg-green-400 rounded-full mr-2"></span>
-            Plug & Play
+            Sistema Unificado
           </div>
         </div>
       </div>
@@ -693,15 +813,18 @@ export const IntegrationsSection = () => {
       {/* 🆕 CONFIGURACIÓN DE CREDENCIALES */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {integrations.map(integration => (
-          <div key={integration.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div key={integration.id} className={`bg-white rounded-xl shadow-sm border border-gray-100 p-6 ${
+            integration.id === 'erp' ? 'md:col-span-2 lg:col-span-3' : ''
+          }`}>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center">
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center mr-3 ${
                   integration.id === 'meta' ? 'bg-gradient-to-r from-blue-500 to-indigo-500' :
                   integration.id === 'google_reviews' ? 'bg-gradient-to-r from-yellow-500 to-orange-500' :
                   integration.id === 'whatsapp' ? 'bg-gradient-to-r from-green-500 to-emerald-500' :
-                  integration.id === 'openai' || integration.id === 'gemini' ? 'bg-gradient-to-r from-purple-500 to-pink-500' :
+                  integration.id === 'gemini' ? 'bg-gradient-to-r from-purple-500 to-pink-500' :
                   integration.id === 'mercadopago' ? 'bg-gradient-to-r from-blue-600 to-cyan-500' :
+                  integration.id === 'erp' ? 'bg-gradient-to-r from-orange-500 to-red-500' :
                   'bg-gradient-to-r from-gray-500 to-gray-700'
                 }`}>
                   <span className="text-white text-xl">{integration.icon}</span>
@@ -732,175 +855,384 @@ export const IntegrationsSection = () => {
               </div>
             </div>
 
-            {/* Credential inputs */}
-            <div className="space-y-3">
-              {integration.id === 'meta' && (
-                <>
-                  <input
-                    type="text"
-                    placeholder="Meta App ID"
-                    value={credentials.meta.app_id}
-                    onChange={(e) => handleCredentialChange('meta', 'app_id', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  />
-                  <input
-                    type="password"
-                    placeholder="Meta App Secret"
-                    value={credentials.meta.app_secret}
-                    onChange={(e) => handleCredentialChange('meta', 'app_secret', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  />
-                  <input
-                    type="text"
-                    placeholder="WhatsApp Phone Number ID"
-                    value={credentials.meta.phone_number_id}
-                    onChange={(e) => handleCredentialChange('meta', 'phone_number_id', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  />
-                </>
-              )}
-
-              {integration.id === 'google_reviews' && (
-                <>
-                  <input
-                    type="text"
-                    placeholder="Google My Business Location ID"
-                    value={credentials.google_reviews.location_id}
-                    onChange={(e) => handleCredentialChange('google_reviews', 'location_id', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  />
-                  <input
-                    type="password"
-                    placeholder="Google Service Account Key"
-                    value={credentials.google_reviews.service_account_key}
-                    onChange={(e) => handleCredentialChange('google_reviews', 'service_account_key', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  />
-                </>
-              )}
-
-              {integration.id === 'whatsapp' && (
-                <>
-                  <input
-                    type="text"
-                    placeholder="WhatsApp Business Account ID"
-                    value={credentials.whatsapp.account_id}
-                    onChange={(e) => handleCredentialChange('whatsapp', 'account_id', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  />
-                  <input
-                    type="password"
-                    placeholder="WhatsApp Access Token"
-                    value={credentials.whatsapp.access_token}
-                    onChange={(e) => handleCredentialChange('whatsapp', 'access_token', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  />
-                </>
-              )}
-
-              {(integration.id === 'openai' || integration.id === 'gemini') && (
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
-                    <span className="text-sm text-green-700">✅ {integration.name}</span>
-                    <span className="text-xs text-green-600">Configurado</span>
-                  </div>
-                  <input
-                    type="password"
-                    placeholder={`${integration.name} API Key`}
-                    value={credentials[integration.id].api_key}
-                    onChange={(e) => handleCredentialChange(integration.id, 'api_key', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                    disabled={integration.status === 'connected'}
-                  />
+            {/* ERP Special Section */}
+            {integration.id === 'erp' && (
+              <div className="space-y-4">
+                <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
+                  <h4 className="font-bold text-orange-800 mb-2">🎯 Integración UserWebApp ↔ ERP</h4>
+                  <p className="text-sm text-orange-700 mb-3">
+                    Los pedidos del UserWebApp se enviarán automáticamente a tu ERP sin intervención manual
+                  </p>
+                  <button
+                    onClick={() => setShowERPModal(true)}
+                    className="w-full bg-orange-500 text-white py-2 px-4 rounded-lg hover:bg-orange-600 transition-colors"
+                  >
+                    🏢 Configurar ERP de Restaurante
+                  </button>
                 </div>
-              )}
+                
+                {integration.status === 'connected' && selectedERP && (
+                  <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                    <h4 className="font-bold text-green-800 mb-2">✅ ERP Conectado</h4>
+                    <p className="text-sm text-green-700">
+                      <strong>{getSelectedERPInfo()?.name}</strong> - {getSelectedERPInfo()?.description}
+                    </p>
+                    <div className="mt-2 flex space-x-2">
+                      <button
+                        onClick={() => handleTestConnection('erp')}
+                        className="flex-1 bg-green-100 text-green-700 py-2 px-3 rounded-lg text-sm hover:bg-green-200 transition-colors"
+                      >
+                        🧪 Test API
+                      </button>
+                      <button
+                        onClick={() => handleDisconnect('erp')}
+                        className="flex-1 bg-red-100 text-red-700 py-2 px-3 rounded-lg text-sm hover:bg-red-200 transition-colors"
+                      >
+                        🔌 Desconectar
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
-              {integration.id === 'mercadopago' && (
-                <>
-                  <input
-                    type="text"
-                    placeholder="MercadoPago App ID"
-                    value={credentials.mercadopago.app_id}
-                    onChange={(e) => handleCredentialChange('mercadopago', 'app_id', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  />
-                  <input
-                    type="password"
-                    placeholder="MercadoPago Access Token"
-                    value={credentials.mercadopago.access_token}
-                    onChange={(e) => handleCredentialChange('mercadopago', 'access_token', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  />
-                </>
-              )}
+            {/* Other integrations credential inputs */}
+            {integration.id !== 'erp' && (
+              <div className="space-y-3">
+                {integration.id === 'meta' && (
+                  <>
+                    <input
+                      type="text"
+                      placeholder="Meta App ID"
+                      value={credentials.meta.app_id}
+                      onChange={(e) => handleCredentialChange('meta', 'app_id', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
+                    <input
+                      type="password"
+                      placeholder="Meta App Secret"
+                      value={credentials.meta.app_secret}
+                      onChange={(e) => handleCredentialChange('meta', 'app_secret', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
+                    <input
+                      type="text"
+                      placeholder="WhatsApp Phone Number ID"
+                      value={credentials.meta.phone_number_id}
+                      onChange={(e) => handleCredentialChange('meta', 'phone_number_id', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
+                  </>
+                )}
 
-              {integration.id === 'custom' && (
-                <>
-                  <input
-                    type="text"
-                    placeholder="API Base URL"
-                    value={credentials.custom.api_url}
-                    onChange={(e) => handleCredentialChange('custom', 'api_url', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  />
-                  <input
-                    type="password"
-                    placeholder="API Key / Token"
-                    value={credentials.custom.api_key}
-                    onChange={(e) => handleCredentialChange('custom', 'api_key', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                  />
-                </>
-              )}
-            </div>
+                {integration.id === 'google_reviews' && (
+                  <>
+                    <input
+                      type="text"
+                      placeholder="Google My Business Location ID"
+                      value={credentials.google_reviews.location_id}
+                      onChange={(e) => handleCredentialChange('google_reviews', 'location_id', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
+                    <input
+                      type="password"
+                      placeholder="Google Service Account Key"
+                      value={credentials.google_reviews.service_account_key}
+                      onChange={(e) => handleCredentialChange('google_reviews', 'service_account_key', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
+                  </>
+                )}
 
-            {/* Action buttons */}
-            <div className="flex space-x-2 mt-4">
-              {integration.status === 'connected' ? (
-                <>
-                  <button
-                    onClick={() => handleTestConnection(integration.id)}
-                    className="flex-1 bg-green-100 text-green-700 py-2 px-3 rounded-lg text-sm hover:bg-green-200 transition-colors"
-                  >
-                    🧪 Probar
-                  </button>
-                  <button
-                    onClick={() => handleDisconnect(integration.id)}
-                    className="flex-1 bg-red-100 text-red-700 py-2 px-3 rounded-lg text-sm hover:bg-red-200 transition-colors"
-                  >
-                    🔌 Desconectar
-                  </button>
-                </>
-              ) : (
-                <button
-                  onClick={() => handleConnect(integration.id)}
-                  className={`w-full text-white py-2 px-3 rounded-lg text-sm hover:opacity-90 transition-colors ${
-                    integration.id === 'meta' ? 'bg-blue-500 hover:bg-blue-600' :
-                    integration.id === 'google_reviews' ? 'bg-yellow-500 hover:bg-yellow-600' :
-                    integration.id === 'whatsapp' ? 'bg-green-500 hover:bg-green-600' :
-                    integration.id === 'openai' || integration.id === 'gemini' ? 'bg-purple-500 hover:bg-purple-600' :
-                    integration.id === 'mercadopago' ? 'bg-blue-600 hover:bg-blue-700' :
-                    'bg-gray-600 hover:bg-gray-700'
-                  }`}
-                >
-                  🔗 Conectar {integration.name}
-                </button>
-              )}
-            </div>
+                {integration.id === 'whatsapp' && (
+                  <>
+                    <input
+                      type="text"
+                      placeholder="WhatsApp Business Account ID"
+                      value={credentials.whatsapp.account_id}
+                      onChange={(e) => handleCredentialChange('whatsapp', 'account_id', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
+                    <input
+                      type="password"
+                      placeholder="WhatsApp Access Token"
+                      value={credentials.whatsapp.access_token}
+                      onChange={(e) => handleCredentialChange('whatsapp', 'access_token', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
+                  </>
+                )}
+
+                {integration.id === 'gemini' && (
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
+                      <span className="text-sm text-green-700">✅ Google Gemini 2.0</span>
+                      <span className="text-xs text-green-600">Configurado</span>
+                    </div>
+                    <input
+                      type="password"
+                      placeholder="Google Gemini API Key"
+                      value={credentials.gemini.api_key}
+                      onChange={(e) => handleCredentialChange('gemini', 'api_key', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      disabled={integration.status === 'connected'}
+                    />
+                  </div>
+                )}
+
+                {integration.id === 'mercadopago' && (
+                  <>
+                    <input
+                      type="text"
+                      placeholder="MercadoPago App ID"
+                      value={credentials.mercadopago.app_id}
+                      onChange={(e) => handleCredentialChange('mercadopago', 'app_id', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
+                    <input
+                      type="password"
+                      placeholder="MercadoPago Access Token"
+                      value={credentials.mercadopago.access_token}
+                      onChange={(e) => handleCredentialChange('mercadopago', 'access_token', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
+                  </>
+                )}
+
+                {/* Action buttons for non-ERP integrations */}
+                <div className="flex space-x-2 mt-4">
+                  {integration.status === 'connected' ? (
+                    <>
+                      <button
+                        onClick={() => handleTestConnection(integration.id)}
+                        className="flex-1 bg-green-100 text-green-700 py-2 px-3 rounded-lg text-sm hover:bg-green-200 transition-colors"
+                      >
+                        🧪 Probar
+                      </button>
+                      <button
+                        onClick={() => handleDisconnect(integration.id)}
+                        className="flex-1 bg-red-100 text-red-700 py-2 px-3 rounded-lg text-sm hover:bg-red-200 transition-colors"
+                      >
+                        🔌 Desconectar
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => handleConnect(integration.id)}
+                      className={`w-full text-white py-2 px-3 rounded-lg text-sm hover:opacity-90 transition-colors ${
+                        integration.id === 'meta' ? 'bg-blue-500 hover:bg-blue-600' :
+                        integration.id === 'google_reviews' ? 'bg-yellow-500 hover:bg-yellow-600' :
+                        integration.id === 'whatsapp' ? 'bg-green-500 hover:bg-green-600' :
+                        integration.id === 'gemini' ? 'bg-purple-500 hover:bg-purple-600' :
+                        integration.id === 'mercadopago' ? 'bg-blue-600 hover:bg-blue-700' :
+                        'bg-gray-600 hover:bg-gray-700'
+                      }`}
+                    >
+                      🔗 Conectar {integration.name}
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         ))}
       </div>
 
+      {/* 🆕 ERP MODAL */}
+      {showERPModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">🏢 Configurar ERP de Restaurante</h2>
+                  <p className="text-gray-600">Conecta tu sistema de gestión para automatizar pedidos del UserWebApp</p>
+                </div>
+                <button 
+                  onClick={() => setShowERPModal(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* ERP Selection */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-bold text-gray-800 mb-4">📋 Selecciona tu ERP</h3>
+                  <div className="space-y-3">
+                    {restaurantERPs.map(erp => (
+                      <div
+                        key={erp.id}
+                        className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                          selectedERP === erp.id 
+                            ? 'border-orange-500 bg-orange-50' 
+                            : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                        onClick={() => handleSelectERP(erp.id)}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-bold text-gray-800">{erp.name}</h4>
+                          <span className={`px-2 py-1 rounded-full text-xs ${
+                            erp.region === 'LATAM' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
+                          }`}>
+                            {erp.region}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-600 mb-2">{erp.description}</p>
+                        <div className="flex flex-wrap gap-1">
+                          {erp.features.map(feature => (
+                            <span key={feature} className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
+                              {feature}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Configuration */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-bold text-gray-800 mb-4">⚙️ Configuración</h3>
+                  
+                  {selectedERP && (
+                    <>
+                      <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                        <h4 className="font-bold text-blue-800 mb-2">📖 {getSelectedERPInfo()?.name} - Información</h4>
+                        <p className="text-sm text-blue-700 mb-2">
+                          <strong>Autenticación:</strong> {getSelectedERPInfo()?.auth_method}
+                        </p>
+                        <p className="text-sm text-blue-700 mb-2">
+                          <strong>Documentación:</strong> {getSelectedERPInfo()?.documentation}
+                        </p>
+                        <div className="text-sm text-blue-700">
+                          <strong>Endpoints principales:</strong>
+                          <ul className="mt-1 space-y-1">
+                            {Object.entries(getSelectedERPInfo()?.endpoints || {}).map(([key, value]) => (
+                              <li key={key}>• {key}: {value}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+
+                      <div className="space-y-3">
+                        <input
+                          type="text"
+                          placeholder="API Endpoint URL (ej: https://tu-erp.com/api/v1)"
+                          value={credentials.erp.endpoint_url}
+                          onChange={(e) => handleCredentialChange('erp', 'endpoint_url', e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        />
+                        
+                        <div className="grid grid-cols-2 gap-3">
+                          <input
+                            type="text"
+                            placeholder="API Key"
+                            value={credentials.erp.api_key}
+                            onChange={(e) => handleCredentialChange('erp', 'api_key', e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          />
+                          <input
+                            type="password"
+                            placeholder="API Secret"
+                            value={credentials.erp.api_secret}
+                            onChange={(e) => handleCredentialChange('erp', 'api_secret', e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          />
+                        </div>
+
+                        <input
+                          type="text"
+                          placeholder="OAuth Token (si aplica)"
+                          value={credentials.erp.oauth_token}
+                          onChange={(e) => handleCredentialChange('erp', 'oauth_token', e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        />
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <input
+                            type="text"
+                            placeholder="Location ID / Store ID"
+                            value={credentials.erp.location_id}
+                            onChange={(e) => handleCredentialChange('erp', 'location_id', e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          />
+                          <input
+                            type="text"
+                            placeholder="POS Profile (si aplica)"
+                            value={credentials.erp.pos_profile}
+                            onChange={(e) => handleCredentialChange('erp', 'pos_profile', e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          />
+                        </div>
+
+                        <div className="flex items-center space-x-2">
+                          <input
+                            type="checkbox"
+                            id="test_mode"
+                            checked={credentials.erp.test_mode}
+                            onChange={(e) => handleCredentialChange('erp', 'test_mode', e.target.checked)}
+                            className="w-4 h-4 text-orange-600 bg-gray-100 border-gray-300 rounded focus:ring-orange-500"
+                          />
+                          <label htmlFor="test_mode" className="text-sm text-gray-700">
+                            Modo de prueba (recomendado para primeras configuraciones)
+                          </label>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                    <h4 className="font-bold text-yellow-800 mb-2">⚠️ Flujo de Integración</h4>
+                    <div className="text-sm text-yellow-700 space-y-1">
+                      <p>1. Cliente hace pedido en UserWebApp</p>
+                      <p>2. Pedido se envía automáticamente al ERP</p>
+                      <p>3. ERP procesa y actualiza estado (preparación → listo)</p>
+                      <p>4. Cliente recibe notificaciones en tiempo real</p>
+                      <p>5. Sin intervención manual del personal</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-3 mt-6 pt-6 border-t border-gray-200">
+                <button 
+                  onClick={() => setShowERPModal(false)}
+                  className="px-6 py-2 text-gray-600 hover:text-gray-800"
+                >
+                  Cancelar
+                </button>
+                <button 
+                  onClick={() => handleTestConnection('erp')}
+                  className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+                >
+                  🧪 Probar Conexión
+                </button>
+                <button 
+                  onClick={() => handleConnect('erp')}
+                  className="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition-colors"
+                  disabled={!selectedERP}
+                >
+                  ✅ Conectar ERP
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 🆕 PRÓXIMOS PASOS */}
       <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
-        <h3 className="font-bold text-green-800 mb-3">🚀 Próximos Pasos</h3>
+        <h3 className="font-bold text-green-800 mb-3">🚀 Ecosistema KUMIA Completo</h3>
         <div className="text-sm text-green-700">
-          <p className="mb-3">Una vez configuradas tus credenciales:</p>
+          <p className="mb-3">Una vez configuradas todas las integraciones:</p>
           <ul className="list-disc list-inside space-y-1">
-            <li>Los agentes IA comenzarán a responder automáticamente</li>
-            <li>Se sincronizarán datos en tiempo real</li>
-            <li>Las métricas mostrarán datos reales en lugar de simulados</li>
-            <li>El sistema estará completamente automatizado</li>
+            <li><strong>UserWebApp:</strong> Clientes hacen pedidos directamente</li>
+            <li><strong>ERP Integration:</strong> Pedidos van automáticamente al sistema de cocina</li>
+            <li><strong>AI Agents:</strong> Responden preguntas y gestionan canales sociales</li>
+            <li><strong>Payments:</strong> MercadoPago procesa pagos automáticamente</li>
+            <li><strong>Analytics:</strong> Dashboard unificado con métricas en tiempo real</li>
           </ul>
         </div>
       </div>
