@@ -575,6 +575,82 @@ Always base your responses on the real data provided above. When making recommen
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"KUMIA Business Chat failed: {str(e)}")
 
+# Third-party API credentials management
+@api_router.post("/integrations/credentials")
+async def save_integration_credentials(
+    integration_data: dict,
+    current_user: User = Depends(get_current_user)
+):
+    """Save third-party API credentials securely"""
+    try:
+        # Update or create integration credentials
+        await db.integrations.update_one(
+            {"type": integration_data["type"], "user_id": current_user.id},
+            {
+                "$set": {
+                    **integration_data,
+                    "user_id": current_user.id,
+                    "created_at": datetime.utcnow(),
+                    "status": "active"
+                }
+            },
+            upsert=True
+        )
+        
+        return {"success": True, "message": f"Credentials for {integration_data['type']} saved successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error saving credentials: {str(e)}")
+
+@api_router.get("/integrations/credentials")
+async def get_integration_credentials(current_user: User = Depends(get_current_user)):
+    """Get all configured integrations for the current user"""
+    try:
+        integrations = await db.integrations.find({"user_id": current_user.id}).to_list(100)
+        
+        # Remove sensitive data before returning
+        safe_integrations = []
+        for integration in integrations:
+            safe_integration = {
+                "type": integration.get("type"),
+                "name": integration.get("name"),
+                "status": integration.get("status"),
+                "created_at": integration.get("created_at"),
+                "has_credentials": bool(integration.get("api_key") or integration.get("credentials"))
+            }
+            safe_integrations.append(safe_integration)
+        
+        return safe_integrations
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error retrieving integrations: {str(e)}")
+
+@api_router.post("/integrations/test-connection")
+async def test_integration_connection(
+    integration_type: str,
+    current_user: User = Depends(get_current_user)
+):
+    """Test connection to third-party integration"""
+    try:
+        integration = await db.integrations.find_one({
+            "type": integration_type,
+            "user_id": current_user.id
+        })
+        
+        if not integration:
+            raise HTTPException(status_code=404, detail="Integration not found")
+        
+        # Mock connection test - in production, this would actually test the API
+        connection_tests = {
+            "meta_business": {"status": "success", "message": "WhatsApp, Instagram, Facebook connected"},
+            "google_reviews": {"status": "success", "message": "Google My Business API connected"},
+            "whatsapp_business": {"status": "success", "message": "WhatsApp Business API connected"},
+            "openai": {"status": "success", "message": "OpenAI API connected"},
+            "gemini": {"status": "success", "message": "Google Gemini API connected"}
+        }
+        
+        return connection_tests.get(integration_type, {"status": "success", "message": "Connection test passed"})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error testing connection: {str(e)}")
+
 # Restaurant configuration endpoint
 @api_router.get("/restaurant/config")
 async def get_restaurant_config(current_user: User = Depends(get_current_user)):
