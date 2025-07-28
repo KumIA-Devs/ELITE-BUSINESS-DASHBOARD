@@ -3858,22 +3858,49 @@ Nunca seas agresivo, siempre agrega valor genuino.`,
     };
 
     setChatMessages(prev => [...prev, userMessage]);
+    const currentInput = chatInput;
     setChatInput('');
     setIsTyping(true);
 
-    // Simular respuesta de Gemini con datos del dashboard
-    setTimeout(() => {
-      const dashboardData = getDashboardContextForAI();
-      const aiResponse = generateAIResponse(chatInput, dashboardData);
-      
-      setChatMessages(prev => [...prev, {
+    try {
+      // Call the real Gemini API endpoint
+      const response = await axios.post(`${API}/ai/kumia-chat`, {
+        message: currentInput,
+        session_id: `kumia_chat_${Date.now()}`,
+        channel: "kumia_business_chat"
+      });
+
+      const aiResponse = {
         id: Date.now() + 1,
         type: 'ai',
-        content: aiResponse,
+        content: response.data.response,
         timestamp: new Date().toISOString()
-      }]);
+      };
+
+      setChatMessages(prev => [...prev, aiResponse]);
+    } catch (error) {
+      console.error('Error sending message to Gemini:', error);
+      
+      // Fallback to mock response in case of API error
+      const fallbackResponse = {
+        id: Date.now() + 1,
+        type: 'ai',
+        content: `🚨 **Error de conexión con KUMIA Business IA**
+        
+Lo siento, hay un problema temporal con la conexión. Mientras tanto, puedo confirmar que:
+
+• **${agents.length} agentes IA** están activos
+• **${performanceData.totalConversations.toLocaleString()} conversaciones** manejadas
+• **${performanceData.automationLevel}% automatización** nivel actual
+
+Por favor, intenta nuevamente en unos momentos.`,
+        timestamp: new Date().toISOString()
+      };
+
+      setChatMessages(prev => [...prev, fallbackResponse]);
+    } finally {
       setIsTyping(false);
-    }, 2000);
+    }
   };
 
   const getDashboardContextForAI = () => {
