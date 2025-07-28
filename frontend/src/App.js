@@ -2134,7 +2134,10 @@ const FeedbackSection = () => {
           >
             📤 Exportar Feedback
           </button>
-          <button className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-2 rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all duration-200">
+          <button 
+            onClick={handleAutoResponseConfig}
+            className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-2 rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all duration-200"
+          >
             ⚙️ Configurar Respuestas Automáticas
           </button>
         </div>
