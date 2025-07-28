@@ -1065,7 +1065,55 @@ const MenuSection = () => {
 
   useEffect(() => {
     fetchMenuItems();
+    initializeIlMandorlaMenu();
   }, []);
+
+  const initializeIlMandorlaMenu = () => {
+    // Menú oficial IL MANDORLA basado en el PDF
+    const ilMandorlaMenu = [
+      // ENTRADAS
+      { id: 'entrada_1', name: 'Nachos', description: 'Nachos con salsa y guacamole', price: 4500, category: 'Entradas', image: '', is_active: true, high_margin: false, popularity: 4, sales_count: 23 },
+      { id: 'entrada_2', name: 'Papas Fritas', description: 'Papas rústicas al horno', price: 3200, category: 'Entradas', image: '', is_active: true, high_margin: true, popularity: 5, sales_count: 45 },
+      { id: 'entrada_3', name: 'Papas con Cheddar y Bacon', description: 'Papas con queso cheddar y bacon ahumado', price: 4800, category: 'Entradas', image: '', is_active: true, high_margin: true, popularity: 5, sales_count: 38 },
+      { id: 'entrada_4', name: 'Empanadas', description: 'Empanadas de carne ahumada (x3)', price: 3600, category: 'Entradas', image: '', is_active: true, high_margin: false, popularity: 4, sales_count: 28 },
+      { id: 'entrada_5', name: 'Alitas BBQ', description: 'Alitas de pollo con salsa BBQ Il Mandorla', price: 5500, category: 'Entradas', image: '', is_active: true, high_margin: true, popularity: 5, sales_count: 42 },
+      { id: 'entrada_6', name: 'Nachos con Pulled Pork', description: 'Nachos cubiertos con pulled pork ahumado', price: 6200, category: 'Entradas', image: '', is_active: true, high_margin: true, popularity: 4, sales_count: 32 },
+      { id: 'entrada_7', name: 'Chipá Relleno', description: 'Chipá relleno con queso y hierbas', price: 2800, category: 'Entradas', image: '', is_active: true, high_margin: false, popularity: 3, sales_count: 15 },
+
+      // SANDWICHES
+      { id: 'sandwich_1', name: 'Brooklyn', description: 'Brisket, cebolla caramelizada, queso cheddar, pan artesanal', price: 8900, category: 'Sandwiches', image: '', is_active: true, high_margin: true, popularity: 5, sales_count: 67 },
+      { id: 'sandwich_2', name: 'Pampeana', description: 'Carne ahumada, chimichurri, tomate, lechuga', price: 7800, category: 'Sandwiches', image: '', is_active: true, high_margin: false, popularity: 4, sales_count: 54 },
+      { id: 'sandwich_3', name: 'Choripán', description: 'Chorizo ahumado, chimichurri, pan crujiente', price: 5200, category: 'Sandwiches', image: '', is_active: true, high_margin: true, popularity: 5, sales_count: 89 },
+      { id: 'sandwich_4', name: 'Pulled Pork', description: 'Pulled pork ahumado, coleslaw, salsa BBQ', price: 7200, category: 'Sandwiches', image: '', is_active: true, high_margin: true, popularity: 4, sales_count: 43 },
+
+      // PARRILLAS
+      { id: 'parrilla_1', name: 'Plato de Carne Individual', description: 'Brisket o costillas con guarnición', price: 12500, category: 'Parrillas', image: '', is_active: true, high_margin: true, popularity: 5, sales_count: 78 },
+      { id: 'parrilla_2', name: 'Para Compartir x2', description: 'Variedad de carnes ahumadas para 2 personas', price: 18900, category: 'Parrillas', image: '', is_active: true, high_margin: true, popularity: 5, sales_count: 45 },
+      { id: 'parrilla_3', name: 'Para Compartir x4', description: 'Parrillada completa para 4 personas', price: 32500, category: 'Parrillas', image: '', is_active: true, high_margin: true, popularity: 5, sales_count: 23 },
+      { id: 'parrilla_4', name: 'Baby Ribs', description: 'Costillas de cerdo baby con glaseado especial', price: 14200, category: 'Parrillas', image: '', is_active: true, high_margin: true, popularity: 4, sales_count: 56 },
+      { id: 'parrilla_5', name: 'Tex-Mex', description: 'Carne ahumada estilo texano con especias', price: 13800, category: 'Parrillas', image: '', is_active: true, high_margin: false, popularity: 4, sales_count: 34 },
+
+      // PIZZAS
+      { id: 'pizza_1', name: 'Muzzarella', description: 'Pizza clásica con muzzarella y orégano', price: 6800, category: 'Pizzas', image: '', is_active: true, high_margin: false, popularity: 3, sales_count: 67 },
+      { id: 'pizza_2', name: '4 Quesos', description: 'Muzzarella, roquefort, parmesano y provoleta', price: 8200, category: 'Pizzas', image: '', is_active: true, high_margin: true, popularity: 4, sales_count: 43 },
+      { id: 'pizza_3', name: 'Bechamel', description: 'Salsa bechamel, jamón y muzzarella', price: 7500, category: 'Pizzas', image: '', is_active: true, high_margin: false, popularity: 3, sales_count: 32 },
+      { id: 'pizza_4', name: 'Asado y Hongos', description: 'Carne asada, hongos y cebolla', price: 9200, category: 'Pizzas', image: '', is_active: true, high_margin: true, popularity: 4, sales_count: 38 },
+      { id: 'pizza_5', name: 'Margarita con Jamón', description: 'Tomate, albahaca, jamón y muzzarella', price: 7800, category: 'Pizzas', image: '', is_active: true, high_margin: false, popularity: 3, sales_count: 28 },
+      { id: 'pizza_6', name: 'Pulled Pork Pizza', description: 'Pulled pork ahumado con cebolla morada', price: 10500, category: 'Pizzas', image: '', is_active: true, high_margin: true, popularity: 5, sales_count: 34 },
+      { id: 'pizza_7', name: 'Spicy Bacon', description: 'Bacon ahumado, jalapeños y queso picante', price: 9800, category: 'Pizzas', image: '', is_active: true, high_margin: true, popularity: 4, sales_count: 29 },
+
+      // BEBIDAS
+      { id: 'bebida_1', name: 'Tragos de Autor', description: 'Cócteles signature de la casa', price: 4500, category: 'Bebidas', image: '', is_active: true, high_margin: true, popularity: 4, sales_count: 78 },
+      { id: 'bebida_2', name: 'Tragos Clásicos', description: 'Whisky sour, mojito, caipirinha', price: 3800, category: 'Bebidas', image: '', is_active: true, high_margin: false, popularity: 4, sales_count: 89 },
+      { id: 'bebida_3', name: 'Vinos', description: 'Selección de vinos tintos y blancos', price: 5200, category: 'Bebidas', image: '', is_active: true, high_margin: true, popularity: 3, sales_count: 45 },
+      { id: 'bebida_4', name: 'Jugos Naturales', description: 'Jugos de frutas frescas', price: 2800, category: 'Bebidas', image: '', is_active: true, high_margin: false, popularity: 3, sales_count: 67 },
+      { id: 'bebida_5', name: 'Cerveza Artesanal', description: 'IPA, Stout y Lager de la casa', price: 3200, category: 'Bebidas', image: '', is_active: true, high_margin: true, popularity: 5, sales_count: 123 },
+      { id: 'bebida_6', name: 'Gaseosas', description: 'Coca Cola, Sprite, Fanta', price: 1800, category: 'Bebidas', image: '', is_active: true, high_margin: false, popularity: 3, sales_count: 98 },
+      { id: 'bebida_7', name: 'Agua', description: 'Agua mineral con o sin gas', price: 1200, category: 'Bebidas', image: '', is_active: true, high_margin: false, popularity: 2, sales_count: 156 }
+    ];
+
+    setMenuItems(ilMandorlaMenu);
+  };
 
   const fetchMenuItems = async () => {
     try {
