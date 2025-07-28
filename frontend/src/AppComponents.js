@@ -944,8 +944,80 @@ export const IntegrationsSection = () => {
     }, 2000);
   };
 
-  const getSelectedERPInfo = () => {
-    return restaurantERPs.find(erp => erp.id === selectedERP);
+  const handleContactSupport = () => {
+    const subject = encodeURIComponent('Solicitud de integración ERP - KUMIA');
+    const body = encodeURIComponent(`Hola equipo de soporte KUMIA,
+
+Necesito asistencia con la integración de mi ERP:
+
+□ Mi ERP no aparece en la lista de sistemas soportados
+□ Necesito ayuda con la configuración de mi ERP actual
+□ Tengo problemas técnicos con la integración
+□ Necesito consultoría para elegir el ERP correcto
+
+Detalles del sistema:
+- Nombre del ERP: [Especificar]
+- Versión: [Especificar]
+- Ubicación: [País/Región]
+- Tipo de restaurante: [Especificar]
+
+Descripción del problema:
+[Describir en detalle]
+
+Gracias por su soporte.
+
+Saludos,
+[Nombre del restaurante]`);
+
+    window.open(`mailto:soporte@kumia.net?subject=${subject}&body=${body}`, '_blank');
+  };
+
+  const getSyncFrequencyInfo = (frequency) => {
+    const syncOptions = {
+      realtime: {
+        label: 'Tiempo Real',
+        description: 'Webhooks + Updates instantáneos',
+        cost: 'Alto',
+        pros: ['Sincronización instantánea', 'Mejor experiencia usuario', 'Datos siempre actualizados'],
+        cons: ['Mayor costo de infraestructura', 'Más llamadas API', 'Requiere webhooks']
+      },
+      '1min': {
+        label: 'Cada 1 minuto',
+        description: 'Polling cada minuto',
+        cost: 'Alto',
+        pros: ['Casi tiempo real', 'Buena para operaciones rápidas', 'Sin webhooks requeridos'],
+        cons: ['1440 llamadas/día', 'Costo elevado', 'Delay de 1 minuto']
+      },
+      '5min': {
+        label: 'Cada 5 minutos',
+        description: 'Polling cada 5 minutos',
+        cost: 'Medio',
+        pros: ['Balance costo-beneficio', 'Suficiente para la mayoría', 'Delay aceptable'],
+        cons: ['288 llamadas/día', 'Delay de hasta 5 minutos', 'Costo medio']
+      },
+      '15min': {
+        label: 'Cada 15 minutos',
+        description: 'Polling cada 15 minutos',
+        cost: 'Bajo',
+        pros: ['Económico', '96 llamadas/día', 'Suficiente para reportes'],
+        cons: ['Delay de hasta 15 minutos', 'No ideal para operaciones urgentes']
+      },
+      '30min': {
+        label: 'Cada 30 minutos',
+        description: 'Polling cada 30 minutos',
+        cost: 'Muy Bajo',
+        pros: ['Muy económico', '48 llamadas/día', 'Ideal para analytics'],
+        cons: ['Delay de hasta 30 minutos', 'No para operaciones tiempo real']
+      },
+      '1hour': {
+        label: 'Cada hora',
+        description: 'Polling cada hora',
+        cost: 'Mínimo',
+        pros: ['Costo mínimo', '24 llamadas/día', 'Perfecto para reportes'],
+        cons: ['Delay de hasta 1 hora', 'Solo para datos no críticos']
+      }
+    };
+    return syncOptions[frequency] || syncOptions['5min'];
   };
 
   return (
