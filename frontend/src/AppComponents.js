@@ -1805,6 +1805,23 @@ export const ClientsSection = () => {
     avgTicket: 'all',
     feedback: 'all'
   });
+  
+  // 🆕 ESTADO PARA MODALES Y FUNCIONALIDADES
+  const [showNewClientModal, setShowNewClientModal] = useState(false);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [showContactModal, setShowContactModal] = useState(false);
+  const [showReferralModal, setShowReferralModal] = useState(false);
+  const [showNFTModal, setShowNFTModal] = useState(false);
+  const [selectedClient, setSelectedClient] = useState(null);
+  const [newClient, setNewClient] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    birthday: '',
+    allergies: '',
+    special_date: '',
+    notes: ''
+  });
 
   const clientFilters = [
     { id: 'all', label: 'Todos', color: 'bg-gray-100', count: 48 },
