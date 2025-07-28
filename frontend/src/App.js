@@ -1410,18 +1410,21 @@ const MenuSection = () => {
         </div>
         <div className="flex space-x-3">
           <button 
-            onClick={() => setViewMode(viewMode === 'admin' ? 'customer' : 'admin')}
+            onClick={handleViewModeToggle}
             className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
           >
             👁️ Vista {viewMode === 'admin' ? 'Cliente' : 'Admin'}
           </button>
           <button 
-            onClick={() => setShowAnalytics(!showAnalytics)}
+            onClick={handleAnalyticsToggle}
             className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors"
           >
             📊 Analíticas
           </button>
-          <button className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-lg hover:from-orange-600 hover:to-red-600 transition-all duration-200">
+          <button 
+            onClick={handleNewItemClick}
+            className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-lg hover:from-orange-600 hover:to-red-600 transition-all duration-200"
+          >
             + Nuevo Item
           </button>
         </div>
