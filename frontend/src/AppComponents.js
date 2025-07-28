@@ -4097,36 +4097,70 @@ Optimiza los prompts de tus agentes con mejor performance y replica esas técnic
         </div>
       </div>
 
-      {/* Grid de Agentes */}
+      {/* 🆕 GRID DE AGENTES IA ESPECIALIZADOS */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {agents.map(agent => (
           <div key={agent.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all duration-200">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center">
-                <div className={`w-12 h-12 bg-gradient-to-br ${getChannelColor(agent.channel)} rounded-xl flex items-center justify-center mr-3`}>
-                  <span className="text-white text-xl">{getChannelIcon(agent.channel)}</span>
+                <div className={`w-12 h-12 bg-gradient-to-br ${getChannelColor(agent.channels)} rounded-xl flex items-center justify-center mr-3`}>
+                  <span className="text-white text-xl">{getChannelIcon(agent.channels)}</span>
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-800">{agent.name}</h3>
-                  <p className="text-sm text-gray-600 capitalize">{agent.channel}</p>
+                  <p className="text-sm text-gray-600">{getAgentSpecialization(agent.specialization)}</p>
                 </div>
               </div>
               <div className="flex items-center space-x-2">
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                  agent.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                }`}>
-                  {agent.is_active ? '🟢 Activo' : '🔴 Inactivo'}
-                </span>
+                <span className={`w-3 h-3 rounded-full ${agent.is_active ? 'bg-green-400' : 'bg-red-400'}`}></span>
+                <button 
+                  onClick={() => handleEditAgent(agent.id)}
+                  className="text-gray-400 hover:text-blue-600 transition-colors"
+                >
+                  ✏️
+                </button>
               </div>
             </div>
 
-            <div className="mb-4">
-              <h4 className="text-sm font-medium text-gray-700 mb-2">Prompt Personalizado:</h4>
-              <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg line-clamp-3">
-                {agent.prompt}
-              </p>
+            {/* Performance metrics */}
+            <div className="grid grid-cols-3 gap-2 mb-4">
+              <div className="bg-blue-50 p-2 rounded-lg text-center">
+                <div className="text-sm font-bold text-blue-600">{agent.performance?.responses || 0}</div>
+                <div className="text-xs text-blue-700">Respuestas</div>
+              </div>
+              <div className="bg-green-50 p-2 rounded-lg text-center">
+                <div className="text-sm font-bold text-green-600">{agent.performance?.rating || 0}/5</div>
+                <div className="text-xs text-green-700">Rating</div>
+              </div>
+              <div className="bg-purple-50 p-2 rounded-lg text-center">
+                <div className="text-sm font-bold text-purple-600">{agent.performance?.conversion || 0}%</div>
+                <div className="text-xs text-purple-700">Conversión</div>
+              </div>
             </div>
 
+            {/* Channels */}
+            <div className="mb-4">
+              <h4 className="text-sm font-medium text-gray-700 mb-2">Canales activos:</h4>
+              <div className="flex flex-wrap gap-1">
+                {agent.channels.map(channel => (
+                  <span key={channel} className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    channel === 'google_reviews' ? 'bg-yellow-100 text-yellow-800' :
+                    channel === 'whatsapp' ? 'bg-green-100 text-green-800' :
+                    channel === 'instagram' ? 'bg-pink-100 text-pink-800' :
+                    channel === 'facebook' ? 'bg-blue-100 text-blue-800' :
+                    channel === 'userwebapp' ? 'bg-orange-100 text-orange-800' :
+                    channel === 'email' ? 'bg-indigo-100 text-indigo-800' :
+                    'bg-gray-100 text-gray-800'
+                  }`}>
+                    {channel === 'google_reviews' ? 'Google Reviews' :
+                     channel === 'userwebapp' ? 'User App' :
+                     channel.charAt(0).toUpperCase() + channel.slice(1)}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Action buttons */}
             <div className="flex flex-col space-y-2">
               <div className="flex space-x-2">
                 <button 
@@ -4155,6 +4189,13 @@ Optimiza los prompts de tus agentes con mejor performance y replica esas técnic
                 >
                   📊 Analizar
                 </button>
+              </div>
+            </div>
+
+            {/* Last training */}
+            <div className="mt-3 pt-3 border-t border-gray-100">
+              <div className="text-xs text-gray-500">
+                Último entrenamiento: {agent.last_training}
               </div>
             </div>
           </div>
