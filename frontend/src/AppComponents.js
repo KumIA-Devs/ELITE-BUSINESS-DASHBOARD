@@ -734,59 +734,61 @@ export const IntegrationsSection = () => {
       sync_support: ['realtime', 'webhooks', 'polling']
     },
     {
-      id: 'square_restaurants',
-      name: 'Square for Restaurants',
-      logo: '⬛', // En producción: logo real de Square
-      category: 'Cloud POS',
-      description: 'Square especializado en restaurantes con API excelente',
+      id: 'netsuite',
+      name: 'Oracle NetSuite',
+      logo: '🟠', // En producción: logo real de NetSuite
+      category: 'Enterprise',
+      description: 'ERP en la nube con SuiteScript y REST APIs',
       region: 'Global',
-      complexity: 'Low',
-      features: ['Orders API', 'Payments', 'Menu Sync', 'Real-time Updates'],
+      complexity: 'High',
+      features: ['SuiteScript', 'RESTlets', 'SuiteTalk', 'Workflow Automation'],
       endpoints: {
-        orders: '/v2/orders',
-        catalog: '/v2/catalog',
-        locations: '/v2/locations'
+        orders: '/app/common/entity/salesord.nl',
+        items: '/app/common/item/item.nl',
+        customers: '/app/common/entity/custjob.nl'
       },
-      auth_method: 'OAuth 2.0 + Bearer Token',
-      documentation: 'https://developer.squareup.com/docs/',
+      auth_method: 'OAuth 2.0 + Token',
+      documentation: 'https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/book_1559132836.html',
       sync_support: ['realtime', 'webhooks', 'polling']
     },
     {
-      id: 'toast_pos',
-      name: 'Toast POS',
-      logo: '🟤', // En producción: logo real de Toast
-      category: 'Cloud POS',
-      description: 'POS estadounidense líder con API comprehensiva',
-      region: 'US',
-      complexity: 'Medium',
-      features: ['Orders API', 'Menu Management', 'Kitchen Display', 'Advanced Analytics'],
+      id: 'infor_cloudsuite',
+      name: 'Infor CloudSuite F&B',
+      logo: '🟡', // En producción: logo real de Infor
+      category: 'Enterprise',
+      description: 'Suite especializada para Food & Beverage con APIs robustas',
+      region: 'Global',
+      complexity: 'High',
+      features: ['ION API', 'Recipe Management', 'Cost Control', 'Multi-location'],
       endpoints: {
-        orders: '/orders/v2/orders',
-        menu: '/config/v2/menuitems',
-        restaurants: '/config/v2/restaurants'
+        orders: '/IONAPI/LN/orders',
+        recipes: '/IONAPI/LN/recipes',
+        inventory: '/IONAPI/LN/inventory'
       },
       auth_method: 'OAuth 2.0',
-      documentation: 'https://doc.toasttab.com/',
+      documentation: 'https://docs.infor.com/cloudsuite/',
       sync_support: ['realtime', 'webhooks', 'polling']
     },
     {
-      id: 'lightspeed_restaurant',
-      name: 'Lightspeed Restaurant',
-      logo: '🟡', // En producción: logo real de Lightspeed
-      category: 'Cloud POS',
-      description: 'Lightspeed especializado en restaurantes con API robusta',
+      id: 'dynamics_365',
+      name: 'Microsoft Dynamics 365',
+      logo: '🔷', // En producción: logo real de Microsoft
+      category: 'Enterprise',
+      description: 'Business Central con módulos de restaurante',
       region: 'Global',
-      complexity: 'Medium',
-      features: ['Orders API', 'Menu Management', 'Kitchen Display', 'Analytics'],
+      complexity: 'High',
+      features: ['Web API', 'OData v4', 'Power Platform Integration', 'AI Insights'],
       endpoints: {
-        orders: '/API/Account/{accountID}/Order',
-        menu: '/API/Account/{accountID}/Item',
-        tables: '/API/Account/{accountID}/Table'
+        orders: '/api/v2.0/companies/orders',
+        items: '/api/v2.0/companies/items',
+        customers: '/api/v2.0/companies/customers'
       },
-      auth_method: 'OAuth 2.0',
-      documentation: 'https://developers.lightspeedpos.com/',
+      auth_method: 'OAuth 2.0 + Azure AD',
+      documentation: 'https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/',
       sync_support: ['realtime', 'webhooks', 'polling']
     },
+
+    // 🌎 Cloud POS / Multiplataforma
     {
       id: 'soft_restaurant',
       name: 'Soft Restaurant',
@@ -824,6 +826,170 @@ export const IntegrationsSection = () => {
       sync_support: ['realtime', 'webhooks', 'polling']
     },
     {
+      id: 'toteat',
+      name: 'Toteat',
+      logo: '🔸', // En producción: logo real de Toteat
+      category: 'Cloud POS',
+      description: 'Plataforma cloud española especializada en restauración',
+      region: 'Europe',
+      complexity: 'Low',
+      features: ['Orders API', 'Kitchen Display', 'Menu Management', 'Real-time Sync'],
+      endpoints: {
+        orders: '/api/v1/orders',
+        menu: '/api/v1/menu',
+        tables: '/api/v1/tables'
+      },
+      auth_method: 'API Key + Bearer Token',
+      documentation: 'https://developers.toteat.es/',
+      sync_support: ['realtime', 'polling']
+    },
+    {
+      id: 'poster_pos',
+      name: 'Poster POS (JoinPoster)',
+      logo: '🟫', // En producción: logo real de Poster
+      category: 'Cloud POS',
+      description: 'POS europeo popular con API REST completa',
+      region: 'Europe',
+      complexity: 'Medium',
+      features: ['Orders API', 'Menu Sync', 'Analytics', 'Multi-location'],
+      endpoints: {
+        orders: '/api/v3/transactions',
+        menu: '/api/v3/menu',
+        spots: '/api/v3/spots'
+      },
+      auth_method: 'API Key',
+      documentation: 'https://api.joinposter.com/',
+      sync_support: ['realtime', 'webhooks', 'polling']
+    },
+    {
+      id: 'rkeeper',
+      name: 'R-Keeper',
+      logo: '🟥', // En producción: logo real de R-Keeper
+      category: 'Cloud POS',
+      description: 'Sistema hospitalario con integración API especializada',
+      region: 'Global',
+      complexity: 'High',
+      features: ['Order Management', 'Kitchen Integration', 'Multi-concept', 'Enterprise Features'],
+      endpoints: {
+        orders: '/rk7api/v1/orders',
+        menu: '/rk7api/v1/menu',
+        stations: '/rk7api/v1/stations'
+      },
+      auth_method: 'API Key + Session',
+      documentation: 'https://www.ucs.ru/en/rkeeper-integration/',
+      sync_support: ['realtime', 'polling']
+    },
+    {
+      id: 'revel_systems',
+      name: 'Revel Systems',
+      logo: '🔳', // En producción: logo real de Revel
+      category: 'Cloud POS',
+      description: 'POS estadounidense con API REST y integración nativa',
+      region: 'US',
+      complexity: 'Medium',
+      features: ['Orders API', 'Inventory Management', 'Reporting', 'Third-party Integration'],
+      endpoints: {
+        orders: '/api/v1/orders/',
+        products: '/api/v1/products/',
+        customers: '/api/v1/customers/'
+      },
+      auth_method: 'API Key + Secret',
+      documentation: 'https://revelsystems.com/developers/',
+      sync_support: ['realtime', 'webhooks', 'polling']
+    },
+    {
+      id: 'lightspeed_restaurant',
+      name: 'Lightspeed Restaurant',
+      logo: '🟡', // En producción: logo real de Lightspeed
+      category: 'Cloud POS',
+      description: 'Lightspeed especializado en restaurantes con API robusta',
+      region: 'Global',
+      complexity: 'Medium',
+      features: ['Orders API', 'Menu Management', 'Kitchen Display', 'Analytics'],
+      endpoints: {
+        orders: '/API/Account/{accountID}/Order',
+        menu: '/API/Account/{accountID}/Item',
+        tables: '/API/Account/{accountID}/Table'
+      },
+      auth_method: 'OAuth 2.0',
+      documentation: 'https://developers.lightspeedpos.com/',
+      sync_support: ['realtime', 'webhooks', 'polling']
+    },
+    {
+      id: 'square_restaurants',
+      name: 'Square for Restaurants',
+      logo: '⬛', // En producción: logo real de Square
+      category: 'Cloud POS',
+      description: 'Square especializado en restaurantes con API excelente',
+      region: 'Global',
+      complexity: 'Low',
+      features: ['Orders API', 'Payments', 'Menu Sync', 'Real-time Updates'],
+      endpoints: {
+        orders: '/v2/orders',
+        catalog: '/v2/catalog',
+        locations: '/v2/locations'
+      },
+      auth_method: 'OAuth 2.0 + Bearer Token',
+      documentation: 'https://developer.squareup.com/docs/',
+      sync_support: ['realtime', 'webhooks', 'polling']
+    },
+    {
+      id: 'touchbistro',
+      name: 'TouchBistro',
+      logo: '🔘', // En producción: logo real de TouchBistro
+      category: 'Cloud POS',
+      description: 'POS canadiense especializado en restaurantes',
+      region: 'North America',
+      complexity: 'Medium',
+      features: ['Orders API', 'Table Management', 'Kitchen Display', 'Staff Management'],
+      endpoints: {
+        orders: '/api/v1/orders',
+        menu: '/api/v1/menu',
+        tables: '/api/v1/tables'
+      },
+      auth_method: 'API Key',
+      documentation: 'https://www.touchbistro.com/developers/',
+      sync_support: ['realtime', 'webhooks', 'polling']
+    },
+    {
+      id: 'toast_pos',
+      name: 'Toast POS',
+      logo: '🟤', // En producción: logo real de Toast
+      category: 'Cloud POS',
+      description: 'POS estadounidense líder con API comprehensiva',
+      region: 'US',
+      complexity: 'Medium',
+      features: ['Orders API', 'Menu Management', 'Kitchen Display', 'Advanced Analytics'],
+      endpoints: {
+        orders: '/orders/v2/orders',
+        menu: '/config/v2/menuitems',
+        restaurants: '/config/v2/restaurants'
+      },
+      auth_method: 'OAuth 2.0',
+      documentation: 'https://doc.toasttab.com/',
+      sync_support: ['realtime', 'webhooks', 'polling']
+    },
+    {
+      id: 'lavu_pos',
+      name: 'Lavu POS',
+      logo: '🔴', // En producción: logo real de Lavu
+      category: 'Cloud POS',
+      description: 'POS con API REST y enfoque en integración',
+      region: 'US',
+      complexity: 'Medium',
+      features: ['Orders API', 'Menu Sync', 'Reporting', 'Third-party Apps'],
+      endpoints: {
+        orders: '/api/v1/orders',
+        menu: '/api/v1/menu',
+        customers: '/api/v1/customers'
+      },
+      auth_method: 'API Key + Token',
+      documentation: 'https://www.lavu.com/api-documentation/',
+      sync_support: ['realtime', 'webhooks', 'polling']
+    },
+
+    // 🧬 Kitchen Management & CRP
+    {
       id: 'apicbase',
       name: 'Apicbase CRP',
       logo: '🟪', // En producción: logo real de Apicbase
@@ -842,6 +1008,82 @@ export const IntegrationsSection = () => {
       sync_support: ['realtime', 'webhooks', 'polling']
     },
     {
+      id: 'marketman',
+      name: 'MarketMan',
+      logo: '📊', // En producción: logo real de MarketMan
+      category: 'Kitchen Management',
+      description: 'Gestión de inventarios con API para automatización',
+      region: 'Global',
+      complexity: 'Medium',
+      features: ['Inventory API', 'Cost Control', 'Supplier Integration', 'Analytics'],
+      endpoints: {
+        inventory: '/api/v1/inventory',
+        suppliers: '/api/v1/suppliers',
+        orders: '/api/v1/purchase-orders'
+      },
+      auth_method: 'API Key',
+      documentation: 'https://marketman.com/api-docs/',
+      sync_support: ['polling', 'webhooks']
+    },
+    {
+      id: 'chowly',
+      name: 'Chowly',
+      logo: '🚚', // En producción: logo real de Chowly
+      category: 'Kitchen Management',
+      description: 'Plataforma de integración especializada en delivery',
+      region: 'US',
+      complexity: 'Low',
+      features: ['Order Aggregation', 'POS Integration', 'Menu Sync', 'Real-time Updates'],
+      endpoints: {
+        orders: '/api/v1/orders',
+        menus: '/api/v1/menus',
+        locations: '/api/v1/locations'
+      },
+      auth_method: 'API Key',
+      documentation: 'https://chowly.com/developers/',
+      sync_support: ['realtime', 'webhooks', 'polling']
+    },
+
+    // 📊 Omnichannel & Retail
+    {
+      id: 'openbravo',
+      name: 'Openbravo Commerce Cloud',
+      logo: '🌐', // En producción: logo real de Openbravo
+      category: 'Omnichannel',
+      description: 'Plataforma omnicanal con vertical Ho-Re-Ca',
+      region: 'Global',
+      complexity: 'High',
+      features: ['REST API', 'Omnichannel', 'Retail Integration', 'Cloud Native'],
+      endpoints: {
+        orders: '/openbravo/ws/dal/Order',
+        products: '/openbravo/ws/dal/Product',
+        business_partner: '/openbravo/ws/dal/BusinessPartner'
+      },
+      auth_method: 'Basic Auth + API Key',
+      documentation: 'https://wiki.openbravo.com/wiki/Web_Services',
+      sync_support: ['realtime', 'webhooks', 'polling']
+    },
+    {
+      id: 'hiopos',
+      name: 'HIOPOS Cloud',
+      logo: '☁️', // En producción: logo real de HIOPOS
+      category: 'Omnichannel',
+      description: 'POS español con capacidades omnicanal',
+      region: 'Spain',
+      complexity: 'Medium',
+      features: ['Cloud API', 'Multi-device', 'Inventory Sync', 'Customer Management'],
+      endpoints: {
+        orders: '/api/v1/orders',
+        articles: '/api/v1/articles',
+        customers: '/api/v1/customers'
+      },
+      auth_method: 'API Key + Token',
+      documentation: 'https://www.hiopos.com/api-documentation/',
+      sync_support: ['realtime', 'polling']
+    },
+
+    // 🧑‍🍳 Reservations & Kitchen Flow
+    {
       id: 'sevenrooms',
       name: 'SevenRooms',
       logo: '🔷', // En producción: logo real de SevenRooms
@@ -857,6 +1099,42 @@ export const IntegrationsSection = () => {
       },
       auth_method: 'OAuth 2.0',
       documentation: 'https://developers.sevenrooms.com/',
+      sync_support: ['realtime', 'webhooks', 'polling']
+    },
+    {
+      id: 'zenchef',
+      name: 'Zenchef',
+      logo: '👨‍🍳', // En producción: logo real de Zenchef
+      category: 'Reservations',
+      description: 'Sistema de reservas europeo con API REST',
+      region: 'Europe',
+      complexity: 'Low',
+      features: ['Booking API', 'Table Management', 'Customer Data', 'Marketing Tools'],
+      endpoints: {
+        bookings: '/api/v1/bookings',
+        tables: '/api/v1/tables',
+        customers: '/api/v1/customers'
+      },
+      auth_method: 'API Key',
+      documentation: 'https://developers.zenchef.com/',
+      sync_support: ['realtime', 'polling']
+    },
+    {
+      id: 'resy',
+      name: 'Resy (OpenTable API)',
+      logo: '🍽️', // En producción: logo real de Resy/OpenTable
+      category: 'Reservations',
+      description: 'Reservas con API de OpenTable integrada',
+      region: 'Global',
+      complexity: 'Medium',
+      features: ['Reservations API', 'Availability Check', 'Guest Profiles', 'Waitlist Management'],
+      endpoints: {
+        reservations: '/api/v2/reservations',
+        availability: '/api/v2/availability',
+        restaurants: '/api/v2/restaurants'
+      },
+      auth_method: 'OAuth 2.0',
+      documentation: 'https://platform.opentable.com/documentation/',
       sync_support: ['realtime', 'webhooks', 'polling']
     }
   ];
