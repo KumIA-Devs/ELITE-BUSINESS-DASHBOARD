@@ -1430,145 +1430,259 @@ export const IntegrationsSection = () => {
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* ERP Selection */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-bold text-gray-800 mb-4">📋 Selecciona tu ERP</h3>
-                  <div className="space-y-3">
-                    {restaurantERPs.map(erp => (
-                      <div
-                        key={erp.id}
-                        className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                          selectedERP === erp.id 
-                            ? 'border-orange-500 bg-orange-50' 
-                            : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                        onClick={() => handleSelectERP(erp.id)}
-                      >
-                        <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-bold text-gray-800">{erp.name}</h4>
-                          <span className={`px-2 py-1 rounded-full text-xs ${
-                            erp.region === 'LATAM' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
-                          }`}>
-                            {erp.region}
+              {!selectedERP ? (
+                /* Step 1: ERP Selection List */
+                <div className="space-y-6">
+                  <div className="text-center mb-6">
+                    <h3 className="text-lg font-bold text-gray-800 mb-2">📋 Selecciona tu ERP / POS</h3>
+                    <p className="text-gray-600">Elige de nuestra lista de +30 sistemas integrados</p>
+                  </div>
+
+                  <div className="space-y-6">
+                    {Object.entries(groupedERPs).map(([category, erps]) => (
+                      <div key={category} className="bg-gray-50 rounded-xl p-4">
+                        <h4 className="flex items-center font-bold text-gray-800 mb-3">
+                          <span className="text-2xl mr-2">{categoryIcons[category]}</span>
+                          {category}
+                          <span className="ml-2 text-sm bg-gray-200 text-gray-600 px-2 py-1 rounded-full">
+                            {erps.length} sistemas
                           </span>
-                        </div>
-                        <p className="text-sm text-gray-600 mb-2">{erp.description}</p>
-                        <div className="flex flex-wrap gap-1">
-                          {erp.features.map(feature => (
-                            <span key={feature} className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
-                              {feature}
-                            </span>
+                        </h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                          {erps.map(erp => (
+                            <div
+                              key={erp.id}
+                              className="bg-white p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-orange-300 hover:shadow-md transition-all"
+                              onClick={() => handleSelectERP(erp.id)}
+                            >
+                              <div className="flex items-center justify-between mb-2">
+                                <h5 className="font-bold text-gray-800 text-sm">{erp.name}</h5>
+                                <div className="flex items-center space-x-1">
+                                  <span className={`px-2 py-1 rounded-full text-xs ${
+                                    erp.complexity === 'Low' ? 'bg-green-100 text-green-800' :
+                                    erp.complexity === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
+                                    erp.complexity === 'High' ? 'bg-orange-100 text-orange-800' :
+                                    'bg-red-100 text-red-800'
+                                  }`}>
+                                    {erp.complexity}
+                                  </span>
+                                  <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                                    {erp.region}
+                                  </span>
+                                </div>
+                              </div>
+                              <p className="text-xs text-gray-600 mb-2">{erp.description}</p>
+                              <div className="flex flex-wrap gap-1">
+                                {erp.features.slice(0, 2).map(feature => (
+                                  <span key={feature} className="px-1 py-0.5 bg-gray-100 text-gray-600 rounded text-xs">
+                                    {feature}
+                                  </span>
+                                ))}
+                                {erp.features.length > 2 && (
+                                  <span className="px-1 py-0.5 bg-gray-100 text-gray-600 rounded text-xs">
+                                    +{erp.features.length - 2} más
+                                  </span>
+                                )}
+                              </div>
+                            </div>
                           ))}
                         </div>
                       </div>
                     ))}
                   </div>
-                </div>
 
-                {/* Configuration */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-bold text-gray-800 mb-4">⚙️ Configuración</h3>
-                  
-                  {selectedERP && (
-                    <>
-                      <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                        <h4 className="font-bold text-blue-800 mb-2">📖 {getSelectedERPInfo()?.name} - Información</h4>
-                        <p className="text-sm text-blue-700 mb-2">
-                          <strong>Autenticación:</strong> {getSelectedERPInfo()?.auth_method}
-                        </p>
-                        <p className="text-sm text-blue-700 mb-2">
-                          <strong>Documentación:</strong> {getSelectedERPInfo()?.documentation}
-                        </p>
-                        <div className="text-sm text-blue-700">
-                          <strong>Endpoints principales:</strong>
-                          <ul className="mt-1 space-y-1">
-                            {Object.entries(getSelectedERPInfo()?.endpoints || {}).map(([key, value]) => (
-                              <li key={key}>• {key}: {value}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
-
-                      <div className="space-y-3">
-                        <input
-                          type="text"
-                          placeholder="API Endpoint URL (ej: https://tu-erp.com/api/v1)"
-                          value={credentials.erp.endpoint_url}
-                          onChange={(e) => handleCredentialChange('erp', 'endpoint_url', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                        />
-                        
-                        <div className="grid grid-cols-2 gap-3">
-                          <input
-                            type="text"
-                            placeholder="API Key"
-                            value={credentials.erp.api_key}
-                            onChange={(e) => handleCredentialChange('erp', 'api_key', e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                          />
-                          <input
-                            type="password"
-                            placeholder="API Secret"
-                            value={credentials.erp.api_secret}
-                            onChange={(e) => handleCredentialChange('erp', 'api_secret', e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                          />
-                        </div>
-
-                        <input
-                          type="text"
-                          placeholder="OAuth Token (si aplica)"
-                          value={credentials.erp.oauth_token}
-                          onChange={(e) => handleCredentialChange('erp', 'oauth_token', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                        />
-
-                        <div className="grid grid-cols-2 gap-3">
-                          <input
-                            type="text"
-                            placeholder="Location ID / Store ID"
-                            value={credentials.erp.location_id}
-                            onChange={(e) => handleCredentialChange('erp', 'location_id', e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                          />
-                          <input
-                            type="text"
-                            placeholder="POS Profile (si aplica)"
-                            value={credentials.erp.pos_profile}
-                            onChange={(e) => handleCredentialChange('erp', 'pos_profile', e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                          />
-                        </div>
-
-                        <div className="flex items-center space-x-2">
-                          <input
-                            type="checkbox"
-                            id="test_mode"
-                            checked={credentials.erp.test_mode}
-                            onChange={(e) => handleCredentialChange('erp', 'test_mode', e.target.checked)}
-                            className="w-4 h-4 text-orange-600 bg-gray-100 border-gray-300 rounded focus:ring-orange-500"
-                          />
-                          <label htmlFor="test_mode" className="text-sm text-gray-700">
-                            Modo de prueba (recomendado para primeras configuraciones)
-                          </label>
-                        </div>
-                      </div>
-                    </>
-                  )}
-
-                  <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-                    <h4 className="font-bold text-yellow-800 mb-2">⚠️ Flujo de Integración</h4>
-                    <div className="text-sm text-yellow-700 space-y-1">
-                      <p>1. Cliente hace pedido en UserWebApp</p>
-                      <p>2. Pedido se envía automáticamente al ERP</p>
-                      <p>3. ERP procesa y actualiza estado (preparación → listo)</p>
-                      <p>4. Cliente recibe notificaciones en tiempo real</p>
-                      <p>5. Sin intervención manual del personal</p>
-                    </div>
+                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 text-center">
+                    <h4 className="font-bold text-blue-800 mb-2">¿No encuentras tu sistema?</h4>
+                    <p className="text-sm text-blue-700 mb-3">
+                      Contacta nuestro equipo de integración para añadir tu ERP a la lista
+                    </p>
+                    <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors text-sm">
+                      📧 Contactar Soporte
+                    </button>
                   </div>
                 </div>
-              </div>
+              ) : (
+                /* Step 2: ERP Configuration */
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* ERP Details */}
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-bold text-gray-800">📖 {getSelectedERPInfo()?.name}</h3>
+                      <button
+                        onClick={() => setSelectedERP('')}
+                        className="text-orange-600 hover:text-orange-800 text-sm"
+                      >
+                        ← Cambiar ERP
+                      </button>
+                    </div>
+                    
+                    <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                      <div className="grid grid-cols-2 gap-4 mb-3">
+                        <div>
+                          <p className="text-sm font-medium text-blue-800">Categoría:</p>
+                          <p className="text-sm text-blue-700">{getSelectedERPInfo()?.category}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-blue-800">Región:</p>
+                          <p className="text-sm text-blue-700">{getSelectedERPInfo()?.region}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-blue-800">Complejidad:</p>
+                          <span className={`inline-block px-2 py-1 rounded-full text-xs ${
+                            getSelectedERPInfo()?.complexity === 'Low' ? 'bg-green-100 text-green-800' :
+                            getSelectedERPInfo()?.complexity === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
+                            getSelectedERPInfo()?.complexity === 'High' ? 'bg-orange-100 text-orange-800' :
+                            'bg-red-100 text-red-800'
+                          }`}>
+                            {getSelectedERPInfo()?.complexity}
+                          </span>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-blue-800">Auth:</p>
+                          <p className="text-sm text-blue-700">{getSelectedERPInfo()?.auth_method}</p>
+                        </div>
+                      </div>
+                      <p className="text-sm text-blue-700 mb-3">{getSelectedERPInfo()?.description}</p>
+                      
+                      <div className="mb-3">
+                        <p className="text-sm font-medium text-blue-800 mb-1">Características:</p>
+                        <div className="flex flex-wrap gap-1">
+                          {getSelectedERPInfo()?.features.map(feature => (
+                            <span key={feature} className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">
+                              {feature}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="mb-3">
+                        <p className="text-sm font-medium text-blue-800 mb-1">Endpoints principales:</p>
+                        <div className="bg-white p-2 rounded border">
+                          {Object.entries(getSelectedERPInfo()?.endpoints || {}).map(([key, value]) => (
+                            <div key={key} className="text-xs">
+                              <span className="font-mono text-gray-600">{key}:</span> 
+                              <span className="font-mono text-blue-600 ml-1">{value}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div>
+                        <p className="text-sm font-medium text-blue-800">Documentación:</p>
+                        <a 
+                          href={getSelectedERPInfo()?.documentation} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-xs text-blue-600 hover:text-blue-800 underline"
+                        >
+                          {getSelectedERPInfo()?.documentation}
+                        </a>
+                      </div>
+                    </div>
+
+                    <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                      <h4 className="font-bold text-yellow-800 mb-2">⚠️ Flujo de Integración</h4>
+                      <div className="text-sm text-yellow-700 space-y-1">
+                        <p>1. Cliente hace pedido en UserWebApp</p>
+                        <p>2. Pedido se envía automáticamente al ERP</p>
+                        <p>3. ERP procesa y actualiza estado (preparación → listo)</p>
+                        <p>4. Cliente recibe notificaciones en tiempo real</p>
+                        <p>5. Sin intervención manual del personal</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Configuration Form */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-bold text-gray-800">⚙️ Configuración</h3>
+                    
+                    <div className="space-y-3">
+                      <input
+                        type="text"
+                        placeholder="API Endpoint URL (ej: https://tu-erp.com/api/v1)"
+                        value={credentials.erp.endpoint_url}
+                        onChange={(e) => handleCredentialChange('erp', 'endpoint_url', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      />
+                      
+                      <div className="grid grid-cols-2 gap-3">
+                        <input
+                          type="text"
+                          placeholder="API Key"
+                          value={credentials.erp.api_key}
+                          onChange={(e) => handleCredentialChange('erp', 'api_key', e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        />
+                        <input
+                          type="password"
+                          placeholder="API Secret"
+                          value={credentials.erp.api_secret}
+                          onChange={(e) => handleCredentialChange('erp', 'api_secret', e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        />
+                      </div>
+
+                      <input
+                        type="text"
+                        placeholder="OAuth Token (si aplica)"
+                        value={credentials.erp.oauth_token}
+                        onChange={(e) => handleCredentialChange('erp', 'oauth_token', e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      />
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <input
+                          type="text"
+                          placeholder="Location ID / Store ID"
+                          value={credentials.erp.location_id}
+                          onChange={(e) => handleCredentialChange('erp', 'location_id', e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        />
+                        <input
+                          type="text"
+                          placeholder="POS Profile (si aplica)"
+                          value={credentials.erp.pos_profile}
+                          onChange={(e) => handleCredentialChange('erp', 'pos_profile', e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        />
+                      </div>
+
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          id="test_mode"
+                          checked={credentials.erp.test_mode}
+                          onChange={(e) => handleCredentialChange('erp', 'test_mode', e.target.checked)}
+                          className="w-4 h-4 text-orange-600 bg-gray-100 border-gray-300 rounded focus:ring-orange-500"
+                        />
+                        <label htmlFor="test_mode" className="text-sm text-gray-700">
+                          Modo de prueba (recomendado para primeras configuraciones)
+                        </label>
+                      </div>
+                    </div>
+
+                    <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                      <h4 className="font-bold text-green-800 mb-2">✅ Ventajas de {getSelectedERPInfo()?.name}</h4>
+                      <ul className="text-sm text-green-700 space-y-1">
+                        <li>• Integración nativa con KUMIA</li>
+                        <li>• Sincronización en tiempo real</li>
+                        <li>• Soporte técnico especializado</li>
+                        <li>• Configuración guiada paso a paso</li>
+                      </ul>
+                    </div>
+
+                    {getSelectedERPInfo()?.complexity === 'High' || getSelectedERPInfo()?.complexity === 'Very High' ? (
+                      <div className="bg-red-50 p-4 rounded-lg border border-red-200">
+                        <h4 className="font-bold text-red-800 mb-2">🚨 Sistema Enterprise</h4>
+                        <p className="text-sm text-red-700">
+                          Este sistema requiere configuración avanzada. Recomendamos contactar nuestro equipo de integración 
+                          para obtener asistencia técnica especializada.
+                        </p>
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+              )}
 
               <div className="flex justify-end space-x-3 mt-6 pt-6 border-t border-gray-200">
                 <button 
@@ -1577,19 +1691,22 @@ export const IntegrationsSection = () => {
                 >
                   Cancelar
                 </button>
-                <button 
-                  onClick={() => handleTestConnection('erp')}
-                  className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors"
-                >
-                  🧪 Probar Conexión
-                </button>
-                <button 
-                  onClick={() => handleConnect('erp')}
-                  className="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition-colors"
-                  disabled={!selectedERP}
-                >
-                  ✅ Conectar ERP
-                </button>
+                {selectedERP && (
+                  <>
+                    <button 
+                      onClick={() => handleTestConnection('erp')}
+                      className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+                    >
+                      🧪 Probar Conexión
+                    </button>
+                    <button 
+                      onClick={() => handleConnect('erp')}
+                      className="bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition-colors"
+                    >
+                      ✅ Conectar ERP
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>
