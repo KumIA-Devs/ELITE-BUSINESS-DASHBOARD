@@ -3762,6 +3762,12 @@ Nunca seas agresivo, siempre agrega valor genuino.`,
     setShowTestModal(true);
   };
 
+  const handleAnalyzeAgent = (agentId) => {
+    const agent = agents.find(a => a.id === agentId);
+    setSelectedAgent(agent);
+    setShowAnalyzeModal(true);
+  };
+
   const handleCloneAgent = (agentId) => {
     const agent = agents.find(a => a.id === agentId);
     const clonedAgent = {
