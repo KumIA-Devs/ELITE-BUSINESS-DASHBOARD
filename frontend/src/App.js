@@ -1498,10 +1498,371 @@ const MenuSection = () => {
 
       {/* Grid de Items */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {menuItems.map(item => (
-          <MenuItemCard key={item.id} item={item} />
-        ))}
+        {filteredItems.length > 0 ? (
+          filteredItems.map(item => (
+            <MenuItemCard key={item.id} item={item} />
+          ))
+        ) : (
+          <div className="col-span-full text-center py-12">
+            <div className="text-6xl mb-4">🍽️</div>
+            <h3 className="text-xl font-bold text-gray-700 mb-2">No hay items en esta categoría</h3>
+            <p className="text-gray-500 mb-4">Agrega el primer item para esta categoría</p>
+            <button 
+              onClick={handleNewItemClick}
+              className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-lg hover:from-orange-600 hover:to-red-600 transition-all duration-200"
+            >
+              + Agregar Primer Item
+            </button>
+          </div>
+        )}
       </div>
+
+      {/* 🆕 MODAL NUEVO ITEM */}
+      {showNewItemModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">🍽️ Nuevo Item del Menú</h2>
+                  <p className="text-gray-600">Agrega un nuevo plato a la carta</p>
+                </div>
+                <button 
+                  onClick={() => setShowNewItemModal(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                {/* Información básica */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Nombre del plato *</label>
+                    <input
+                      type="text"
+                      value={newItem.name}
+                      onChange={(e) => setNewItem(prev => ({ ...prev, name: e.target.value }))}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      placeholder="Ej: Brisket ahumado"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Precio *</label>
+                    <input
+                      type="number"
+                      value={newItem.price}
+                      onChange={(e) => setNewItem(prev => ({ ...prev, price: e.target.value }))}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      placeholder="15000"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Categoría *</label>
+                  <select
+                    value={newItem.category}
+                    onChange={(e) => setNewItem(prev => ({ ...prev, category: e.target.value }))}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  >
+                    {categories.map(category => (
+                      <option key={category} value={category}>{category}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
+                  <textarea
+                    value={newItem.description}
+                    onChange={(e) => setNewItem(prev => ({ ...prev, description: e.target.value }))}
+                    rows="3"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    placeholder="Describe los ingredientes y preparación..."
+                  />
+                </div>
+
+                {/* Upload de imagen */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Imagen del plato</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleImageUpload(e, false)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  />
+                  {newItem.image && (
+                    <div className="mt-2">
+                      <img src={newItem.image} alt="Preview" className="w-32 h-32 object-cover rounded-lg" />
+                    </div>
+                  )}
+                </div>
+
+                {/* Upload de video */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Video del plato (opcional)</label>
+                  <input
+                    type="file"
+                    accept="video/*"
+                    onChange={(e) => handleVideoUpload(e, false)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  />
+                  {newItem.video && (
+                    <div className="mt-2">
+                      <video controls className="w-full h-32 object-cover rounded-lg">
+                        <source src={newItem.video} type="video/mp4" />
+                      </video>
+                    </div>
+                  )}
+                </div>
+
+                {/* Configuraciones adicionales */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Popularidad (1-5)</label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="5"
+                      value={newItem.popularity}
+                      onChange={(e) => setNewItem(prev => ({ ...prev, popularity: e.target.value }))}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
+                  </div>
+
+                  <div className="flex items-center space-x-4 pt-6">
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={newItem.high_margin}
+                        onChange={(e) => setNewItem(prev => ({ ...prev, high_margin: e.target.checked }))}
+                        className="mr-2"
+                      />
+                      💰 Alto margen
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={newItem.is_active}
+                        onChange={(e) => setNewItem(prev => ({ ...prev, is_active: e.target.checked }))}
+                        className="mr-2"
+                      />
+                      ✅ Activo
+                    </label>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Sugerencias de upselling</label>
+                  <input
+                    type="text"
+                    value={newItem.upselling_suggestions}
+                    onChange={(e) => setNewItem(prev => ({ ...prev, upselling_suggestions: e.target.value }))}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    placeholder="Ej: Papas fritas, Bebida, Postre"
+                  />
+                </div>
+              </div>
+
+              {/* Botones de acción */}
+              <div className="flex justify-between items-center pt-6 border-t border-gray-200 mt-8">
+                <div className="text-sm text-gray-500">
+                  * Campos obligatorios
+                </div>
+                <div className="flex space-x-3">
+                  <button 
+                    onClick={() => setShowNewItemModal(false)}
+                    className="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button 
+                    onClick={handleCreateItem}
+                    className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-3 rounded-lg hover:from-orange-600 hover:to-red-600 transition-all duration-200 font-bold"
+                  >
+                    🍽️ Crear Item
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 🆕 MODAL EDITAR ITEM */}
+      {editingItem && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">✏️ Editar Item</h2>
+                  <p className="text-gray-600">Modifica los detalles del plato</p>
+                </div>
+                <button 
+                  onClick={() => setEditingItem(null)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                {/* Información básica */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Nombre del plato *</label>
+                    <input
+                      type="text"
+                      value={editingItem.name}
+                      onChange={(e) => setEditingItem(prev => ({ ...prev, name: e.target.value }))}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Precio *</label>
+                    <input
+                      type="number"
+                      value={editingItem.price}
+                      onChange={(e) => setEditingItem(prev => ({ ...prev, price: parseFloat(e.target.value) }))}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Categoría *</label>
+                  <select
+                    value={editingItem.category}
+                    onChange={(e) => setEditingItem(prev => ({ ...prev, category: e.target.value }))}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  >
+                    {categories.map(category => (
+                      <option key={category} value={category}>{category}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
+                  <textarea
+                    value={editingItem.description}
+                    onChange={(e) => setEditingItem(prev => ({ ...prev, description: e.target.value }))}
+                    rows="3"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  />
+                </div>
+
+                {/* Upload de imagen */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Imagen del plato</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleImageUpload(e, true)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  />
+                  {editingItem.image && (
+                    <div className="mt-2">
+                      <img src={editingItem.image} alt="Preview" className="w-32 h-32 object-cover rounded-lg" />
+                    </div>
+                  )}
+                </div>
+
+                {/* Upload de video */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Video del plato (opcional)</label>
+                  <input
+                    type="file"
+                    accept="video/*"
+                    onChange={(e) => handleVideoUpload(e, true)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  />
+                  {editingItem.video && (
+                    <div className="mt-2">
+                      <video controls className="w-full h-32 object-cover rounded-lg">
+                        <source src={editingItem.video} type="video/mp4" />
+                      </video>
+                    </div>
+                  )}
+                </div>
+
+                {/* Configuraciones adicionales */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Popularidad (1-5)</label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="5"
+                      value={editingItem.popularity}
+                      onChange={(e) => setEditingItem(prev => ({ ...prev, popularity: parseInt(e.target.value) }))}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
+                  </div>
+
+                  <div className="flex items-center space-x-4 pt-6">
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={editingItem.high_margin}
+                        onChange={(e) => setEditingItem(prev => ({ ...prev, high_margin: e.target.checked }))}
+                        className="mr-2"
+                      />
+                      💰 Alto margen
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={editingItem.is_active}
+                        onChange={(e) => setEditingItem(prev => ({ ...prev, is_active: e.target.checked }))}
+                        className="mr-2"
+                      />
+                      ✅ Activo
+                    </label>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Sugerencias de upselling</label>
+                  <input
+                    type="text"
+                    value={editingItem.upselling_suggestions || ''}
+                    onChange={(e) => setEditingItem(prev => ({ ...prev, upselling_suggestions: e.target.value }))}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    placeholder="Ej: Papas fritas, Bebida, Postre"
+                  />
+                </div>
+              </div>
+
+              {/* Botones de acción */}
+              <div className="flex justify-between items-center pt-6 border-t border-gray-200 mt-8">
+                <div className="text-sm text-gray-500">
+                  * Campos obligatorios
+                </div>
+                <div className="flex space-x-3">
+                  <button 
+                    onClick={() => setEditingItem(null)}
+                    className="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button 
+                    onClick={() => handleUpdateItem(editingItem)}
+                    className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-3 rounded-lg hover:from-orange-600 hover:to-red-600 transition-all duration-200 font-bold"
+                  >
+                    ✏️ Actualizar Item
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
