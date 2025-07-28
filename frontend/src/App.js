@@ -2167,6 +2167,7 @@ const FeedbackSection = () => {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
             >
               <option value="all">Todos los canales</option>
+              <option value="google_reviews">🌟 Google Reviews</option>
               <option value="whatsapp">WhatsApp</option>
               <option value="instagram">Instagram</option>
               <option value="facebook">Facebook</option>
