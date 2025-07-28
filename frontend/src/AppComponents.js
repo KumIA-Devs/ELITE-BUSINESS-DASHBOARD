@@ -4003,56 +4003,97 @@ Optimiza los prompts de tus agentes con mejor performance y replica esas técnic
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold text-gray-800">🤖 Agentes IA</h2>
-          <p className="text-gray-600 mt-1">Gestiona y optimiza tus asistentes de IA</p>
+          <h2 className="text-3xl font-bold text-gray-800">🤖 Agencia de Marketing IA</h2>
+          <p className="text-gray-600 mt-1">Experiencia 100% automatizada · Reemplaza community managers humanos</p>
         </div>
         <div className="flex space-x-3">
-          <button className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors">
+          <button 
+            onClick={() => setShowKumiaChat(!showKumiaChat)}
+            className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-4 py-2 rounded-lg hover:from-purple-600 hover:to-indigo-600 transition-all duration-200"
+          >
+            🧠 KUMIA Business IA
+          </button>
+          <button 
+            onClick={handleShowPerformanceReport}
+            className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors"
+          >
             📊 Reporte de Rendimiento
           </button>
-          <button className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-lg hover:from-orange-600 hover:to-red-600 transition-all duration-200">
+          <button 
+            onClick={handleNewAgent}
+            className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-lg hover:from-orange-600 hover:to-red-600 transition-all duration-200"
+          >
             + Nuevo Agente
           </button>
         </div>
       </div>
 
-      {/* 🆕 MÉTRICAS DE RENDIMIENTO */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      {/* 🆕 MÉTRICAS AVANZADAS DE AUTOMATIZACIÓN */}
+      <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-medium text-gray-600">Total Conversaciones</h3>
+              <h3 className="text-sm font-medium text-gray-600">Conversaciones IA</h3>
               <p className="text-2xl font-bold text-blue-600">{performanceData.totalConversations.toLocaleString()}</p>
             </div>
             <div className="text-2xl">💬</div>
           </div>
+          <div className="text-xs text-green-600 mt-1">+23% vs mes anterior</div>
         </div>
+        
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-medium text-gray-600">Tiempo de Respuesta</h3>
-              <p className="text-2xl font-bold text-green-600">{performanceData.averageResponseTime}s</p>
+              <h3 className="text-sm font-medium text-gray-600">Respuestas Automáticas</h3>
+              <p className="text-2xl font-bold text-purple-600">{performanceData.totalResponses.toLocaleString()}</p>
             </div>
             <div className="text-2xl">⚡</div>
           </div>
+          <div className="text-xs text-green-600 mt-1">+47% vs mes anterior</div>
         </div>
+        
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-medium text-gray-600">Satisfacción</h3>
-              <p className="text-2xl font-bold text-purple-600">{performanceData.satisfactionScore}/5</p>
+              <h3 className="text-sm font-medium text-gray-600">Tiempo Respuesta</h3>
+              <p className="text-2xl font-bold text-green-600">{performanceData.averageResponseTime}s</p>
+            </div>
+            <div className="text-2xl">🚀</div>
+          </div>
+          <div className="text-xs text-green-600 mt-1">-1.2s vs humanos</div>
+        </div>
+        
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-medium text-gray-600">Satisfacción IA</h3>
+              <p className="text-2xl font-bold text-orange-600">{performanceData.satisfactionScore}/5</p>
             </div>
             <div className="text-2xl">⭐</div>
           </div>
+          <div className="text-xs text-green-600 mt-1">+0.3 vs humanos</div>
         </div>
+        
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-medium text-gray-600">Conversión</h3>
-              <p className="text-2xl font-bold text-orange-600">{performanceData.conversionRate}%</p>
+              <h3 className="text-sm font-medium text-gray-600">Conversión IA</h3>
+              <p className="text-2xl font-bold text-indigo-600">{performanceData.conversionRate}%</p>
             </div>
             <div className="text-2xl">🎯</div>
           </div>
+          <div className="text-xs text-green-600 mt-1">+8.2% vs humanos</div>
+        </div>
+        
+        <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl shadow-sm border border-green-200 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-medium text-green-700">Automatización</h3>
+              <p className="text-2xl font-bold text-green-600">{performanceData.automationLevel}%</p>
+            </div>
+            <div className="text-2xl">🤖</div>
+          </div>
+          <div className="text-xs text-green-600 mt-1">Ahorro: 3.2 empleados</div>
         </div>
       </div>
 
