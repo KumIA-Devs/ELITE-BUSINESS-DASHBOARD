@@ -1249,7 +1249,7 @@ const MenuSection = () => {
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all duration-200">
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center">
-          <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-red-400 rounded-xl flex items-center justify-center mr-4">
+          <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-red-400 rounded-xl flex items-center justify-center mr-4 overflow-hidden">
             {item.image ? (
               <img src={item.image} alt={item.name} className="w-full h-full object-cover rounded-xl" />
             ) : (
@@ -1259,10 +1259,18 @@ const MenuSection = () => {
           <div>
             <h3 className="font-semibold text-gray-800">{item.name}</h3>
             <p className="text-sm text-gray-600">{item.category}</p>
-            <p className="text-lg font-bold text-green-600">${item.price}</p>
+            <p className="text-lg font-bold text-green-600">${item.price?.toLocaleString()}</p>
           </div>
         </div>
         <div className="flex flex-col items-end space-y-2">
+          {/* 🆕 BOTÓN PENCIL PRINCIPAL */}
+          <button 
+            onClick={() => setEditingItem(item)}
+            className="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors"
+            title="Editar item"
+          >
+            ✏️
+          </button>
           <span className={`px-2 py-1 rounded-full text-xs font-medium ${
             item.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
           }`}>
@@ -1281,7 +1289,16 @@ const MenuSection = () => {
 
       <p className="text-sm text-gray-600 mb-4">{item.description}</p>
 
-      {/* 🆕 NUEVAS FUNCIONALIDADES */}
+      {/* Video preview si existe */}
+      {item.video && (
+        <div className="mb-4">
+          <video controls className="w-full h-32 object-cover rounded-lg">
+            <source src={item.video} type="video/mp4" />
+          </video>
+        </div>
+      )}
+
+      {/* Información adicional */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-3">
           <span className="text-sm text-gray-600">Popularidad:</span>
@@ -1294,17 +1311,13 @@ const MenuSection = () => {
           </div>
         </div>
         <div className="text-sm text-gray-600">
-          Sugerido con: {item.upselling_suggestions || 'Ninguno'}
+          {item.upselling_suggestions && (
+            <span>Sugerido con: {item.upselling_suggestions}</span>
+          )}
         </div>
       </div>
 
       <div className="flex space-x-2">
-        <button 
-          onClick={() => setEditingItem(item)}
-          className="flex-1 bg-blue-100 text-blue-700 px-3 py-2 rounded-lg text-sm hover:bg-blue-200 transition-colors"
-        >
-          ✏️ Editar
-        </button>
         <button 
           onClick={() => handleDuplicateItem(item)}
           className="flex-1 bg-purple-100 text-purple-700 px-3 py-2 rounded-lg text-sm hover:bg-purple-200 transition-colors"
@@ -1320,6 +1333,12 @@ const MenuSection = () => {
           }`}
         >
           {item.is_active ? '🔴 Desactivar' : '🟢 Activar'}
+        </button>
+        <button 
+          onClick={() => handleDeleteItem(item.id)}
+          className="bg-red-100 text-red-700 px-3 py-2 rounded-lg text-sm hover:bg-red-200 transition-colors"
+        >
+          🗑️ Eliminar
         </button>
       </div>
     </div>
