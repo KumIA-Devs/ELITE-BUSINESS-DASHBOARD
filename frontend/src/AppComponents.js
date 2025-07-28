@@ -1460,13 +1460,22 @@ Saludos,
                     <h3 className="text-lg font-bold text-gray-800">⚙️ Configuración</h3>
                     
                     <div className="space-y-3">
-                      <input
-                        type="text"
-                        placeholder="API Endpoint URL (ej: https://tu-erp.com/api/v1)"
-                        value={credentials.erp.endpoint_url}
-                        onChange={(e) => handleCredentialChange('erp', 'endpoint_url', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                      />
+                      <div className="grid grid-cols-2 gap-3">
+                        <input
+                          type="text"
+                          placeholder="API Endpoint URL"
+                          value={credentials.erp.endpoint_url}
+                          onChange={(e) => handleCredentialChange('erp', 'endpoint_url', e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Location ID / Store ID"
+                          value={credentials.erp.location_id}
+                          onChange={(e) => handleCredentialChange('erp', 'location_id', e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        />
+                      </div>
                       
                       <div className="grid grid-cols-2 gap-3">
                         <input
@@ -1487,27 +1496,95 @@ Saludos,
 
                       <input
                         type="text"
-                        placeholder="OAuth Token (si aplica)"
+                        placeholder="OAuth Token (opcional)"
                         value={credentials.erp.oauth_token}
                         onChange={(e) => handleCredentialChange('erp', 'oauth_token', e.target.value)}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                       />
 
-                      <div className="grid grid-cols-2 gap-3">
-                        <input
-                          type="text"
-                          placeholder="Location ID / Store ID"
-                          value={credentials.erp.location_id}
-                          onChange={(e) => handleCredentialChange('erp', 'location_id', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                        />
-                        <input
-                          type="text"
-                          placeholder="POS Profile (si aplica)"
-                          value={credentials.erp.pos_profile}
-                          onChange={(e) => handleCredentialChange('erp', 'pos_profile', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                        />
+                      {/* Configuración de Sincronización */}
+                      <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                        <h4 className="font-bold text-purple-800 mb-3">⚡ Frecuencia de Sincronización</h4>
+                        <div className="space-y-3">
+                          <select
+                            value={credentials.erp.sync_frequency}
+                            onChange={(e) => handleCredentialChange('erp', 'sync_frequency', e.target.value)}
+                            className="w-full px-3 py-2 border border-purple-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                          >
+                            <option value="realtime">⚡ Tiempo Real (Webhooks)</option>
+                            <option value="1min">🟢 Cada 1 minuto</option>
+                            <option value="5min">🟡 Cada 5 minutos (Recomendado)</option>
+                            <option value="15min">🟠 Cada 15 minutos</option>
+                            <option value="30min">🔴 Cada 30 minutos</option>
+                            <option value="1hour">⚫ Cada hora</option>
+                          </select>
+
+                          <div className="bg-white p-3 rounded-lg border border-purple-200">
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-sm font-medium text-purple-800">
+                                {getSyncFrequencyInfo(credentials.erp.sync_frequency).label}
+                              </span>
+                              <span className={`px-2 py-1 rounded-full text-xs ${
+                                getSyncFrequencyInfo(credentials.erp.sync_frequency).cost === 'Alto' ? 'bg-red-100 text-red-800' :
+                                getSyncFrequencyInfo(credentials.erp.sync_frequency).cost === 'Medio' ? 'bg-yellow-100 text-yellow-800' :
+                                'bg-green-100 text-green-800'
+                              }`}>
+                                Costo: {getSyncFrequencyInfo(credentials.erp.sync_frequency).cost}
+                              </span>
+                            </div>
+                            <p className="text-xs text-purple-700 mb-2">
+                              {getSyncFrequencyInfo(credentials.erp.sync_frequency).description}
+                            </p>
+                            <div className="grid grid-cols-2 gap-2">
+                              <div>
+                                <p className="text-xs font-medium text-green-700 mb-1">✅ Pros:</p>
+                                <ul className="text-xs text-green-600 space-y-0.5">
+                                  {getSyncFrequencyInfo(credentials.erp.sync_frequency).pros.map(pro => (
+                                    <li key={pro}>• {pro}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                              <div>
+                                <p className="text-xs font-medium text-red-700 mb-1">❌ Cons:</p>
+                                <ul className="text-xs text-red-600 space-y-0.5">
+                                  {getSyncFrequencyInfo(credentials.erp.sync_frequency).cons.map(con => (
+                                    <li key={con}>• {con}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            </div>
+                          </div>
+
+                          {credentials.erp.sync_frequency === 'realtime' && (
+                            <div className="bg-green-50 p-3 rounded-lg border border-green-200">
+                              <h5 className="font-bold text-green-800 mb-2">🔗 Configuración de Webhooks</h5>
+                              <div className="space-y-2">
+                                <div className="flex items-center space-x-2">
+                                  <input
+                                    type="checkbox"
+                                    id="enable_webhooks"
+                                    checked={credentials.erp.enable_webhooks}
+                                    onChange={(e) => handleCredentialChange('erp', 'enable_webhooks', e.target.checked)}
+                                    className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500"
+                                  />
+                                  <label htmlFor="enable_webhooks" className="text-sm text-green-700">
+                                    Activar Webhooks (recomendado para tiempo real)
+                                  </label>
+                                </div>
+                                {credentials.erp.enable_webhooks && (
+                                  <input
+                                    type="text"
+                                    placeholder="URL del Webhook KUMIA (se proporcionará automáticamente)"
+                                    value={credentials.erp.webhook_url}
+                                    onChange={(e) => handleCredentialChange('erp', 'webhook_url', e.target.value)}
+                                    className="w-full px-3 py-2 border border-green-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
+                                    disabled
+                                  />
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </div>
 
                       <div className="flex items-center space-x-2">
