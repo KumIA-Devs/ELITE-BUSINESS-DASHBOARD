@@ -3752,24 +3752,7 @@ Nunca seas agresivo, siempre agrega valor genuino.`,
   const handleTrainAgent = (agentId) => {
     const agent = agents.find(a => a.id === agentId);
     setSelectedAgent(agent);
-    // Simular proceso de entrenamiento
-    alert(`🎓 Iniciando entrenamiento de ${agent.name}...
-
-📚 Datos incluidos:
-• Menú actualizado de IL MANDORLA
-• Historial de conversaciones (último mes)
-• Feedback de clientes
-• Políticas y procedimientos
-
-⏱️ Tiempo estimado: 15 minutos
-📈 Mejora esperada: +12% en satisfacción`);
-    
-    // Actualizar fecha de entrenamiento
-    setAgents(prev => prev.map(a => 
-      a.id === agentId 
-        ? { ...a, last_training: new Date().toISOString().split('T')[0] }
-        : a
-    ));
+    setShowTrainModal(true);
   };
 
   const handleTestAgent = (agentId) => {
