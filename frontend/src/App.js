@@ -1117,10 +1117,131 @@ const MenuSection = () => {
 
   const fetchMenuItems = async () => {
     try {
-      const response = await axios.get(`${API}/menu-items`);
-      setMenuItems(response.data);
+      const response = await axios.get(`${API}/menu`);
+      if (response.data && response.data.length > 0) {
+        setMenuItems(response.data);
+      }
     } catch (error) {
       console.error('Error fetching menu items:', error);
+      // Si no hay datos en el backend, usar los datos iniciales
+    }
+  };
+
+  // 🆕 FUNCIONES CRUD COMPLETAS
+  const handleCreateItem = async () => {
+    if (!newItem.name || !newItem.price) {
+      alert('Por favor completa el nombre y el precio');
+      return;
+    }
+
+    try {
+      const itemToCreate = {
+        ...newItem,
+        id: `${newItem.category.toLowerCase()}_${Date.now()}`,
+        price: parseFloat(newItem.price),
+        sales_count: 0,
+        popularity: parseInt(newItem.popularity) || 3
+      };
+
+      // Enviar al backend
+      const response = await axios.post(`${API}/menu`, itemToCreate);
+      
+      // Actualizar estado local
+      setMenuItems(prev => [...prev, itemToCreate]);
+      setShowNewItemModal(false);
+      
+      // Reset form
+      setNewItem({
+        name: '',
+        description: '',
+        price: '',
+        category: 'Entradas',
+        image: '',
+        video: '',
+        is_active: true,
+        high_margin: false,
+        popularity: 3,
+        upselling_suggestions: '',
+        sales_count: 0
+      });
+      
+      alert('¡Item creado exitosamente!');
+    } catch (error) {
+      console.error('Error creating item:', error);
+      alert('Error al crear el item. Intenta de nuevo.');
+    }
+  };
+
+  const handleUpdateItem = async (updatedItem) => {
+    try {
+      // Enviar al backend
+      await axios.put(`${API}/menu/${updatedItem.id}`, updatedItem);
+      
+      // Actualizar estado local
+      setMenuItems(prev => 
+        prev.map(item => 
+          item.id === updatedItem.id ? updatedItem : item
+        )
+      );
+      
+      setEditingItem(null);
+      alert('¡Item actualizado exitosamente!');
+    } catch (error) {
+      console.error('Error updating item:', error);
+      alert('Error al actualizar el item. Intenta de nuevo.');
+    }
+  };
+
+  const handleDeleteItem = async (itemId) => {
+    if (!confirm('¿Estás seguro de que quieres eliminar este item?')) {
+      return;
+    }
+
+    try {
+      // Enviar al backend
+      await axios.delete(`${API}/menu/${itemId}`);
+      
+      // Actualizar estado local
+      setMenuItems(prev => prev.filter(item => item.id !== itemId));
+      
+      alert('¡Item eliminado exitosamente!');
+    } catch (error) {
+      console.error('Error deleting item:', error);
+      alert('Error al eliminar el item. Intenta de nuevo.');
+    }
+  };
+
+  const handleImageUpload = (event, isEditing = false) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64Image = e.target.result;
+        if (isEditing && editingItem) {
+          setEditingItem(prev => ({ ...prev, image: base64Image }));
+        } else {
+          setNewItem(prev => ({ ...prev, image: base64Image }));
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleVideoUpload = (event, isEditing = false) => {
+    const file = event.target.files[0];
+    if (file && file.size <= 50 * 1024 * 1024) { // 50MB limit
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64Video = e.target.result;
+        if (isEditing && editingItem) {
+          setEditingItem(prev => ({ ...prev, video: base64Video }));
+        } else {
+          setNewItem(prev => ({ ...prev, video: base64Video }));
+        }
+      };
+      reader.readAsDataURL(file);
+    } else {
+      alert('El archivo de video es muy grande. Máximo 50MB.');
     }
   };
 
