@@ -2358,9 +2358,17 @@ export const ClientsSection = () => {
 
       {/* Clients Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {clients.map(client => (
-          <ClientCard key={client.id} client={client} />
-        ))}
+        {filteredClients.length > 0 ? (
+          filteredClients.map(client => (
+            <ClientCard key={client.id} client={client} />
+          ))
+        ) : (
+          <div className="col-span-full text-center py-12">
+            <div className="text-6xl mb-4">👥</div>
+            <h3 className="text-xl font-bold text-gray-700 mb-2">No hay clientes que coincidan con los filtros</h3>
+            <p className="text-gray-500">Ajusta los filtros o agrega nuevos clientes</p>
+          </div>
+        )}
       </div>
     </div>
   );
