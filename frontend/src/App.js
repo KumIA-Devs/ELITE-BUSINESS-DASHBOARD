@@ -1874,7 +1874,23 @@ const FeedbackSection = () => {
     ratingDistribution: { 5: 45, 4: 32, 3: 12, 2: 8, 1: 3 },
     weeklyEvolution: [85, 92, 78, 95, 88, 96, 102],
     npsScore: 8.4,
-    npsChannels: { whatsapp: 8.7, instagram: 8.2, facebook: 8.5, general: 8.1 },
+    // 🆕 GOOGLE REVIEWS AGREGADO COMO CANAL PRINCIPAL
+    npsChannels: { 
+      google_reviews: 8.9, 
+      whatsapp: 8.7, 
+      instagram: 8.2, 
+      facebook: 8.5, 
+      web: 8.1,
+      general: 8.4 
+    },
+    // 🆕 ESTADÍSTICAS POR CANAL INCLUYENDO GOOGLE REVIEWS
+    channelStats: {
+      google_reviews: { count: 234, avg_rating: 4.6, growth: '+18%' },
+      whatsapp: { count: 156, avg_rating: 4.4, growth: '+12%' },
+      instagram: { count: 98, avg_rating: 4.2, growth: '+8%' },
+      facebook: { count: 72, avg_rating: 4.3, growth: '+5%' },
+      web: { count: 45, avg_rating: 4.1, growth: '+3%' }
+    },
     keywords: [
       { word: 'delicioso', count: 45, sentiment: 'positive' },
       { word: 'excelente', count: 38, sentiment: 'positive' },
@@ -1886,6 +1902,36 @@ const FeedbackSection = () => {
   const [selectedDateRange, setSelectedDateRange] = useState('30d');
   const [selectedChannel, setSelectedChannel] = useState('all');
   const [selectedSatisfaction, setSelectedSatisfaction] = useState('all');
+  
+  // 🆕 ESTADO PARA RESPUESTAS AUTOMÁTICAS
+  const [showAutoResponseModal, setShowAutoResponseModal] = useState(false);
+  const [autoResponses, setAutoResponses] = useState({
+    google_reviews: {
+      positive: "¡Gracias por tu excelente review! 🍖 Nos emociona saber que disfrutaste la experiencia IL MANDORLA. ¡Te esperamos pronto para seguir sorprendiéndote!",
+      neutral: "Gracias por tu feedback. Nos encantaría conocer más detalles para mejorar tu experiencia. ¿Podrías contactarnos por WhatsApp?",
+      negative: "Lamentamos que tu experiencia no haya sido la esperada. Tu opinión es muy importante para nosotros. Te contactaremos pronto para solucionarlo."
+    },
+    whatsapp: {
+      positive: "¡Gracias por elegirnos! 🔥 Nos alegra que hayas disfrutado. Tienes 50 puntos KUMIA de regalo.",
+      neutral: "Gracias por tu feedback. ¿Hay algo específico que podamos mejorar?",
+      negative: "Disculpa la molestia. ¿Podrías contarnos qué pasó? Queremos solucionarlo inmediatamente."
+    },
+    instagram: {
+      positive: "¡Gracias por compartir tu experiencia! 📸 Tag a un amigo para que también pruebe nuestras carnes ahumadas.",
+      neutral: "¡Gracias por visitarnos! ¿Qué te gustaría probar en tu próxima visita?",
+      negative: "Lamentamos que no hayamos cumplido tus expectativas. Te enviamos un DM para solucionarlo."
+    },
+    facebook: {
+      positive: "¡Gracias por tu review! 🙌 No olvides seguirnos para enterarte de nuestras promociones especiales.",
+      neutral: "Gracias por tu comentario. ¡Esperamos verte pronto!",
+      negative: "Disculpa cualquier inconveniente. Nos contactamos contigo por privado."
+    },
+    web: {
+      positive: "¡Excelente! Gracias por tu feedback. Te invitamos a registrarte en KUMIA para ganar puntos.",
+      neutral: "Gracias por tu opinión. ¿Te gustaría recibir nuestras promociones especiales?",
+      negative: "Lamentamos tu experiencia. Te contactaremos para mejorar nuestro servicio."
+    }
+  });
 
   useEffect(() => {
     fetchFeedback();
