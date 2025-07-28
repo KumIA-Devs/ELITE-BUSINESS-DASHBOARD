@@ -4115,6 +4115,71 @@ Optimiza los prompts de tus agentes con mejor performance y replica esas técnic
         </div>
       </div>
 
+      {/* 🆕 KUMIA BUSINESS INTELLIGENCE CHAT */}
+      {showKumiaChat && (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-bold text-gray-800">🧠 KUMIA Business Intelligence</h3>
+            <button 
+              onClick={() => setShowKumiaChat(!showKumiaChat)}
+              className="bg-red-100 text-red-700 hover:bg-red-200 px-3 py-1 rounded-lg text-sm transition-colors"
+            >
+              👁️ Ocultar
+            </button>
+          </div>
+
+          <div className="space-y-4">
+            {/* Chat messages */}
+            <div className="h-96 overflow-y-auto bg-gray-50 rounded-lg p-4 space-y-3">
+              {chatMessages.map(message => (
+                <div key={message.id} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`max-w-sm p-3 rounded-lg ${
+                    message.type === 'user' 
+                      ? 'bg-blue-500 text-white' 
+                      : 'bg-white border border-gray-200 text-gray-800'
+                  }`}>
+                    <div className="text-sm whitespace-pre-line">{message.content}</div>
+                    <div className="text-xs opacity-70 mt-1">
+                      {new Date(message.timestamp).toLocaleTimeString()}
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {isTyping && (
+                <div className="flex justify-start">
+                  <div className="bg-white border border-gray-200 text-gray-800 p-3 rounded-lg">
+                    <div className="text-sm">🤖 KUMIA está analizando...</div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Chat input */}
+            <div className="flex space-x-2">
+              <input
+                type="text"
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                placeholder="Pregúntame sobre tus agentes, métricas, estrategias..."
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              />
+              <button 
+                onClick={handleSendMessage}
+                disabled={!chatInput.trim() || isTyping}
+                className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors disabled:opacity-50"
+              >
+                📤
+              </button>
+            </div>
+
+            <div className="text-xs text-gray-500 text-center">
+              💡 Puedo analizar todos tus datos del dashboard para ayudarte con decisiones estratégicas
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 🆕 GRID DE AGENTES IA ESPECIALIZADOS */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {agents.map(agent => (
