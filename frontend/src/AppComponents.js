@@ -1356,7 +1356,10 @@ Saludos,
                     <p className="text-sm text-blue-700 mb-3">
                       Contacta nuestro equipo de integración para añadir tu ERP a la lista
                     </p>
-                    <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors text-sm">
+                    <button 
+                      onClick={handleContactSupport}
+                      className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors text-sm"
+                    >
                       📧 Contactar Soporte
                     </button>
                   </div>
