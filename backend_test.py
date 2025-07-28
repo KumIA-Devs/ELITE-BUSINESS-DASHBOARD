@@ -944,7 +944,14 @@ class BackendTester:
 def main():
     """Main test execution"""
     tester = BackendTester()
-    success = tester.run_all_tests()
+    
+    # Check if we should run focused tests (based on command line args or default)
+    if len(sys.argv) > 1 and sys.argv[1] == "--focused":
+        success = tester.run_focused_tests()
+    else:
+        # Run focused tests by default for this specific request
+        success = tester.run_focused_tests()
+    
     sys.exit(0 if success else 1)
 
 if __name__ == "__main__":
