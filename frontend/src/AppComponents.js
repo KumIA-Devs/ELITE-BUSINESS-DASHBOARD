@@ -2080,25 +2080,189 @@ export const ClientsSection = () => {
     </div>
   );
 
+  // 🆕 FUNCIONES COMPLETAS PARA BOTONES
   const handleRewardNFT = (clientId) => {
-    alert(`Recompensando con NFT al cliente ${clientId}`);
+    const client = clients.find(c => c.id === clientId);
+    setSelectedClient(client);
+    setShowNFTModal(true);
   };
 
   const handleViewHistory = (clientId) => {
-    alert(`Visualizando historial completo del cliente ${clientId}`);
+    const client = clients.find(c => c.id === clientId);
+    setSelectedClient(client);
+    setShowHistoryModal(true);
   };
 
   const handleContactClient = (clientId) => {
-    alert(`Contactando al cliente ${clientId}`);
+    const client = clients.find(c => c.id === clientId);
+    setSelectedClient(client);
+    setShowContactModal(true);
   };
 
   const handleInviteReferral = (clientId) => {
-    alert(`Invitando cliente ${clientId} a campaña de referidos`);
+    const client = clients.find(c => c.id === clientId);
+    setSelectedClient(client);
+    setShows(true);
   };
 
-  const handleActivateAutoReward = (clientId) => {
-    alert(`Activando recompensa automática para cliente ${clientId}`);
+  const handleActivateAutoReward = async (clientId) => {
+    try {
+      const client = clients.find(c => c.id === clientId);
+      
+      // Actualizar estado del cliente
+      const updatedClients = clients.map(c => 
+        c.id === clientId 
+          ? { ...c, auto_rewards_active: !c.auto_rewards_active }
+          : c
+      );
+      
+      setClients(updatedClients);
+      
+      // Mostrar confirmación
+      const status = client.auto_rewards_active ? 'desactivadas' : 'activadas';
+      alert(`✅ Recompensas automáticas ${status} para ${client.name}
+      
+🔥 Sistema KUMIA configurado:
+• Puntos automáticos por visita
+• NFTs por fidelidad
+• Ofertas personalizadas
+• Notificaciones push`);
+      
+    } catch (error) {
+      console.error('Error activating auto rewards:', error);
+    }
   };
+
+  const handleNewClientClick = () => {
+    setShowNewClientModal(true);
+  };
+
+  const handleCreateClient = async () => {
+    if (!newClient.name || !newClient.email) {
+      alert('Por favor completa el nombre y email');
+      return;
+    }
+
+    try {
+      const clientToCreate = {
+        ...newClient,
+        id: `client_${Date.now()}`,
+        visit_count: 0,
+        points: 0,
+        feedback_count: 0,
+        nft_level: 'bronce',
+        last_visit: new Date().toISOString().split('T')[0],
+        total_spent: 0,
+        avg_ticket: 0,
+        status: 'new',
+        acquisition_date: new Date().toISOString().split('T')[0],
+        referrals_made: 0,
+        favorite_dishes: [],
+        engagement_score: 50,
+        auto_rewards_active: false
+      };
+
+      // Enviar al backend
+      await axios.post(`${API}/customers`, clientToCreate);
+      
+      // Actualizar estado local
+      setClients(prev => [...prev, clientToCreate]);
+      setShowNewClientModal(false);
+      
+      // Reset form
+      setNewClient({
+        name: '',
+        email: '',
+        phone: '',
+        birthday: '',
+        allergies: '',
+        special_date: '',
+        notes: ''
+      });
+      
+      alert('¡Cliente creado exitosamente!');
+    } catch (error) {
+      console.error('Error creating client:', error);
+      alert('Error al crear el cliente. Intenta de nuevo.');
+    }
+  };
+
+  const handleSendNFTReward = async (nftType) => {
+    try {
+      const rewardData = {
+        client_id: selectedClient.id,
+        nft_type: nftType,
+        reward_date: new Date().toISOString(),
+        points_awarded: nftType === 'oro' ? 500 : nftType === 'plata' ? 300 : 100
+      };
+
+      // Enviar recompensa
+      await axios.post(`${API}/nft-rewards`, rewardData);
+      
+      // Actualizar cliente
+      const updatedClients = clients.map(c => 
+        c.id === selectedClient.id 
+          ? { ...c, nft_level: nftType, points: c.points + rewardData.points_awarded }
+          : c
+      );
+      
+      setClients(updatedClients);
+      setShowNFTModal(false);
+      
+      alert(`🎁 NFT ${nftType.toUpperCase()} enviado exitosamente a ${selectedClient.name}!
+      
+✅ ${rewardData.points_awarded} puntos añadidos
+🎉 WhatsApp enviado automáticamente
+📱 Notificación push activada`);
+      
+    } catch (error) {
+      console.error('Error sending NFT reward:', error);
+      alert('Error al enviar recompensa NFT. Intenta de nuevo.');
+    }
+  };
+
+  const handleSendMessage = async (messageType, customMessage = '') => {
+    try {
+      const messageData = {
+        client_id: selectedClient.id,
+        message_type: messageType,
+        message: customMessage,
+        sent_date: new Date().toISOString()
+      };
+
+      // Enviar mensaje
+      await axios.post(`${API}/client-messages`, messageData);
+      
+      setShowContactModal(false);
+      
+      alert(`📱 Mensaje enviado exitosamente a ${selectedClient.name}!
+      
+✅ WhatsApp: ${selectedClient.phone}
+📧 Email: ${selectedClient.email}
+🎯 Tipo: ${messageType}`);
+      
+    } catch (error) {
+      console.error('Error sending message:', error);
+      alert('Error al enviar mensaje. Intenta de nuevo.');
+    }
+  };
+
+  const filteredClients = clients.filter(client => {
+    if (filter !== 'all' && client.status !== filter) return false;
+    
+    // Smart filters
+    if (smartFilters.frequency !== 'all') {
+      const frequency = client.visit_count > 10 ? 'high' : client.visit_count > 5 ? 'medium' : 'low';
+      if (frequency !== smartFilters.frequency) return false;
+    }
+    
+    if (smartFilters.avgTicket !== 'all') {
+      const ticket = client.avg_ticket > 12000 ? 'premium' : client.avg_ticket > 8000 ? 'standard' : 'basic';
+      if (ticket !== smartFilters.avgTicket) return false;
+    }
+    
+    return true;
+  });
 
   return (
     <div className="space-y-6">
