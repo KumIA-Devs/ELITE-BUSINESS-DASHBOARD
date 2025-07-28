@@ -3454,6 +3454,7 @@ export const AIAgentsSection = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showTestModal, setShowTestModal] = useState(false);
   const [showTrainModal, setShowTrainModal] = useState(false);
+  const [showAnalyzeModal, setShowAnalyzeModal] = useState(false);
   const [showPerformanceModal, setShowPerformanceModal] = useState(false);
   const [showKumiaChat, setShowKumiaChat] = useState(false);
   
