@@ -2370,6 +2370,490 @@ export const ClientsSection = () => {
           </div>
         )}
       </div>
+
+      {/* 🆕 MODAL NUEVO CLIENTE */}
+      {showNewClientModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">👥 Nuevo Cliente</h2>
+                  <p className="text-gray-600">Agrega un nuevo cliente a KUMIA</p>
+                </div>
+                <button 
+                  onClick={() => setShowNewClientModal(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Nombre completo *</label>
+                    <input
+                      type="text"
+                      value={newClient.name}
+                      onChange={(e) => setNewClient(prev => ({ ...prev, name: e.target.value }))}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      placeholder="Ej: Juan Pérez"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                    <input
+                      type="email"
+                      value={newClient.email}
+                      onChange={(e) => setNewClient(prev => ({ ...prev, email: e.target.value }))}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      placeholder="juan.perez@email.com"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
+                  <input
+                    type="tel"
+                    value={newClient.phone}
+                    onChange={(e) => setNewClient(prev => ({ ...prev, phone: e.target.value }))}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    placeholder="+595 21 123 4567"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Cumpleaños</label>
+                    <input
+                      type="date"
+                      value={newClient.birthday}
+                      onChange={(e) => setNewClient(prev => ({ ...prev, birthday: e.target.value }))}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Fecha especial</label>
+                    <input
+                      type="text"
+                      value={newClient.special_date}
+                      onChange={(e) => setNewClient(prev => ({ ...prev, special_date: e.target.value }))}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      placeholder="Ej: Aniversario, Graduación"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Alergias alimentarias</label>
+                  <input
+                    type="text"
+                    value={newClient.allergies}
+                    onChange={(e) => setNewClient(prev => ({ ...prev, allergies: e.target.value }))}
+                    className="w-full px-4 py-2 border border-red-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-red-50"
+                    placeholder="Ej: Lactosa, Gluten, Mariscos"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Notas adicionales</label>
+                  <textarea
+                    value={newClient.notes}
+                    onChange={(e) => setNewClient(prev => ({ ...prev, notes: e.target.value }))}
+                    rows="3"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    placeholder="Preferencias, observaciones especiales..."
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center pt-6 border-t border-gray-200 mt-8">
+                <div className="text-sm text-gray-500">* Campos obligatorios</div>
+                <div className="flex space-x-3">
+                  <button 
+                    onClick={() => setShowNewClientModal(false)}
+                    className="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button 
+                    onClick={handleCreateClient}
+                    className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-3 rounded-lg hover:from-orange-600 hover:to-red-600 transition-all duration-200 font-bold"
+                  >
+                    👥 Crear Cliente
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 🆕 MODAL HISTORIAL CLIENTE */}
+      {showHistoryModal && selectedClient && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">📊 Historial Completo</h2>
+                  <p className="text-gray-600">{selectedClient.name} - {selectedClient.email}</p>
+                </div>
+                <button 
+                  onClick={() => setShowHistoryModal(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Resumen general */}
+                <div className="bg-blue-50 rounded-xl p-6 border border-blue-200">
+                  <h3 className="font-bold text-blue-800 mb-4">📈 Resumen General</h3>
+                  <div className="space-y-3">
+                    <div className="flex justify-between">
+                      <span className="text-blue-700">Total visitasPCONS:</span>
+                      <span className="font-bold">{selectedClient.visit_count}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-blue-700">Puntos acumulados:</span>
+                      <span className="font-bold">{selectedClient.points}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-blue-700">Total gastado:</span>
+                      <span className="font-bold">${selectedClient.total_spent?.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-blue-700">Ticket promedio:</span>
+                      <span className="font-bold">${selectedClient.avg_ticket?.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-blue-700">Engagement:</span>
+                      <span className="font-bold">{selectedClient.engagement_score}%</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Platos favoritos */}
+                <div className="bg-green-50 rounded-xl p-6 border border-green-200">
+                  <h3 className="font-bold text-green-800 mb-4">🍽️ Platos Favoritos</h3>
+                  <div className="space-y-2">
+                    {selectedClient.favorite_dishes?.map((dish, index) => (
+                      <div key={index} className="bg-white p-2 rounded-lg text-sm">
+                        {dish}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Información personal */}
+                <div className="bg-purple-50 rounded-xl p-6 border border-purple-200">
+                  <h3 className="font-bold text-purple-800 mb-4">👤 Info Personal</h3>
+                  <div className="space-y-3 text-sm">
+                    <div>
+                      <span className="text-purple-700 font-medium">Cumpleaños:</span>
+                      <div>{selectedClient.birthday || 'No especificado'}</div>
+                    </div>
+                    <div>
+                      <span className="text-purple-700 font-medium">Alergias:</span>
+                      <div className="text-red-600 font-medium">{selectedClient.allergies}</div>
+                    </div>
+                    <div>
+                      <span className="text-purple-700 font-medium">Fecha especial:</span>
+                      <div>{selectedClient.special_date}</div>
+                    </div>
+                    <div>
+                      <span className="text-purple-700 font-medium">Cliente desde:</span>
+                      <div>{selectedClient.acquisition_date}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Actividad reciente mock */}
+              <div className="mt-6 bg-gray-50 rounded-xl p-6">
+                <h3 className="font-bold text-gray-800 mb-4">🕐 Actividad Reciente</h3>
+                <div className="space-y-3">
+                  <div className="bg-white p-4 rounded-lg flex items-center">
+                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                      <span className="text-green-600">🍽️</span>
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-medium">Pedido realizado - Brooklyn + Baby Ribs</div>
+                      <div className="text-sm text-gray-600">{selectedClient.last_visit} - $18,500</div>
+                    </div>
+                    <div className="text-green-600 font-bold">+150 puntos</div>
+                  </div>
+                  <div className="bg-white p-4 rounded-lg flex items-center">
+                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                      <span className="text-blue-600">⭐</span>
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-medium">Review dejado - 5 estrellas</div>
+                      <div className="text-sm text-gray-600">2025-01-18 - "Excelente servicio y comida"</div>
+                    </div>
+                    <div className="text-blue-600 font-bold">+50 puntos</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end pt-4">
+                <button 
+                  onClick={() => setShowHistoryModal(false)}
+                  className="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors"
+                >
+                  Cerrar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 🆕 MODAL RECOMPENSA NFT */}
+      {showNFTModal && selectedClient && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-lg">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">🎁 Recompensar con NFT</h2>
+                  <p className="text-gray-600">{selectedClient.name}</p>
+                </div>
+                <button 
+                  onClick={() => setShowNFTModal(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div className="text-center mb-6">
+                  <div className="text-4xl mb-2">🏆</div>
+                  <p className="text-gray-600">Selecciona el tipo de NFT KUMIA para recompensar</p>
+                </div>
+
+                <button 
+                  onClick={() => handleSendNFTReward('oro')}
+                  className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 text-white px-6 py-4 rounded-lg hover:from-yellow-500 hover:to-yellow-600 transition-all duration-200 transform hover:scale-105"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <span className="text-2xl mr-3">🥇</span>
+                      <div>
+                        <div className="font-bold text-lg">NFT Oro</div>
+                        <div className="text-sm opacity-90">Cliente VIP - +500 puntos</div>
+                      </div>
+                    </div>
+                    <div className="text-xl">→</div>
+                  </div>
+                </button>
+
+                <button 
+                  onClick={() => handleSendNFTReward('plata')}
+                  className="w-full bg-gradient-to-r from-gray-400 to-gray-500 text-white px-6 py-4 rounded-lg hover:from-gray-500 hover:to-gray-600 transition-all duration-200 transform hover:scale-105"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <span className="text-2xl mr-3">🥈</span>
+                      <div>
+                        <div className="font-bold text-lg">NFT Plata</div>
+                        <div className="text-sm opacity-90">Cliente Frecuente - +300 puntos</div>
+                      </div>
+                    </div>
+                    <div className="text-xl">→</div>
+                  </div>
+                </button>
+
+                <button 
+                  onClick={() => handleSendNFTReward('bronce')}
+                  className="w-full bg-gradient-to-r from-orange-400 to-orange-500 text-white px-6 py-4 rounded-lg hover:from-orange-500 hover:to-orange-600 transition-all duration-200 transform hover:scale-105"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <span className="text-2xl mr-3">🥉</span>
+                      <div>
+                        <div className="font-bold text-lg">NFT Bronce</div>
+                        <div className="text-sm opacity-90">Bienvenida KUMIA - +100 puntos</div>
+                      </div>
+                    </div>
+                    <div className="text-xl">→</div>
+                  </div>
+                </button>
+              </div>
+
+              <div className="flex justify-center pt-4">
+                <button 
+                  onClick={() => setShowNFTModal(false)}
+                  className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 🆕 MODAL CONTACTAR CLIENTE */}
+      {showContactModal && selectedClient && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-lg">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">📞 Contactar Cliente</h2>
+                  <p className="text-gray-600">{selectedClient.name}</p>
+                </div>
+                <button 
+                  onClick={() => setShowContactModal(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <button 
+                  onClick={() => handleSendMessage('promocion')}
+                  className="w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white px-6 py-4 rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all duration-200"
+                >
+                  <div className="flex items-center">
+                    <span className="text-2xl mr-3">🎉</span>
+                    <div className="text-left">
+                      <div className="font-bold">Enviar Promoción Especial</div>
+                      <div className="text-sm opacity-90">Oferta personalizada basada en su historial</div>
+                    </div>
+                  </div>
+                </button>
+
+                <button 
+                  onClick={() => handleSendMessage('cumpleanos')}
+                  className="w-full bg-gradient-to-r from-pink-500 to-rose-500 text-white px-6 py-4 rounded-lg hover:from-pink-600 hover:to-rose-600 transition-all duration-200"
+                >
+                  <div className="flex items-center">
+                    <span className="text-2xl mr-3">🎂</span>
+                    <div className="text-left">
+                      <div className="font-bold">Felicitación de Cumpleaños</div>
+                      <div className="text-sm opacity-90">Mensaje personalizado + descuento especial</div>
+                    </div>
+                  </div>
+                </button>
+
+                <button 
+                  onClick={() => handleSendMessage('feedback')}
+                  className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 py-4 rounded-lg hover:from-blue-600 hover:to-indigo-600 transition-all duration-200"
+                >
+                  <div className="flex items-center">
+                    <span className="text-2xl mr-3">💬</span>
+                    <div className="text-left">
+                      <div className="font-bold">Solicitar Feedback</div>
+                      <div className="text-sm opacity-90">Invitación a dejar review con incentivo</div>
+                    </div>
+                  </div>
+                </button>
+
+                <button 
+                  onClick={() => handleSendMessage('reactivacion')}
+                  className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-4 rounded-lg hover:from-orange-600 hover:to-red-600 transition-all duration-200"
+                >
+                  <div className="flex items-center">
+                    <span className="text-2xl mr-3">🔥</span>
+                    <div className="text-left">
+                      <div className="font-bold">Reactivar Cliente</div>
+                      <div className="text-sm opacity-90">¡Te extrañamos! Oferta especial de regreso</div>
+                    </div>
+                  </div>
+                </button>
+              </div>
+
+              <div className="flex justify-center pt-4">
+                <button 
+                  onClick={() => setShowContactModal(false)}
+                  className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 🆕 MODAL CAMPAÑA DE REFERIDOS */}
+      {showReferralModal && selectedClient && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-lg">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">👥 Campaña de Referidos</h2>
+                  <p className="text-gray-600">{selectedClient.name}</p>
+                </div>
+                <button 
+                  onClick={() => setShowReferralModal(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="text-center mb-6">
+                <div className="text-4xl mb-2">🚀</div>
+                <h3 className="text-lg font-bold text-gray-800 mb-2">¡Invita y Gana!</h3>
+                <p className="text-gray-600">Este cliente puede ganar puntos KUMIA por cada referido</p>
+              </div>
+
+              <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 border border-purple-200 mb-6">
+                <h4 className="font-bold text-purple-800 mb-3">🎁 Beneficios del Programa</h4>
+                <ul className="space-y-2 text-sm text-purple-700">
+                  <li>• 200 puntos por cada amigo que visite</li>
+                  <li>• NFT especial al lograr 5 referidos</li>
+                  <li>• 10% descuento en próxima visita</li>
+                  <li>• Acceso a eventos exclusivos</li>
+                </ul>
+              </div>
+
+              <div className="flex space-x-3">
+                <button 
+                  onClick={() => {
+                    handleSendMessage('referidos', `¡Hola ${selectedClient.name}! 🚀
+
+¿Sabías que puedes ganar increíbles recompensas KUMIA invitando a tus amigos?
+
+🎁 Por cada amigo que traigas:
+• 200 puntos KUMIA
+• 10% descuento en tu próxima visita
+• Oportunidad de ganar NFTs exclusivos
+
+¡Comparte la experiencia IL MANDORLA y gana juntos!
+
+Link para compartir: https://ilmandorla.kumia.app/referido/${selectedClient.id}
+
+¡Te esperamos! 🍖`);
+                    setShowReferralModal(false);
+                  }}
+                  className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-3 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-200 font-bold"
+                >
+                  📱 Enviar Invitación
+                </button>
+                <button 
+                  onClick={() => setShowReferralModal(false)}
+                  className="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
