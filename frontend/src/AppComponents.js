@@ -1310,20 +1310,25 @@ Saludos,
                               className="bg-white p-3 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-orange-300 hover:shadow-md transition-all"
                               onClick={() => handleSelectERP(erp.id)}
                             >
-                              <div className="flex items-center justify-between mb-2">
-                                <h5 className="font-bold text-gray-800 text-sm">{erp.name}</h5>
-                                <div className="flex items-center space-x-1">
-                                  <span className={`px-2 py-1 rounded-full text-xs ${
-                                    erp.complexity === 'Low' ? 'bg-green-100 text-green-800' :
-                                    erp.complexity === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
-                                    erp.complexity === 'High' ? 'bg-orange-100 text-orange-800' :
-                                    'bg-red-100 text-red-800'
-                                  }`}>
-                                    {erp.complexity}
-                                  </span>
-                                  <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
-                                    {erp.region}
-                                  </span>
+                              <div className="flex items-center mb-2">
+                                <div className="w-8 h-8 flex items-center justify-center mr-3 bg-gray-100 rounded-lg">
+                                  <span className="text-lg">{erp.logo}</span>
+                                </div>
+                                <div className="flex-1">
+                                  <h5 className="font-bold text-gray-800 text-sm">{erp.name}</h5>
+                                  <div className="flex items-center space-x-1 mt-1">
+                                    <span className={`px-2 py-1 rounded-full text-xs ${
+                                      erp.complexity === 'Low' ? 'bg-green-100 text-green-800' :
+                                      erp.complexity === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
+                                      erp.complexity === 'High' ? 'bg-orange-100 text-orange-800' :
+                                      'bg-red-100 text-red-800'
+                                    }`}>
+                                      {erp.complexity}
+                                    </span>
+                                    <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                                      {erp.region}
+                                    </span>
+                                  </div>
                                 </div>
                               </div>
                               <p className="text-xs text-gray-600 mb-2">{erp.description}</p>
