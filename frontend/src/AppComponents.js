@@ -2102,7 +2102,7 @@ export const ClientsSection = () => {
   const handleInviteReferral = (clientId) => {
     const client = clients.find(c => c.id === clientId);
     setSelectedClient(client);
-    setShows(true);
+    setShowReferralModal(true);
   };
 
   const handleActivateAutoReward = async (clientId) => {
