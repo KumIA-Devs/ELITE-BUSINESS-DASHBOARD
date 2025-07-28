@@ -463,6 +463,117 @@ async def get_conversation_history(session_id: str, current_user: User = Depends
         for conv in conversations
     ]
 
+# KUMIA Business Intelligence Chat with Gemini
+@api_router.post("/ai/kumia-chat")
+async def kumia_business_chat(request: AIConversationRequest, current_user: User = Depends(get_current_user)):
+    """KUMIA Business Intelligence Chat with access to real dashboard data"""
+    try:
+        # Get real dashboard data for context
+        dashboard_data = await get_dashboard_metrics(current_user)
+        
+        # Get customers data
+        customers = await db.customers.find({}).to_list(1000)
+        total_customers = len(customers)
+        
+        # Get menu items
+        menu_items = await db.menu_items.find({}).to_list(1000)
+        total_menu_items = len(menu_items)
+        
+        # Get feedback data
+        feedback_list = await db.feedback.find({}).to_list(1000)
+        total_feedback = len(feedback_list)
+        
+        # Get AI agents data
+        ai_agents = await db.ai_agents.find({}).to_list(100)
+        active_agents = [agent for agent in ai_agents if agent.get("is_active", False)]
+        
+        # Get recent conversations
+        recent_conversations = await db.conversations.find(
+            {"user_id": current_user.id}
+        ).sort("created_at", -1).limit(10).to_list(10)
+        
+        # Calculate performance metrics
+        total_conversations = await db.conversations.count_documents({"user_id": current_user.id})
+        
+        # Create comprehensive system message with real data
+        system_message = f"""You are KUMIA Business Intelligence Assistant for {RESTAURANT_CONFIG['name']}.
+        
+You have access to REAL dashboard data and should provide actionable insights based on actual metrics:
+
+📊 CURRENT DASHBOARD METRICS:
+- Total Customers: {total_customers}
+- Total Reservations: {dashboard_data.get('total_reservations', 0)}
+- Total Feedback: {total_feedback}
+- Active AI Agents: {len(active_agents)}
+- Total Revenue: ${dashboard_data.get('total_revenue', 0):,.2f}
+- Average Rating: {dashboard_data.get('avg_rating', 0):.1f}/5
+- Total Points Delivered: {dashboard_data.get('total_points_delivered', 0)}
+- NFTs Delivered: {dashboard_data.get('nfts_delivered', 0)}
+
+🤖 AI AGENTS PERFORMANCE:
+- Total AI Conversations: {total_conversations}
+- Active Agents: {len(active_agents)}
+- Available Agents: {', '.join([agent.get('name', 'Unknown') for agent in active_agents])}
+
+🍽️ MENU INSIGHTS:
+- Total Menu Items: {total_menu_items}
+- Top Categories: {', '.join(set([item.get('category', 'Unknown') for item in menu_items[:5]]))}
+
+💡 YOUR CAPABILITIES:
+1. **Data Analysis**: Analyze trends, identify opportunities, explain metrics
+2. **Agent Optimization**: Suggest improvements for AI agents, prompts, channels
+3. **Business Strategy**: Recommend actions based on performance data
+4. **ROI Insights**: Calculate and explain return on investment
+5. **Customer Intelligence**: Insights about customer behavior and segments
+6. **Marketing Strategy**: Recommendations for campaigns and engagement
+
+🎯 PERSONALITY: 
+- Expert business analyst with deep restaurant industry knowledge
+- Data-driven recommendations with actionable insights
+- Professional but conversational tone
+- Focus on ROI and business growth
+- Proactive in suggesting optimizations
+
+Always base your responses on the real data provided above. When making recommendations, reference specific metrics and explain the reasoning behind your suggestions."""
+
+        # Create Gemini chat instance
+        gemini_api_key = os.environ.get("GEMINI_API_KEY")
+        if not gemini_api_key:
+            raise HTTPException(status_code=500, detail="Gemini API key not configured")
+        
+        chat = LlmChat(
+            api_key=gemini_api_key,
+            session_id=request.session_id,
+            system_message=system_message
+        ).with_model("gemini", "gemini-2.0-flash").with_max_tokens(4096)
+        
+        # Create user message
+        user_message = UserMessage(text=request.message)
+        
+        # Get AI response
+        response = await chat.send_message(user_message)
+        
+        # Store conversation in database with special channel
+        conversation_data = {
+            "id": str(uuid.uuid4()),
+            "user_id": current_user.id,
+            "session_id": request.session_id,
+            "channel": "kumia_business_chat",
+            "user_message": request.message,
+            "ai_response": response,
+            "created_at": datetime.utcnow()
+        }
+        await db.conversations.insert_one(conversation_data)
+        
+        return AIConversationResponse(
+            response=response,
+            session_id=request.session_id,
+            channel="kumia_business_chat"
+        )
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"KUMIA Business Chat failed: {str(e)}")
+
 # Restaurant configuration endpoint
 @api_router.get("/restaurant/config")
 async def get_restaurant_config(current_user: User = Depends(get_current_user)):
