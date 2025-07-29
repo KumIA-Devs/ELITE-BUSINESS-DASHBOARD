@@ -1235,6 +1235,553 @@ export const RewardsNFTsSection = () => {
           </div>
         </div>
       )}
+
+      {/* 👥 Modal de Ver Clientes */}
+      {showClientsList && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-5xl max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">👥 Clientes Nivel {showClientsList.name}</h2>
+                  <p className="text-gray-600">{showClientsList.activeClients} clientes activos • Multiplicador x{showClientsList.multiplier}</p>
+                </div>
+                <button 
+                  onClick={() => setShowClientsList(null)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {(() => {
+                const mockClients = {
+                  descubridor: [
+                    { id: 1, name: 'Ana Torres', email: 'ana.torres@email.com', phone: '+56912345678', stars: 28, lastVisit: '2025-01-25', totalSpent: 89000, visits: 12, nftUnlocked: 'Ninguno', status: 'Activo' },
+                    { id: 2, name: 'Luis Martín', email: 'luis.martin@email.com', phone: '+56987654321', stars: 15, lastVisit: '2025-01-20', totalSpent: 45000, visits: 8, nftUnlocked: 'Ninguno', status: 'Activo' },
+                    { id: 3, name: 'Carmen Silva', email: 'carmen.silva@email.com', phone: '+56945678123', stars: 32, lastVisit: '2025-01-28', totalSpent: 96000, visits: 14, nftUnlocked: 'Ninguno', status: 'Activo' },
+                    { id: 4, name: 'María González', email: 'maria.gonzalez@email.com', phone: '+56923456789', stars: 21, lastVisit: '2025-01-22', totalSpent: 63000, visits: 9, nftUnlocked: 'Ninguno', status: 'Activo' }
+                  ],
+                  explorador: [
+                    { id: 5, name: 'Pedro Ruiz', email: 'pedro.ruiz@email.com', phone: '+56912348765', stars: 44, lastVisit: '2025-01-26', totalSpent: 132000, visits: 18, nftUnlocked: 'NFT Explorador', status: 'Activo' },
+                    { id: 6, name: 'Sofia Moreno', email: 'sofia.moreno@email.com', phone: '+56934567812', stars: 39, lastVisit: '2025-01-24', totalSpent: 117000, visits: 16, nftUnlocked: 'NFT Explorador', status: 'Activo' }
+                  ],
+                  destacado: [
+                    { id: 7, name: 'Diego Castro', email: 'diego.castro@email.com', phone: '+56923456781', stars: 56, lastVisit: '2025-01-27', totalSpent: 168000, visits: 22, nftUnlocked: 'NFT Destacado', status: 'VIP' },
+                    { id: 8, name: 'Elena Vargas', email: 'elena.vargas@email.com', phone: '+56945671234', stars: 52, lastVisit: '2025-01-23', totalSpent: 156000, visits: 21, nftUnlocked: 'NFT Destacado', status: 'VIP' }
+                  ],
+                  estrella: [
+                    { id: 9, name: 'Roberto Kim', email: 'roberto.kim@email.com', phone: '+56912347856', stars: 68, lastVisit: '2025-01-29', totalSpent: 204000, visits: 28, nftUnlocked: 'NFT Estrella', status: 'Premium' }
+                  ],
+                  leyenda: [
+                    { id: 10, name: 'Alexander Zúñiga', email: 'alexander.zuniga@email.com', phone: '+56934561278', stars: 89, lastVisit: '2025-01-28', totalSpent: 267000, visits: 35, nftUnlocked: 'NFT Leyenda', status: 'Élite' },
+                    { id: 11, name: 'Valentina Chen', email: 'valentina.chen@email.com', phone: '+56923451867', stars: 95, lastVisit: '2025-01-26', totalSpent: 285000, visits: 38, nftUnlocked: 'NFT Leyenda', status: 'Élite' }
+                  ]
+                };
+
+                const clients = mockClients[showClientsList.id] || [];
+
+                return (
+                  <div className="space-y-4">
+                    {/* Filtros y Acciones */}
+                    <div className="flex justify-between items-center bg-gray-50 p-4 rounded-lg">
+                      <div className="flex space-x-3">
+                        <input
+                          type="text"
+                          placeholder="Buscar por nombre o email..."
+                          className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        />
+                        <select className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
+                          <option>Todos los estados</option>
+                          <option>Activo</option>
+                          <option>VIP</option>
+                          <option>Premium</option>
+                          <option>Élite</option>
+                        </select>
+                      </div>
+                      <div className="flex space-x-2">
+                        <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors text-sm">
+                          📤 Exportar Lista
+                        </button>
+                        <button className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors text-sm">
+                          📧 Campaña Email
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Tabla de Clientes */}
+                    <div className="overflow-x-auto">
+                      <table className="w-full border-collapse border border-gray-200">
+                        <thead>
+                          <tr className="bg-gray-100">
+                            <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Cliente</th>
+                            <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Contacto</th>
+                            <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Stars</th>
+                            <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Última Visita</th>
+                            <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Total Gastado</th>
+                            <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">NFT</th>
+                            <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Estado</th>
+                            <th className="border border-gray-200 px-4 py-3 text-left text-sm font-medium text-gray-700">Acciones</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {clients.map(client => (
+                            <tr key={client.id} className="hover:bg-gray-50">
+                              <td className="border border-gray-200 px-4 py-3">
+                                <div>
+                                  <div className="font-medium text-gray-800">{client.name}</div>
+                                  <div className="text-sm text-gray-600">{client.visits} visitas</div>
+                                </div>
+                              </td>
+                              <td className="border border-gray-200 px-4 py-3">
+                                <div className="text-sm">
+                                  <div>{client.email}</div>
+                                  <div className="text-gray-600">{client.phone}</div>
+                                </div>
+                              </td>
+                              <td className="border border-gray-200 px-4 py-3">
+                                <span className="font-bold text-orange-600">{client.stars}</span>
+                              </td>
+                              <td className="border border-gray-200 px-4 py-3 text-sm">
+                                {client.lastVisit}
+                              </td>
+                              <td className="border border-gray-200 px-4 py-3">
+                                <span className="font-medium text-green-600">${client.totalSpent.toLocaleString()}</span>
+                              </td>
+                              <td className="border border-gray-200 px-4 py-3">
+                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                  client.nftUnlocked === 'Ninguno' ? 'bg-gray-100 text-gray-600' : 
+                                  showClientsList.badgeColor + ' ' + showClientsList.textColor
+                                }`}>
+                                  {client.nftUnlocked}
+                                </span>
+                              </td>
+                              <td className="border border-gray-200 px-4 py-3">
+                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                  client.status === 'Élite' ? 'bg-purple-100 text-purple-700' :
+                                  client.status === 'Premium' ? 'bg-yellow-100 text-yellow-700' :
+                                  client.status === 'VIP' ? 'bg-blue-100 text-blue-700' :
+                                  'bg-green-100 text-green-700'
+                                }`}>
+                                  {client.status}
+                                </span>
+                              </td>
+                              <td className="border border-gray-200 px-4 py-3">
+                                <div className="flex space-x-1">
+                                  <button className="bg-blue-100 text-blue-600 px-2 py-1 rounded text-xs hover:bg-blue-200 transition-colors">
+                                    👁️
+                                  </button>
+                                  <button className="bg-green-100 text-green-600 px-2 py-1 rounded text-xs hover:bg-green-200 transition-colors">
+                                    ✏️
+                                  </button>
+                                  <button className="bg-orange-100 text-orange-600 px-2 py-1 rounded text-xs hover:bg-orange-200 transition-colors">
+                                    💬
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Resumen */}
+                    <div className="bg-gradient-to-r from-orange-50 to-red-50 p-4 rounded-lg">
+                      <h4 className="font-medium text-orange-800 mb-2">📊 Resumen Nivel {showClientsList.name}</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+                        <div>
+                          <span className="text-gray-600">Total clientes:</span>
+                          <span className="font-bold text-gray-800 ml-2">{clients.length}</span>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Stars promedio:</span>
+                          <span className="font-bold text-orange-600 ml-2">
+                            {Math.round(clients.reduce((sum, c) => sum + c.stars, 0) / clients.length)}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Gasto promedio:</span>
+                          <span className="font-bold text-green-600 ml-2">
+                            ${Math.round(clients.reduce((sum, c) => sum + c.totalSpent, 0) / clients.length).toLocaleString()}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Visitas promedio:</span>
+                          <span className="font-bold text-blue-600 ml-2">
+                            {Math.round(clients.reduce((sum, c) => sum + c.visits, 0) / clients.length)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ⚙️ Modal de Configurar Nivel */}
+      {showLevelConfig && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">⚙️ Configurar Nivel {showLevelConfig.name}</h2>
+                  <p className="text-gray-600">Gestión avanzada de beneficios, recompensas y configuración del nivel</p>
+                </div>
+                <button 
+                  onClick={() => setShowLevelConfig(null)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                {/* Información Actual */}
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h3 className="font-bold text-gray-800 mb-3">📋 Información Actual</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div>
+                      <span className="text-sm text-gray-600">Stars requeridas:</span>
+                      <div className="font-bold text-orange-600">{showLevelConfig.starsRequired} {showLevelConfig.id !== 'descubridor' ? '(adicionales)' : '(base)'}</div>
+                    </div>
+                    <div>
+                      <span className="text-sm text-gray-600">Multiplicador:</span>
+                      <div className="font-bold text-blue-600">x{showLevelConfig.multiplier}</div>
+                    </div>
+                    <div>
+                      <span className="text-sm text-gray-600">Clientes activos:</span>
+                      <div className="font-bold text-green-600">{showLevelConfig.activeClients}</div>
+                    </div>
+                    <div>
+                      <span className="text-sm text-gray-600">Capitalización:</span>
+                      <div className="font-bold text-purple-600 text-sm">{showLevelConfig.capitalization}</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Beneficios y Descripción */}
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <h3 className="font-bold text-blue-800 mb-3">🎁 Beneficios del Nivel</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Descripción Principal</label>
+                      <textarea
+                        defaultValue={showLevelConfig.description}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 h-20"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Beneficio Principal</label>
+                      <textarea
+                        defaultValue={showLevelConfig.benefit}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 h-16"
+                      />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Descuento Especial (%)</label>
+                        <input
+                          type="number"
+                          defaultValue={showLevelConfig.multiplier * 5}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Prioridad en Reservas</label>
+                        <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                          <option>Normal</option>
+                          <option>Preferencial</option>
+                          <option>VIP</option>
+                          <option>Máxima</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Recompensas Específicas */}
+                <div className="bg-green-50 p-4 rounded-lg">
+                  <h3 className="font-bold text-green-800 mb-3">🏆 Recompensas Específicas del Nivel</h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between p-3 bg-white rounded-lg border">
+                      <div>
+                        <div className="font-medium text-gray-800">Plato del Mes Gratis</div>
+                        <div className="text-sm text-gray-600">Disponible cada 30 días</div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm text-green-600">Activo</span>
+                        <button className="bg-red-100 text-red-600 px-2 py-1 rounded text-xs hover:bg-red-200 transition-colors">
+                          Desactivar
+                        </button>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between p-3 bg-white rounded-lg border">
+                      <div>
+                        <div className="font-medium text-gray-800">Mesa Preferencial</div>
+                        <div className="text-sm text-gray-600">Reserva automática en mejores mesas</div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm text-green-600">Activo</span>
+                        <button className="bg-red-100 text-red-600 px-2 py-1 rounded text-xs hover:bg-red-200 transition-colors">
+                          Desactivar
+                        </button>
+                      </div>
+                    </div>
+                    <button className="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors text-sm">
+                      + Agregar Nueva Recompensa
+                    </button>
+                  </div>
+                </div>
+
+                {/* Análisis de Rendimiento */}
+                <div className="bg-purple-50 p-4 rounded-lg">
+                  <h3 className="font-bold text-purple-800 mb-3">📊 Análisis de Rendimiento</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="bg-white p-3 rounded-lg text-center">
+                      <div className="text-2xl font-bold text-purple-600">{(showLevelConfig.multiplier * 2.3).toFixed(1)}x</div>
+                      <div className="text-sm text-gray-600">ROI Promedio</div>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg text-center">
+                      <div className="text-2xl font-bold text-green-600">{Math.floor(85 + showLevelConfig.multiplier * 5)}%</div>
+                      <div className="text-sm text-gray-600">Retención</div>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg text-center">
+                      <div className="text-2xl font-bold text-blue-600">${(3200 * showLevelConfig.multiplier).toLocaleString()}</div>
+                      <div className="text-sm text-gray-600">Ticket Promedio</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Botones de Acción */}
+                <div className="flex space-x-3">
+                  <button 
+                    onClick={() => setShowLevelConfig(null)}
+                    className="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button className="flex-1 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                    📊 Ver Análisis Detallado
+                  </button>
+                  <button 
+                    onClick={() => {
+                      alert(`✅ Configuración del nivel ${showLevelConfig.name} guardada exitosamente\n\nTodos los cambios se aplicarán inmediatamente y se sincronizarán con Firebase.`);
+                      setShowLevelConfig(null);
+                    }}
+                    className="flex-1 bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors"
+                  >
+                    💾 Guardar Cambios
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 📊 Modal de Análisis de Acciones por Nivel */}
+      {showActionsAnalysis && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">📈 Análisis de Acciones por Nivel</h2>
+                  <p className="text-gray-600">Comportamiento y patrones de uso por cada nivel del sistema KumIA Stars</p>
+                </div>
+                <button 
+                  onClick={() => setShowActionsAnalysis(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                {/* Resumen General */}
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg">
+                  <h3 className="font-bold text-blue-800 mb-4">📊 Resumen General de Acciones</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <div className="bg-white p-4 rounded-lg text-center">
+                      <div className="text-2xl font-bold text-orange-600">2,847</div>
+                      <div className="text-sm text-gray-600">Total Feedbacks</div>
+                    </div>
+                    <div className="bg-white p-4 rounded-lg text-center">
+                      <div className="text-2xl font-bold text-green-600">1,293</div>
+                      <div className="text-sm text-gray-600">Reservas Completadas</div>
+                    </div>
+                    <div className="bg-white p-4 rounded-lg text-center">
+                      <div className="text-2xl font-bold text-purple-600">456</div>
+                      <div className="text-sm text-gray-600">Referidos Exitosos</div>
+                    </div>
+                    <div className="bg-white p-4 rounded-lg text-center">
+                      <div className="text-2xl font-bold text-blue-600">789</div>
+                      <div className="text-sm text-gray-600">Juegos Completados</div>
+                    </div>
+                    <div className="bg-white p-4 rounded-lg text-center">
+                      <div className="text-2xl font-bold text-pink-600">2,156</div>
+                      <div className="text-sm text-gray-600">Pagos Procesados</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Análisis por Nivel */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {kumiaLevels.map((level, index) => {
+                    const mockData = {
+                      descubridor: { feedback: 45, reservas: 30, referidos: 15, juegos: 5, pagos: 25 },
+                      explorador: { feedback: 40, reservas: 35, referidos: 20, juegos: 8, pagos: 30 },
+                      destacado: { feedback: 35, reservas: 40, referidos: 25, juegos: 12, pagos: 35 },
+                      estrella: { feedback: 30, reservas: 45, referidos: 30, juegos: 15, pagos: 40 },
+                      leyenda: { feedback: 25, reservas: 50, referidos: 35, juegos: 20, pagos: 45 }
+                    };
+
+                    const levelData = mockData[level.id];
+
+                    return (
+                      <div key={level.id} className="bg-white rounded-lg border border-gray-200 p-4">
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center space-x-3">
+                            <div className={`w-4 h-4 rounded-full bg-gradient-to-r ${level.bgColor}`}></div>
+                            <h4 className="font-bold text-gray-800">{level.name}</h4>
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${level.badgeColor} ${level.textColor}`}>
+                              {level.activeClients} clientes
+                            </span>
+                          </div>
+                          <span className="text-sm text-gray-500">Multiplicador: x{level.multiplier}</span>
+                        </div>
+
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-gray-600">💬 Feedback</span>
+                            <div className="flex items-center space-x-2">
+                              <div className="w-20 bg-gray-200 rounded-full h-2">
+                                <div 
+                                  className="bg-orange-400 h-2 rounded-full transition-all duration-500"
+                                  style={{ width: `${levelData.feedback}%` }}
+                                ></div>
+                              </div>
+                              <span className="text-sm font-medium text-gray-800">{levelData.feedback}%</span>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-gray-600">📅 Reservas</span>
+                            <div className="flex items-center space-x-2">
+                              <div className="w-20 bg-gray-200 rounded-full h-2">
+                                <div 
+                                  className="bg-green-400 h-2 rounded-full transition-all duration-500"
+                                  style={{ width: `${levelData.reservas}%` }}
+                                ></div>
+                              </div>
+                              <span className="text-sm font-medium text-gray-800">{levelData.reservas}%</span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-gray-600">👥 Referidos</span>
+                            <div className="flex items-center space-x-2">
+                              <div className="w-20 bg-gray-200 rounded-full h-2">
+                                <div 
+                                  className="bg-purple-400 h-2 rounded-full transition-all duration-500"
+                                  style={{ width: `${levelData.referidos}%` }}
+                                ></div>
+                              </div>
+                              <span className="text-sm font-medium text-gray-800">{levelData.referidos}%</span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-gray-600">🎮 Juegos</span>
+                            <div className="flex items-center space-x-2">
+                              <div className="w-20 bg-gray-200 rounded-full h-2">
+                                <div 
+                                  className="bg-blue-400 h-2 rounded-full transition-all duration-500"
+                                  style={{ width: `${levelData.juegos}%` }}
+                                ></div>
+                              </div>
+                              <span className="text-sm font-medium text-gray-800">{levelData.juegos}%</span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm text-gray-600">💳 Pagos</span>
+                            <div className="flex items-center space-x-2">
+                              <div className="w-20 bg-gray-200 rounded-full h-2">
+                                <div 
+                                  className="bg-pink-400 h-2 rounded-full transition-all duration-500"
+                                  style={{ width: `${levelData.pagos}%` }}
+                                ></div>
+                              </div>
+                              <span className="text-sm font-medium text-gray-800">{levelData.pagos}%</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+                          <h5 className="text-sm font-medium text-gray-700 mb-2">🎯 Insights del Nivel</h5>
+                          <p className="text-xs text-gray-600">
+                            {level.id === 'descubridor' && "Nuevos usuarios priorizan feedback básico y conocimiento del restaurante."}
+                            {level.id === 'explorador' && "Balance entre feedback y reservas, comenzando a explorar beneficios."}
+                            {level.id === 'destacado' && "Mayor foco en reservas y experiencias VIP, uso moderado de juegos."}
+                            {level.id === 'estrella' && "Usuarios premium con alta frecuencia de reservas y referidos activos."}
+                            {level.id === 'leyenda' && "Embajadores de marca con máximo engagement en reservas y referidos."}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Recomendaciones Estratégicas */}
+                <div className="bg-gradient-to-r from-emerald-50 to-green-50 p-6 rounded-lg">
+                  <h3 className="font-bold text-emerald-800 mb-4">💡 Recomendaciones Estratégicas</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className="font-medium text-emerald-700 mb-3">🎯 Optimizaciones Detectadas:</h4>
+                      <ul className="space-y-2 text-sm text-emerald-600">
+                        <li className="flex items-start space-x-2">
+                          <span className="text-emerald-500 mt-1">•</span>
+                          <span><strong>Descubridor:</strong> Incrementar incentivos para juegos (+15% engagement estimado)</span>
+                        </li>
+                        <li className="flex items-start space-x-2">
+                          <span className="text-emerald-500 mt-1">•</span>
+                          <span><strong>Explorador:</strong> Promover programa de referidos (potencial +8 nuevos clientes/mes)</span>
+                        </li>
+                        <li className="flex items-start space-x-2">
+                          <span className="text-emerald-500 mt-1">•</span>
+                          <span><strong>Estrella:</strong> Campaign especial para maximizar feedback con video</span>
+                        </li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-emerald-700 mb-3">🚀 Oportunidades de Crecimiento:</h4>
+                      <ul className="space-y-2 text-sm text-emerald-600">
+                        <li className="flex items-start space-x-2">
+                          <span className="text-emerald-500 mt-1">•</span>
+                          <span>Crear challenges cruzados entre niveles para aumentar interacción</span>
+                        </li>
+                        <li className="flex items-start space-x-2">
+                          <span className="text-emerald-500 mt-1">•</span>
+                          <span>Implementar sistema de mentorías: Leyenda → Descubridor</span>
+                        </li>
+                        <li className="flex items-start space-x-2">
+                          <span className="text-emerald-500 mt-1">•</span>
+                          <span>Gamificar proceso de pagos para niveles más bajos</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
