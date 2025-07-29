@@ -1061,6 +1061,285 @@ const DashboardSummary = ({ metrics }) => {
           </div>
         </div>
       )}
+
+      {/* 🚀 Modal Expandir KUMIA */}
+      {showExpandKumia && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-5xl max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">🚀 Expandir KUMIA a Nuevos Locales</h2>
+                  <p className="text-gray-600">Análisis de viabilidad y proceso de expansión basado en tu éxito actual</p>
+                </div>
+                <button 
+                  onClick={() => setShowExpandKumia(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                {/* Análisis de Viabilidad */}
+                <div className="bg-gradient-to-r from-emerald-50 to-green-50 p-6 rounded-lg border border-emerald-200">
+                  <h3 className="font-bold text-emerald-800 mb-4">📊 Análisis de Viabilidad Actual</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="bg-white p-4 rounded-lg text-center">
+                      <div className="text-2xl font-bold text-emerald-600">+{roiData.multiplier}x</div>
+                      <div className="text-sm text-emerald-700">ROI Mensual</div>
+                      <div className="text-xs text-emerald-600 mt-1">✅ Óptimo para expansión</div>
+                    </div>
+                    <div className="bg-white p-4 rounded-lg text-center">
+                      <div className="text-2xl font-bold text-blue-600">${roiData.monthlyRevenue.toLocaleString()}</div>
+                      <div className="text-sm text-blue-700">Facturación Mensual</div>
+                      <div className="text-xs text-blue-600 mt-1">✅ Base sólida</div>
+                    </div>
+                    <div className="bg-white p-4 rounded-lg text-center">
+                      <div className="text-2xl font-bold text-purple-600">85%</div>
+                      <div className="text-sm text-purple-700">Retención Clientes</div>
+                      <div className="text-xs text-purple-600 mt-1">✅ Muy alta fidelización</div>
+                    </div>
+                    <div className="bg-white p-4 rounded-lg text-center">
+                      <div className="text-2xl font-bold text-orange-600">22%</div>
+                      <div className="text-sm text-orange-700">Crecimiento Mensual</div>
+                      <div className="text-xs text-orange-600 mt-1">✅ Tendencia ascendente</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Proceso de Expansión */}
+                <div className="bg-white rounded-lg border border-gray-200 p-6">
+                  <h3 className="font-bold text-gray-800 mb-4">🗺️ Proceso de Expansión KUMIA</h3>
+                  <div className="space-y-4">
+                    <div className="flex items-start space-x-4 p-4 bg-blue-50 rounded-lg">
+                      <div className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
+                      <div>
+                        <h4 className="font-medium text-blue-800">Análisis de Mercado</h4>
+                        <p className="text-sm text-blue-700">Identificamos las mejores ubicaciones basadas en demografía, competencia y potencial de mercado.</p>
+                        <div className="mt-2 text-xs text-blue-600">⏱️ Duración: 2-3 semanas</div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start space-x-4 p-4 bg-purple-50 rounded-lg">
+                      <div className="w-8 h-8 bg-purple-500 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
+                      <div>
+                        <h4 className="font-medium text-purple-800">Replicación del Sistema</h4>
+                        <p className="text-sm text-purple-700">Implementamos tu configuración KUMIA existente: menú, agentes IA, sistema de recompensas y toda tu base de conocimiento.</p>
+                        <div className="mt-2 text-xs text-purple-600">⏱️ Duración: 1-2 semanas</div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start space-x-4 p-4 bg-green-50 rounded-lg">
+                      <div className="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">3</div>
+                      <div>
+                        <h4 className="font-medium text-green-800">Lanzamiento Coordinado</h4>
+                        <p className="text-sm text-green-700">Campaña de marketing multiplataforma, capacitación del equipo y transferencia de clientes entre locales.</p>
+                        <div className="mt-2 text-xs text-green-600">⏱️ Duración: 1 semana</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Ubicaciones Potenciales */}
+                <div className="bg-white rounded-lg border border-gray-200 p-6">
+                  <h3 className="font-bold text-gray-800 mb-4">📍 Ubicaciones Potenciales Analizadas</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <h4 className="font-medium text-gray-800">Las Condes</h4>
+                        <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">Recomendado</span>
+                      </div>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Potencial de mercado:</span>
+                          <span className="font-medium text-green-600">Alto</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Demografía objetivo:</span>
+                          <span className="font-medium text-gray-800">95% match</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Competencia:</span>
+                          <span className="font-medium text-orange-600">Media</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">ROI estimado:</span>
+                          <span className="font-medium text-blue-600">+3.8x</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <h4 className="font-medium text-gray-800">Providencia</h4>
+                        <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">Viable</span>
+                      </div>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Potencial de mercado:</span>
+                          <span className="font-medium text-blue-600">Medio-Alto</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Demografía objetivo:</span>
+                          <span className="font-medium text-gray-800">88% match</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Competencia:</span>
+                          <span className="font-medium text-red-600">Alta</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">ROI estimado:</span>
+                          <span className="font-medium text-blue-600">+3.2x</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <h4 className="font-medium text-gray-800">Ñuñoa</h4>
+                        <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium">En análisis</span>
+                      </div>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Potencial de mercado:</span>
+                          <span className="font-medium text-blue-600">Medio</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Demografía objetivo:</span>
+                          <span className="font-medium text-gray-800">75% match</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Competencia:</span>
+                          <span className="font-medium text-green-600">Baja</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">ROI estimado:</span>
+                          <span className="font-medium text-blue-600">+2.9x</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Beneficios de la Expansión */}
+                <div className="bg-gradient-to-r from-orange-50 to-red-50 p-6 rounded-lg border border-orange-200">
+                  <h3 className="font-bold text-orange-800 mb-4">🎯 Beneficios de Expandir con KUMIA</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className="font-medium text-orange-700 mb-3">💰 Impacto Económico</h4>
+                      <ul className="space-y-2 text-sm text-orange-600">
+                        <li className="flex items-center"><span className="text-green-500 mr-2">•</span> Duplicar ingresos proyectados en 6 meses</li>
+                        <li className="flex items-center"><span className="text-green-500 mr-2">•</span> Economías de escala en marketing y operaciones</li>
+                        <li className="flex items-center"><span className="text-green-500 mr-2">•</span> Diversificación de riesgo geográfico</li>
+                        <li className="flex items-center"><span className="text-green-500 mr-2">•</span> Mayor poder de negociación con proveedores</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-orange-700 mb-3">🚀 Ventajas Operacionales</h4>
+                      <ul className="space-y-2 text-sm text-orange-600">
+                        <li className="flex items-center"><span className="text-blue-500 mr-2">•</span> Sistema KUMIA ya optimizado y probado</li>
+                        <li className="flex items-center"><span className="text-blue-500 mr-2">•</span> Base de clientes transferible entre locales</li>
+                        <li className="flex items-center"><span className="text-blue-500 mr-2">•</span> Agentes IA entrenados con tu conocimiento</li>
+                        <li className="flex items-center"><span className="text-blue-500 mr-2">•</span> Métricas centralizadas para ambos locales</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Plan de Inversión */}
+                <div className="bg-white rounded-lg border border-gray-200 p-6">
+                  <h3 className="font-bold text-gray-800 mb-4">💼 Plan de Inversión y Cronograma</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <h4 className="font-medium text-gray-800 mb-3">💰 Inversión Estimada</h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Setup KUMIA (nuevo local):</span>
+                          <span className="font-medium">$2,500</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Análisis de mercado:</span>
+                          <span className="font-medium">$1,200</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Capacitación y setup:</span>
+                          <span className="font-medium">$800</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Marketing de lanzamiento:</span>
+                          <span className="font-medium">$1,500</span>
+                        </div>
+                        <div className="border-t border-gray-300 pt-2 mt-3">
+                          <div className="flex justify-between font-bold">
+                            <span>Total estimado:</span>
+                            <span className="text-green-600">$6,000</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <h4 className="font-medium text-gray-800 mb-3">📅 Cronograma de Expansión</h4>
+                      <div className="space-y-3">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                          <div className="text-sm">
+                            <div className="font-medium">Semanas 1-3: Análisis</div>
+                            <div className="text-gray-600">Estudio de mercado y selección de ubicación</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+                          <div className="text-sm">
+                            <div className="font-medium">Semanas 4-5: Setup</div>
+                            <div className="text-gray-600">Implementación técnica y replicación</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                          <div className="text-sm">
+                            <div className="font-medium">Semana 6: Lanzamiento</div>
+                            <div className="text-gray-600">Apertura y campaña de marketing</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Botones de Acción */}
+                <div className="flex space-x-4">
+                  <button 
+                    onClick={() => setShowExpandKumia(false)}
+                    className="flex-1 bg-gray-100 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors"
+                  >
+                    Cerrar
+                  </button>
+                  <button 
+                    onClick={() => {
+                      alert('📧 Solicitud de expansión enviada!\n\nNuestro equipo de crecimiento se contactará contigo en las próximas 24 horas para iniciar el análisis detallado.\n\n📊 Incluiremos:\n• Análisis de mercado personalizado\n• Proyecciones financieras específicas\n• Plan de implementación paso a paso\n• Cronograma detallado de expansión');
+                      setShowExpandKumia(false);
+                    }}
+                    className="flex-1 bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors"
+                  >
+                    📊 Solicitar Análisis Detallado
+                  </button>
+                  <button 
+                    onClick={() => {
+                      alert('🚀 ¡Excelente decisión!\n\nIniciaremos el proceso de expansión inmediatamente:\n\n✅ Análisis de mercado: Las Condes (recomendado)\n✅ Setup técnico: 2 semanas\n✅ Lanzamiento estimado: 6 semanas\n✅ ROI proyectado: +3.8x\n\nNuestro equipo se contactará en las próximas 2 horas para coordinar los detalles.');
+                      setShowExpandKumia(false);
+                    }}
+                    className="flex-1 bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-lg hover:from-orange-600 hover:to-red-600 transition-all duration-200 font-bold"
+                  >
+                    🚀 Iniciar Expansión Ahora
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
