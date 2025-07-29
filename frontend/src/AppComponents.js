@@ -1300,27 +1300,41 @@ export const RewardsNFTsSection = () => {
                   descubridor: [
                     { id: 1, name: 'Ana Torres', email: 'ana.torres@email.com', phone: '+56912345678', stars: 28, lastVisit: '2025-01-25', totalSpent: 89000, visits: 12, nftUnlocked: 'Ninguno', status: 'Activo' },
                     { id: 2, name: 'Luis Martín', email: 'luis.martin@email.com', phone: '+56987654321', stars: 15, lastVisit: '2025-01-20', totalSpent: 45000, visits: 8, nftUnlocked: 'Ninguno', status: 'Activo' },
-                    { id: 3, name: 'Carmen Silva', email: 'carmen.silva@email.com', phone: '+56945678123', stars: 32, lastVisit: '2025-01-28', totalSpent: 96000, visits: 14, nftUnlocked: 'Ninguno', status: 'Activo' },
+                    { id: 3, name: 'Carmen Silva', email: 'carmen.silva@email.com', phone: '+56945678123', stars: 32, lastVisit: '2025-01-28', totalSpent: 96000, visits: 14, nftUnlocked: 'Ninguno', status: 'Inactivo' },
                     { id: 4, name: 'María González', email: 'maria.gonzalez@email.com', phone: '+56923456789', stars: 21, lastVisit: '2025-01-22', totalSpent: 63000, visits: 9, nftUnlocked: 'Ninguno', status: 'Activo' }
                   ],
                   explorador: [
                     { id: 5, name: 'Pedro Ruiz', email: 'pedro.ruiz@email.com', phone: '+56912348765', stars: 44, lastVisit: '2025-01-26', totalSpent: 132000, visits: 18, nftUnlocked: 'NFT Explorador', status: 'Activo' },
-                    { id: 6, name: 'Sofia Moreno', email: 'sofia.moreno@email.com', phone: '+56934567812', stars: 39, lastVisit: '2025-01-24', totalSpent: 117000, visits: 16, nftUnlocked: 'NFT Explorador', status: 'Activo' }
+                    { id: 6, name: 'Sofia Moreno', email: 'sofia.moreno@email.com', phone: '+56934567812', stars: 39, lastVisit: '2025-01-24', totalSpent: 117000, visits: 16, nftUnlocked: 'NFT Explorador', status: 'Inactivo' }
                   ],
                   destacado: [
-                    { id: 7, name: 'Diego Castro', email: 'diego.castro@email.com', phone: '+56923456781', stars: 56, lastVisit: '2025-01-27', totalSpent: 168000, visits: 22, nftUnlocked: 'NFT Destacado', status: 'VIP' },
-                    { id: 8, name: 'Elena Vargas', email: 'elena.vargas@email.com', phone: '+56945671234', stars: 52, lastVisit: '2025-01-23', totalSpent: 156000, visits: 21, nftUnlocked: 'NFT Destacado', status: 'VIP' }
+                    { id: 7, name: 'Diego Castro', email: 'diego.castro@email.com', phone: '+56923456781', stars: 56, lastVisit: '2025-01-27', totalSpent: 168000, visits: 22, nftUnlocked: 'NFT Destacado', status: 'Activo' },
+                    { id: 8, name: 'Elena Vargas', email: 'elena.vargas@email.com', phone: '+56945671234', stars: 52, lastVisit: '2025-01-23', totalSpent: 156000, visits: 21, nftUnlocked: 'NFT Destacado', status: 'Activo' }
                   ],
                   estrella: [
-                    { id: 9, name: 'Roberto Kim', email: 'roberto.kim@email.com', phone: '+56912347856', stars: 68, lastVisit: '2025-01-29', totalSpent: 204000, visits: 28, nftUnlocked: 'NFT Estrella', status: 'Premium' }
+                    { id: 9, name: 'Roberto Kim', email: 'roberto.kim@email.com', phone: '+56912347856', stars: 68, lastVisit: '2025-01-29', totalSpent: 204000, visits: 28, nftUnlocked: 'NFT Estrella', status: 'Activo' }
                   ],
                   leyenda: [
-                    { id: 10, name: 'Alexander Zúñiga', email: 'alexander.zuniga@email.com', phone: '+56934561278', stars: 89, lastVisit: '2025-01-28', totalSpent: 267000, visits: 35, nftUnlocked: 'NFT Leyenda', status: 'Élite' },
-                    { id: 11, name: 'Valentina Chen', email: 'valentina.chen@email.com', phone: '+56923451867', stars: 95, lastVisit: '2025-01-26', totalSpent: 285000, visits: 38, nftUnlocked: 'NFT Leyenda', status: 'Élite' }
+                    { id: 10, name: 'Alexander Zúñiga', email: 'alexander.zuniga@email.com', phone: '+56934561278', stars: 89, lastVisit: '2025-01-28', totalSpent: 267000, visits: 35, nftUnlocked: 'NFT Leyenda', status: 'Activo' },
+                    { id: 11, name: 'Valentina Chen', email: 'valentina.chen@email.com', phone: '+56923451867', stars: 95, lastVisit: '2025-01-26', totalSpent: 285000, visits: 38, nftUnlocked: 'NFT Leyenda', status: 'Inactivo' }
                   ]
                 };
 
-                const clients = mockClients[showClientsList.id] || [];
+                let clients = mockClients[showClientsList.id] || [];
+                
+                // Aplicar filtros
+                if (clientSearchTerm) {
+                  clients = clients.filter(client =>
+                    client.name.toLowerCase().includes(clientSearchTerm.toLowerCase()) ||
+                    client.email.toLowerCase().includes(clientSearchTerm.toLowerCase())
+                  );
+                }
+                
+                if (clientStatusFilter !== 'all') {
+                  clients = clients.filter(client =>
+                    clientStatusFilter === 'active' ? client.status === 'Activo' : client.status === 'Inactivo'
+                  );
+                }
 
                 return (
                   <div className="space-y-4">
