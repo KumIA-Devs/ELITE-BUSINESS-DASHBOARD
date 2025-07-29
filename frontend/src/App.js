@@ -629,6 +629,7 @@ const AIRecommendationCTA = ({ recommendation, impact, action }) => (
 // Enhanced Dashboard Summary with Weekly Report Modal
 const DashboardSummary = ({ metrics }) => {
   const [showWeeklyReport, setShowWeeklyReport] = useState(false);
+  const [showExpandKumia, setShowExpandKumia] = useState(false);
   const weeklyRevenue = [85000, 92000, 78000, 95000, 88000, 96000, 102000];
   const roiData = {
     multiplier: 4.3,
