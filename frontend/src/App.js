@@ -403,147 +403,156 @@ const MetricsCard = ({ title, value, icon, color, trend, tooltip, category, onCl
 
 // MANTENER TODOS LOS COMPONENTES EXISTENTES Y AGREGAR NUEVAS FUNCIONALIDADES
 
-// Enhanced Interactive Weekly Growth Chart Component
+// Enhanced Weekly Growth Chart Component
 const WeeklyGrowthChart = ({ data, title }) => {
-  const [hoveredIndex, setHoveredIndex] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
-  
-  const dayNames = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
-  const shortDays = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+  const dayNames = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
   const maxValue = Math.max(...data);
   const minValue = Math.min(...data);
-  const totalWeekly = data.reduce((a, b) => a + b, 0);
-  const avgWeekly = totalWeekly / data.length;
-  
-  // Calculate growth rate for each day
-  const growthData = data.map((value, index) => {
-    if (index === 0) return 0;
-    return ((value - data[index - 1]) / data[index - 1] * 100).toFixed(1);
-  });
+  const totalRevenue = data.reduce((a, b) => a + b, 0);
+  const averageRevenue = totalRevenue / data.length;
+  const growth = ((data[data.length - 1] - data[0]) / data[0] * 100).toFixed(1);
+  const bestDay = data.indexOf(maxValue);
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all duration-300">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-bold text-gray-800">{title}</h3>
-        <div className="flex space-x-2">
-          <button 
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center">
+          <h3 className="text-lg font-semibold text-gray-800 mr-3">{title}</h3>
+          <button
             onClick={() => setShowDetails(!showDetails)}
-            className="bg-blue-100 text-blue-700 px-3 py-1 rounded-lg text-sm hover:bg-blue-200 transition-colors"
+            className="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full hover:bg-blue-200 transition-colors"
           >
-            {showDetails ? '👁️ Vista Simple' : '📊 Detalles'}
+            {showDetails ? '🔼 Ocultar' : '🔽 Ver Detalles'}
           </button>
+        </div>
+        <div className="text-right">
+          <div className="text-2xl font-bold text-green-600">+{growth}%</div>
+          <div className="text-sm text-gray-600">Crecimiento</div>
         </div>
       </div>
 
-      {/* Enhanced Interactive Chart */}
-      <div className="relative">
-        <div className="flex items-end justify-between h-48 bg-gradient-to-t from-gray-50 to-white rounded-lg p-4 mb-4">
-          {data.map((value, index) => (
-            <div 
-              key={index} 
-              className="flex flex-col items-center group cursor-pointer relative"
-              onMouseEnter={() => setHoveredIndex(index)}
-              onMouseLeave={() => setHoveredIndex(null)}
-            >
-              {/* Tooltip on Hover */}
-              {hoveredIndex === index && (
-                <div className="absolute bottom-full mb-2 bg-gray-900 text-white px-3 py-2 rounded-lg text-xs whitespace-nowrap z-10">
-                  <div className="font-bold">{dayNames[index]}</div>
-                  <div>${value.toLocaleString()}</div>
-                  {index > 0 && (
-                    <div className={`${parseFloat(growthData[index]) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                      {parseFloat(growthData[index]) >= 0 ? '↗️' : '↘️'} {growthData[index]}%
-                    </div>
-                  )}
-                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
+      {/* Gráfico de Línea Mejorado */}
+      <div className="mb-6">
+        <div className="relative">
+          {/* Área del gráfico */}
+          <div className="h-48 bg-gradient-to-t from-gray-50 to-white rounded-lg border border-gray-200 p-4 relative overflow-hidden">
+            {/* Grid lines */}
+            <div className="absolute inset-4">
+              {[0, 25, 50, 75, 100].map(percent => (
+                <div
+                  key={percent}
+                  className="absolute w-full border-t border-gray-200 opacity-50"
+                  style={{ bottom: `${percent}%` }}
+                />
+              ))}
+            </div>
+            
+            {/* Line chart */}
+            <svg className="absolute inset-4 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+              {/* Background gradient */}
+              <defs>
+                <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="rgba(34, 197, 94, 0.2)" />
+                  <stop offset="100%" stopColor="rgba(34, 197, 94, 0.05)" />
+                </linearGradient>
+              </defs>
+              
+              {/* Area fill */}
+              <path
+                d={`M 0 ${100 - ((data[0] - minValue) / (maxValue - minValue)) * 100} 
+                   ${data.map((value, index) => 
+                     `L ${(index / (data.length - 1)) * 100} ${100 - ((value - minValue) / (maxValue - minValue)) * 100}`
+                   ).join(' ')} 
+                   L 100 100 L 0 100 Z`}
+                fill="url(#chartGradient)"
+              />
+              
+              {/* Main line */}
+              <path
+                d={`M 0 ${100 - ((data[0] - minValue) / (maxValue - minValue)) * 100} 
+                   ${data.map((value, index) => 
+                     `L ${(index / (data.length - 1)) * 100} ${100 - ((value - minValue) / (maxValue - minValue)) * 100}`
+                   ).join(' ')}`}
+                fill="none"
+                stroke="rgb(34, 197, 94)"
+                strokeWidth="3"
+                className="drop-shadow-sm"
+              />
+              
+              {/* Data points */}
+              {data.map((value, index) => (
+                <circle
+                  key={index}
+                  cx={(index / (data.length - 1)) * 100}
+                  cy={100 - ((value - minValue) / (maxValue - minValue)) * 100}
+                  r="4"
+                  fill="rgb(34, 197, 94)"
+                  stroke="white"
+                  strokeWidth="2"
+                  className="drop-shadow-sm hover:r-6 transition-all cursor-pointer"
+                />
+              ))}
+            </svg>
+            
+            {/* Hover tooltips */}
+            <div className="absolute inset-4 flex justify-between items-end pointer-events-none">
+              {data.map((value, index) => (
+                <div key={index} className="flex flex-col items-center">
+                  <div className="bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 hover:opacity-100 transition-opacity mb-2">
+                    ${value.toLocaleString()}
+                  </div>
+                  <div className="text-xs text-gray-600 font-medium">{dayNames[index]}</div>
                 </div>
-              )}
-              
-              {/* Revenue Value */}
-              <div className={`text-xs mb-1 transition-all duration-200 ${
-                hoveredIndex === index ? 'text-gray-800 font-bold' : 'text-gray-600'
-              }`}>
-                ${value.toLocaleString()}
-              </div>
-              
-              {/* Bar */}
-              <div 
-                className={`rounded-t-lg transition-all duration-500 group-hover:shadow-lg ${
-                  value === maxValue ? 'bg-gradient-to-t from-green-400 to-emerald-500' :
-                  value === minValue ? 'bg-gradient-to-t from-red-400 to-red-500' :
-                  'bg-gradient-to-t from-orange-400 to-red-400'
-                } ${hoveredIndex === index ? 'w-12' : 'w-8'}`}
-                style={{ height: `${(value / maxValue) * 100}%` }}
-              ></div>
-              
-              {/* Day Label */}
-              <span className={`text-xs mt-2 transition-all duration-200 ${
-                hoveredIndex === index ? 'text-gray-800 font-bold' : 'text-gray-500'
-              }`}>
-                {shortDays[index]}
-              </span>
-              
-              {/* Growth Indicator */}
-              {index > 0 && (
-                <span className={`text-xs mt-1 font-medium ${
-                  parseFloat(growthData[index]) >= 0 ? 'text-green-600' : 'text-red-600'
-                }`}>
-                  {parseFloat(growthData[index]) >= 0 ? '↗️' : '↘️'} {Math.abs(growthData[index])}%
-                </span>
-              )}
+              ))}
             </div>
-          ))}
-        </div>
-
-        {/* Summary Statistics */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-          <div className="bg-emerald-50 p-3 rounded-lg text-center">
-            <div className="text-lg font-bold text-emerald-600">${totalWeekly.toLocaleString()}</div>
-            <div className="text-xs text-emerald-700">Total Semanal</div>
-          </div>
-          <div className="bg-blue-50 p-3 rounded-lg text-center">
-            <div className="text-lg font-bold text-blue-600">${Math.round(avgWeekly).toLocaleString()}</div>
-            <div className="text-xs text-blue-700">Promedio Diario</div>
-          </div>
-          <div className="bg-green-50 p-3 rounded-lg text-center">
-            <div className="text-lg font-bold text-green-600">${maxValue.toLocaleString()}</div>
-            <div className="text-xs text-green-700">Mejor Día</div>
-          </div>
-          <div className="bg-orange-50 p-3 rounded-lg text-center">
-            <div className="text-lg font-bold text-orange-600">
-              {((data[6] - data[0]) / data[0] * 100).toFixed(1)}%
-            </div>
-            <div className="text-xs text-orange-700">Crecimiento</div>
           </div>
         </div>
+      </div>
 
-        {/* Detailed Analysis */}
-        {showDetails && (
-          <div className="bg-gray-50 rounded-lg p-4 space-y-3">
-            <h4 className="font-medium text-gray-800 mb-3">📈 Análisis Detallado</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <h5 className="text-sm font-medium text-gray-700 mb-2">🏆 Mejor Rendimiento</h5>
-                <div className="text-sm text-gray-600">
-                  <div className="flex justify-between">
-                    <span>{dayNames[data.indexOf(maxValue)]}</span>
-                    <span className="font-medium text-green-600">${maxValue.toLocaleString()}</span>
-                  </div>
-                  <div className="text-xs text-green-700 mt-1">
-                    +{((maxValue - avgWeekly) / avgWeekly * 100).toFixed(1)}% sobre promedio
-                  </div>
+      {/* Métricas rápidas */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+        <div className="bg-gray-50 p-3 rounded-lg text-center">
+          <div className="text-lg font-bold text-gray-800">${totalRevenue.toLocaleString()}</div>
+          <div className="text-xs text-gray-600">Total Semana</div>
+        </div>
+        <div className="bg-gray-50 p-3 rounded-lg text-center">
+          <div className="text-lg font-bold text-gray-800">${Math.round(averageRevenue).toLocaleString()}</div>
+          <div className="text-xs text-gray-600">Promedio Diario</div>
+        </div>
+        <div className="bg-gray-50 p-3 rounded-lg text-center">
+          <div className="text-lg font-bold text-gray-800">${maxValue.toLocaleString()}</div>
+          <div className="text-xs text-gray-600">Mejor Día ({dayNames[bestDay]})</div>
+        </div>
+        <div className="bg-gray-50 p-3 rounded-lg text-center">
+          <div className="text-lg font-bold text-green-600">+{growth}%</div>
+          <div className="text-xs text-gray-600">Crecimiento</div>
+        </div>
+      </div>
+
+      {showDetails && (
+        <div className="border-t border-gray-100 pt-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h4 className="text-sm font-medium text-gray-700 mb-3">📊 Análisis Detallado</h4>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Día con mejor rendimiento:</span>
+                  <span className="font-medium text-green-600">{dayNames[bestDay]} (${maxValue.toLocaleString()})</span>
                 </div>
-              </div>
-              <div>
-                <h5 className="text-sm font-medium text-gray-700 mb-2">📉 Oportunidad de Mejora</h5>
-                <div className="text-sm text-gray-600">
-                  <div className="flex justify-between">
-                    <span>{dayNames[data.indexOf(minValue)]}</span>
-                    <span className="font-medium text-red-600">${minValue.toLocaleString()}</span>
-                  </div>
-                  <div className="text-xs text-red-700 mt-1">
-                    {((minValue - avgWeekly) / avgWeekly * 100).toFixed(1)}% bajo promedio
-                  </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Día con menor rendimiento:</span>
+                  <span className="font-medium text-orange-600">{dayNames[data.indexOf(minValue)]} (${minValue.toLocaleString()})</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Variación máxima:</span>
+                  <span className="font-medium text-blue-600">${(maxValue - minValue).toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Tendencia general:</span>
+                  <span className={`font-medium ${growth > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    {growth > 0 ? '📈 Creciente' : '📉 Decreciente'}
+                  </span>
                 </div>
               </div>
             </div>
@@ -551,14 +560,18 @@ const WeeklyGrowthChart = ({ data, title }) => {
             <div className="bg-blue-50 p-3 rounded-lg">
               <h5 className="text-sm font-medium text-blue-800 mb-2">💡 Recomendación KUMIA</h5>
               <p className="text-xs text-blue-700">
-                Considera implementar promociones especiales los {dayNames[data.indexOf(minValue)].toLowerCase()} 
-                para equilibrar el rendimiento semanal. El potencial de crecimiento es de 
-                ${(maxValue - minValue).toLocaleString()} adicionales.
+                {growth > 0 ? 
+                  `Excelente tendencia de crecimiento del ${growth}%. Considera mantener las estrategias actuales y expandir los días de mejor rendimiento.` :
+                  `Oportunidad de mejora detectada. Revisa las estrategias para los días de menor rendimiento y considera promociones especiales.`
+                }
               </p>
+              <div className="mt-2 text-xs text-blue-600">
+                <strong>Próxima acción sugerida:</strong> Implementar promociones especiales los {dayNames[data.indexOf(minValue)].toLowerCase()} para equilibrar el rendimiento.
+              </div>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
