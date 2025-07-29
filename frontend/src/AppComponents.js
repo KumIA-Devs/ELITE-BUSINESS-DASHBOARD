@@ -1327,25 +1327,50 @@ export const RewardsNFTsSection = () => {
                     {/* Filtros y Acciones */}
                     <div className="flex justify-between items-center bg-gray-50 p-4 rounded-lg">
                       <div className="flex space-x-3">
-                        <input
-                          type="text"
-                          placeholder="Buscar por nombre o email..."
+                        <div className="relative">
+                          <input
+                            type="text"
+                            placeholder="Buscar por nombre o email..."
+                            value={clientSearchTerm}
+                            onChange={(e) => setClientSearchTerm(e.target.value)}
+                            onKeyPress={handleSearchEnter}
+                            className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 pr-10"
+                          />
+                          <button 
+                            onClick={() => handleClientSearch(clientSearchTerm)}
+                            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-orange-500"
+                          >
+                            🔍
+                          </button>
+                        </div>
+                        <select 
+                          value={clientStatusFilter}
+                          onChange={(e) => setClientStatusFilter(e.target.value)}
                           className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
-                        />
-                        <select className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
-                          <option>Todos los estados</option>
-                          <option>Activo</option>
-                          <option>VIP</option>
-                          <option>Premium</option>
-                          <option>Élite</option>
+                        >
+                          <option value="all">Todos los estados</option>
+                          <option value="active">Activo</option>
+                          <option value="inactive">Inactivo</option>
                         </select>
                       </div>
                       <div className="flex space-x-2">
-                        <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors text-sm">
+                        <button 
+                          onClick={() => setShowClientExport(true)}
+                          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors text-sm"
+                        >
                           📤 Exportar Lista
                         </button>
-                        <button className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors text-sm">
+                        <button 
+                          onClick={() => handleEmailCampaign(showClientsList)}
+                          className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors text-sm"
+                        >
                           📧 Campaña Email
+                        </button>
+                        <button 
+                          onClick={() => handleWhatsAppCampaign(showClientsList)}
+                          className="bg-emerald-500 text-white px-4 py-2 rounded-lg hover:bg-emerald-600 transition-colors text-sm"
+                        >
+                          📱 Campaña WhatsApp
                         </button>
                       </div>
                     </div>
