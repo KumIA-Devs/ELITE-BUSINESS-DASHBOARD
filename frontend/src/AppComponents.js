@@ -1438,23 +1438,32 @@ export const RewardsNFTsSection = () => {
                               </td>
                               <td className="border border-gray-200 px-4 py-3">
                                 <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                  client.status === 'Élite' ? 'bg-purple-100 text-purple-700' :
-                                  client.status === 'Premium' ? 'bg-yellow-100 text-yellow-700' :
-                                  client.status === 'VIP' ? 'bg-blue-100 text-blue-700' :
-                                  'bg-green-100 text-green-700'
+                                  client.status === 'Activo' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
                                 }`}>
                                   {client.status}
                                 </span>
                               </td>
                               <td className="border border-gray-200 px-4 py-3">
                                 <div className="flex space-x-1">
-                                  <button className="bg-blue-100 text-blue-600 px-2 py-1 rounded text-xs hover:bg-blue-200 transition-colors">
+                                  <button 
+                                    onClick={() => handleViewClientDetails(client)}
+                                    className="bg-blue-100 text-blue-600 px-2 py-1 rounded text-xs hover:bg-blue-200 transition-colors"
+                                    title="Ver detalles del cliente"
+                                  >
                                     👁️
                                   </button>
-                                  <button className="bg-green-100 text-green-600 px-2 py-1 rounded text-xs hover:bg-green-200 transition-colors">
+                                  <button 
+                                    onClick={() => handleEditClient(client)}
+                                    className="bg-green-100 text-green-600 px-2 py-1 rounded text-xs hover:bg-green-200 transition-colors"
+                                    title="Editar cliente"
+                                  >
                                     ✏️
                                   </button>
-                                  <button className="bg-orange-100 text-orange-600 px-2 py-1 rounded text-xs hover:bg-orange-200 transition-colors">
+                                  <button 
+                                    onClick={() => handleContactClient(client)}
+                                    className="bg-orange-100 text-orange-600 px-2 py-1 rounded text-xs hover:bg-orange-200 transition-colors"
+                                    title="Contactar cliente"
+                                  >
                                     💬
                                   </button>
                                 </div>
