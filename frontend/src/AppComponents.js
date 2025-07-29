@@ -437,6 +437,47 @@ export const RewardsNFTsSection = () => {
     setShowLevelConfig(level);
   };
 
+  // 🔍 FUNCIÓN DE BÚSQUEDA DE CLIENTES
+  const [clientSearchTerm, setClientSearchTerm] = useState('');
+  const [clientStatusFilter, setClientStatusFilter] = useState('all');
+
+  const handleClientSearch = (searchTerm) => {
+    setClientSearchTerm(searchTerm);
+  };
+
+  const handleSearchEnter = (e) => {
+    if (e.key === 'Enter') {
+      handleClientSearch(e.target.value);
+    }
+  };
+
+  // 📧 FUNCIÓN DE CAMPAÑA EMAIL
+  const [showEmailCampaign, setShowEmailCampaign] = useState(null);
+  const [showWhatsAppCampaign, setShowWhatsAppCampaign] = useState(null);
+
+  const handleEmailCampaign = (level) => {
+    setShowEmailCampaign(level);
+  };
+
+  const handleWhatsAppCampaign = (level) => {
+    setShowWhatsAppCampaign(level);
+  };
+
+  // 👁️ FUNCIÓN VER DETALLES CLIENTE
+  const handleViewClientDetails = (client) => {
+    alert(`👤 DETALLES DEL CLIENTE\n\n📋 Información Personal:\n• Nombre: ${client.name}\n• Email: ${client.email}\n• Teléfono: ${client.phone}\n• Estado: ${client.status}\n\n⭐ Actividad KumIA:\n• Stars actuales: ${client.stars}\n• Total gastado: $${client.totalSpent.toLocaleString()}\n• Visitas realizadas: ${client.visits}\n• NFT desbloqueado: ${client.nftUnlocked}\n• Última visita: ${client.lastVisit}\n\n🎯 En producción se abrirá un panel completo con historial detallado, preferencias y análisis de comportamiento.`);
+  };
+
+  // ✏️ FUNCIÓN EDITAR CLIENTE
+  const handleEditClient = (client) => {
+    alert(`✏️ EDITAR CLIENTE - ${client.name}\n\n📝 Opciones de edición disponibles:\n• Modificar información personal\n• Ajustar stars manualmente\n• Cambiar estado (Activo/Inactivo)\n• Agregar notas internas\n• Configurar preferencias\n• Historial de transacciones\n\n💡 En producción se abrirá un formulario completo de edición con validaciones y auditoría de cambios.`);
+  };
+
+  // 💬 FUNCIÓN CONTACTAR CLIENTE
+  const handleContactClient = (client) => {
+    alert(`💬 CONTACTAR CLIENTE - ${client.name}\n\n📱 Opciones de contacto:\n• WhatsApp: ${client.phone}\n• Email: ${client.email}\n• Mensaje automático vía KUMIA\n• Llamada directa\n\n🤖 ¿Qué tipo de mensaje quieres enviar?\n• Promoción personalizada\n• Invitación a regresar\n• Encuesta de satisfacción\n• Mensaje de cumpleaños\n\n💡 En producción se integrará directamente con los Agentes IA para mensajes personalizados.`);
+  };
+
   const handleCompleteAnalysis = () => {
     setShowCompleteAnalysis(true);
   };
