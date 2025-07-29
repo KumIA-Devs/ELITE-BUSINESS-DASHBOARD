@@ -446,7 +446,7 @@ export const RewardsNFTsSection = () => {
   };
 
   const handleActionsAnalysis = () => {
-    alert(`📊 Análisis de Acciones por Nivel:\n\n• Descubridor: 45% feedback, 30% reservas, 25% referidos\n• Explorador: 40% feedback, 35% reservas, 25% referidos\n• Destacado: 35% feedback, 40% reservas, 25% referidos\n• Estrella: 30% feedback, 45% reservas, 25% referidos\n• Leyenda: 25% feedback, 50% reservas, 25% referidos\n\nImplementando vista detallada...`);
+    setShowActionsAnalysis(true);
   };
 
   const handleExportClients = () => {
