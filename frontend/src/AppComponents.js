@@ -1022,6 +1022,17 @@ export const RewardsNFTsSection = () => {
                         defaultValue="3000"
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
+                      <div className="mt-2 p-3 bg-blue-100 rounded-lg">
+                        <p className="text-xs text-blue-800 mb-2"><strong>💡 ¿Por qué 3,000 CLP?</strong></p>
+                        <p className="text-xs text-blue-700">
+                          Basado en análisis de ticket promedio ($3,200) donde 1 Star = ~1% del ticket. 
+                          Para alcanzar una recompensa de $20,000 se requieren ~36 Stars (equivalente a $108,000 en consumo).
+                        </p>
+                        <p className="text-xs text-blue-600 mt-1">
+                          <strong>Recomendación:</strong> Mantener este valor constante para todos los restaurantes KUMIA. 
+                          Ajustar solo si el ticket promedio varía significativamente (+/-50%).
+                        </p>
+                      </div>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Período de canje (días)</label>
@@ -1030,13 +1041,18 @@ export const RewardsNFTsSection = () => {
                         defaultValue="60"
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
+                      <div className="mt-2 p-3 bg-amber-100 rounded-lg">
+                        <p className="text-xs text-amber-800">
+                          <strong>⏰ Ventana de canje:</strong> Tiempo máximo que tiene el cliente para canjear sus stars una vez alcanzado el nivel mínimo.
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
 
                 <div className="bg-green-50 p-4 rounded-lg">
                   <h3 className="font-bold text-green-800 mb-4">⭐ Configuración de Generación de Stars</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Feedback con texto</label>
                       <input
@@ -1069,6 +1085,53 @@ export const RewardsNFTsSection = () => {
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                       />
                     </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Juego completado (UserApp)</label>
+                      <input
+                        type="number"
+                        defaultValue="2"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Uso plataforma de pagos</label>
+                      <input
+                        type="number"
+                        defaultValue="1"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="mt-4 bg-emerald-100 p-3 rounded-lg">
+                    <h4 className="font-medium text-emerald-800 mb-2">💰 Stars por Monto de Compra</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">Stars por cada $ gastado</label>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-sm text-gray-600">1 Star por cada $</span>
+                          <input
+                            type="number"
+                            defaultValue="3000"
+                            className="w-20 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
+                          />
+                          <span className="text-sm text-gray-600">CLP</span>
+                        </div>
+                      </div>
+                      <div className="bg-green-200 p-2 rounded">
+                        <p className="text-xs text-green-800">
+                          <strong>Ejemplo:</strong> Compra de $60,000 = 20 Stars base<br/>
+                          Con multiplicador x1.5 (Destacado) = 30 Stars total
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-3 p-3 bg-yellow-100 rounded-lg">
+                    <p className="text-xs text-yellow-800">
+                      <strong>📌 Importante:</strong> Todas las acciones se multiplican por el multiplicador del nivel actual del cliente. 
+                      Las stars por monto de compra se calculan automáticamente según el valor por star configurado arriba.
+                    </p>
                   </div>
                 </div>
 
