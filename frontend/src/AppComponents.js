@@ -354,12 +354,23 @@ export const RewardsNFTsSection = () => {
 
       {/* Imagen NFT */}
       <div className="p-4">
-        <div className="w-full h-32 bg-gray-100 rounded-lg mb-4 overflow-hidden">
+        <div className="w-full h-32 bg-gray-100 rounded-lg mb-4 overflow-hidden relative group">
           <img 
             src={level.nftImage} 
             alt={level.nftName}
             className="w-full h-full object-cover"
           />
+          <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowEditNFT(level);
+              }}
+              className="bg-white text-gray-800 px-3 py-1 rounded-lg text-sm hover:bg-gray-100 transition-colors"
+            >
+              🖼️ Cambiar NFT
+            </button>
+          </div>
         </div>
 
         {/* Info del NFT */}
@@ -391,16 +402,89 @@ export const RewardsNFTsSection = () => {
       {/* Footer con acciones */}
       <div className="p-4 border-t border-gray-100">
         <div className="flex space-x-2">
-          <button className="flex-1 bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm hover:bg-gray-200 transition-colors">
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              handleViewClients(level);
+            }}
+            className="flex-1 bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm hover:bg-gray-200 transition-colors"
+          >
             👥 Ver Clientes
           </button>
-          <button className="flex-1 bg-orange-100 text-orange-700 px-3 py-2 rounded-lg text-sm hover:bg-orange-200 transition-colors">
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              handleConfigureLevel(level);
+            }}
+            className="flex-1 bg-orange-100 text-orange-700 px-3 py-2 rounded-lg text-sm hover:bg-orange-200 transition-colors"
+          >
             ⚙️ Configurar
           </button>
         </div>
       </div>
     </div>
   );
+
+  // 🔧 FUNCIONES DE MANEJO DE EVENTOS
+  const handleViewClients = (level) => {
+    alert(`Ver clientes del nivel ${level.name}: ${level.activeClients} clientes activos\n\nEsta funcionalidad abrirá una vista detallada con la lista de clientes en este nivel.`);
+  };
+
+  const handleConfigureLevel = (level) => {
+    alert(`Configurar nivel ${level.name}:\n\n• Modificar multiplicador (actual: x${level.multiplier})\n• Cambiar requisitos de stars\n• Actualizar beneficios\n• Gestionar NFT asociado`);
+  };
+
+  const handleCompleteAnalysis = () => {
+    setShowCompleteAnalysis(true);
+  };
+
+  const handleSystemConfig = () => {
+    setShowSystemConfig(true);
+  };
+
+  const handleActionsAnalysis = () => {
+    alert(`📊 Análisis de Acciones por Nivel:\n\n• Descubridor: 45% feedback, 30% reservas, 25% referidos\n• Explorador: 40% feedback, 35% reservas, 25% referidos\n• Destacado: 35% feedback, 40% reservas, 25% referidos\n• Estrella: 30% feedback, 45% reservas, 25% referidos\n• Leyenda: 25% feedback, 50% reservas, 25% referidos\n\nImplementando vista detallada...`);
+  };
+
+  const handleExportClients = () => {
+    const selectedLevel = document.querySelector('select[name="level"]')?.value || 'all';
+    const selectedFormat = document.querySelector('input[name="format"]:checked')?.value || 'excel';
+    
+    // Datos mock para exportación
+    const exportData = {
+      all: { total: 106, data: ['Juan Pérez', 'María García', 'Carlos López', '...'] },
+      descubridor: { total: 45, data: ['Ana Torres', 'Luis Martín', '...'] },
+      explorador: { total: 32, data: ['Carmen Silva', 'Pedro Ruiz', '...'] },
+      destacado: { total: 18, data: ['Sofia Moreno', 'Diego Castro', '...'] },
+      estrella: { total: 8, data: ['Elena Vargas', 'Roberto Kim', '...'] },
+      leyenda: { total: 3, data: ['Alexander Zúñiga', 'Valentina Chen', 'Maximiliano Torres'] }
+    };
+
+    const levelData = exportData[selectedLevel] || exportData.all;
+    
+    if (selectedFormat === 'excel' || selectedFormat === 'csv') {
+      // Crear contenido CSV
+      const csvContent = "data:text/csv;charset=utf-8," + 
+        "Nombre,Nivel,Stars,Última Visita,Total Gastado\n" +
+        levelData.data.slice(0, 5).map((name, index) => 
+          `${name},${selectedLevel === 'all' ? ['Descubridor', 'Explorador', 'Destacado', 'Estrella', 'Leyenda'][index % 5] : selectedLevel},${Math.floor(Math.random() * 100)},2025-01-${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')},${Math.floor(Math.random() * 50000) + 10000}`
+        ).join("\n");
+      
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `clientes_${selectedLevel}_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      alert(`✅ Archivo ${selectedFormat.toUpperCase()} generado exitosamente\n\nClientes ${selectedLevel}: ${levelData.total}\nArchivo: clientes_${selectedLevel}_${new Date().toISOString().split('T')[0]}.csv`);
+    } else if (selectedFormat === 'pdf') {
+      alert(`📄 Generando PDF para ${levelData.total} clientes del nivel ${selectedLevel}...\n\nEn producción se integrará con jsPDF para generar reportes completos con gráficos y análisis detallado.`);
+    }
+    
+    setShowClientExport(false);
+  };
 
   // 📊 MÉTRICAS AGREGADAS
   const AggregatedMetrics = () => (
