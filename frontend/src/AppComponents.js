@@ -618,6 +618,31 @@ export const RewardsNFTsSection = () => {
         </div>
       </div>
 
+      {/* 🛠️ FUNCIONALIDAD ADMINISTRATIVA */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-lg font-bold text-gray-800 mb-4">🛠️ Funcionalidad Administrativa</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <button 
+            onClick={() => setShowClientExport(true)}
+            className="bg-blue-500 text-white px-4 py-3 rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center"
+          >
+            📊 Exportar Clientes por Nivel
+          </button>
+          <button 
+            onClick={handleActionsAnalysis}
+            className="bg-green-500 text-white px-4 py-3 rounded-lg hover:bg-green-600 transition-colors flex items-center justify-center"
+          >
+            📈 Análisis de Acciones por Nivel
+          </button>
+          <button 
+            onClick={() => setShowSpecialRewards(true)}
+            className="bg-purple-500 text-white px-4 py-3 rounded-lg hover:bg-purple-600 transition-colors flex items-center justify-center"
+          >
+            🎁 Recompensas Especiales
+          </button>
+        </div>
+      </div>
+
       {/* Lógica del Sistema */}
       <SystemLogicExplanation />
 
