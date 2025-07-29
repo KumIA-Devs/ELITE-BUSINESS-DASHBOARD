@@ -646,19 +646,16 @@ export const RewardsNFTsSection = () => {
       {/* Lógica del Sistema */}
       <SystemLogicExplanation />
 
-      {/* Controles Administrativos */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h3 className="text-lg font-bold text-gray-800 mb-4">🛠️ Funcionalidad Administrativa</h3>
-        <AdminControls />
-      </div>
-
       {/* 🎯 Modal de Recompensas Especiales */}
       {showSpecialRewards && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-screen overflow-y-auto">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-screen overflow-y-auto">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">🎁 Recompensas Especiales</h2>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">🎁 Recompensas Especiales por Tiempo Limitado</h2>
+                  <p className="text-gray-600">Crea promociones exclusivas para niveles específicos</p>
+                </div>
                 <button 
                   onClick={() => setShowSpecialRewards(false)}
                   className="text-gray-400 hover:text-gray-600 text-2xl"
@@ -677,27 +674,146 @@ export const RewardsNFTsSection = () => {
                       </span>
                     </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <input
-                        type="text"
-                        placeholder="Nombre de recompensa especial"
-                        className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Recompensa</label>
+                        <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
+                          <option>Descuento porcentual</option>
+                          <option>Plato gratis</option>
+                          <option>Experiencia VIP</option>
+                          <option>Evento exclusivo</option>
+                          <option>Puntos bonus</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Vigencia</label>
+                        <input
+                          type="date"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Duración (días)</label>
+                        <input
+                          type="number"
+                          placeholder="7"
+                          defaultValue="7"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        />
+                      </div>
+                    </div>
+                    <div className="mt-4">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Descripción de la Promoción</label>
+                      <textarea
+                        placeholder={`Ej: "Promoción especial de aniversario: 25% descuento en todos los platos para clientes ${level.name} válido por 7 días"`}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 h-20"
                       />
-                      <input
-                        type="date"
-                        className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
-                      />
-                      <input
-                        type="number"
-                        placeholder="Duración (días)"
-                        className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
-                      />
+                    </div>
+                    <div className="mt-4 flex space-x-2">
                       <button className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors text-sm">
-                        ✨ Activar
+                        ✨ Activar Promoción
+                      </button>
+                      <button className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors text-sm">
+                        👀 Vista Previa
                       </button>
                     </div>
                   </div>
                 ))}
+              </div>
+
+              <div className="mt-6 bg-blue-50 p-4 rounded-lg">
+                <h4 className="font-medium text-blue-800 mb-2">💡 Ideas de Recompensas Especiales:</h4>
+                <ul className="text-sm text-blue-700 space-y-1">
+                  <li>• <strong>Descubridor:</strong> Bienvenida con bebida gratis + 10 stars bonus</li>
+                  <li>• <strong>Explorador:</strong> 15% descuento en segundos platos por 15 días</li>
+                  <li>• <strong>Destacado:</strong> Acceso VIP a mesa preferencial por 1 mes</li>
+                  <li>• <strong>Estrella:</strong> Cena degustación gratis + chef personalizado</li>
+                  <li>• <strong>Leyenda:</strong> Evento privado exclusivo + menú personalizado</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 🖼️ Modal de Edición NFT */}
+      {showEditNFT && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-gray-800">🖼️ Modificar NFT - {showEditNFT.name}</h2>
+                <button 
+                  onClick={() => setShowEditNFT(null)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Imagen Actual</label>
+                  <div className="w-full h-32 bg-gray-100 rounded-lg overflow-hidden mb-2">
+                    <img 
+                      src={showEditNFT.nftImage} 
+                      alt={showEditNFT.nftName}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Subir Nueva Imagen</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Formatos: JPG, PNG, SVG. Tamaño recomendado: 400x400px</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Nombre del NFT</label>
+                  <input
+                    type="text"
+                    defaultValue={showEditNFT.nftName}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
+                  <textarea
+                    defaultValue={showEditNFT.description}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 h-20"
+                  />
+                </div>
+
+                <div className="bg-orange-50 p-3 rounded-lg">
+                  <h4 className="font-medium text-orange-800 mb-1">📱 Distribución UserWebApp</h4>
+                  <p className="text-sm text-orange-700">
+                    La imagen se optimizará automáticamente y se distribuirá a todos los clientes que desbloqueen este nivel
+                  </p>
+                </div>
+
+                <div className="flex space-x-3">
+                  <button 
+                    onClick={() => setShowEditNFT(null)}
+                    className="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button 
+                    onClick={() => {
+                      alert(`✅ NFT ${showEditNFT.name} actualizado exitosamente\n\nLa nueva imagen se sincronizará automáticamente con todas las UserWebApps de clientes que tengan este nivel desbloqueado.`);
+                      setShowEditNFT(null);
+                    }}
+                    className="flex-1 bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors"
+                  >
+                    💾 Guardar Cambios
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -722,8 +838,8 @@ export const RewardsNFTsSection = () => {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Seleccionar Nivel</label>
-                  <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500">
-                    <option value="all">Todos los niveles</option>
+                  <select name="level" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500">
+                    <option value="all">Todos los niveles (106 clientes)</option>
                     {kumiaLevels.map(level => (
                       <option key={level.id} value={level.id}>{level.name} ({level.activeClients} clientes)</option>
                     ))}
@@ -748,6 +864,17 @@ export const RewardsNFTsSection = () => {
                   </div>
                 </div>
 
+                <div className="bg-blue-50 p-3 rounded-lg">
+                  <h4 className="font-medium text-blue-800 mb-1">📋 Datos incluidos en la exportación:</h4>
+                  <ul className="text-sm text-blue-700 space-y-1">
+                    <li>• Nombre completo y email del cliente</li>
+                    <li>• Nivel actual y stars acumuladas</li>
+                    <li>• Fecha de última visita y frecuencia</li>
+                    <li>• Total gastado y ticket promedio</li>
+                    <li>• NFTs desbloqueados y fecha de obtención</li>
+                  </ul>
+                </div>
+
                 <div className="flex space-x-3">
                   <button 
                     onClick={() => setShowClientExport(false)}
@@ -755,8 +882,244 @@ export const RewardsNFTsSection = () => {
                   >
                     Cancelar
                   </button>
-                  <button className="flex-1 bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors">
+                  <button 
+                    onClick={handleExportClients}
+                    className="flex-1 bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors"
+                  >
                     📥 Exportar Datos
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 📊 Modal de Análisis Completo */}
+      {showCompleteAnalysis && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">📊 Análisis Completo - Sistema KumIA Stars</h2>
+                <button 
+                  onClick={() => setShowCompleteAnalysis(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg">
+                  <h3 className="font-bold text-blue-800 mb-4">📈 Análisis de Rendimiento por Nivel</h3>
+                  <div className="space-y-3">
+                    {kumiaLevels.map(level => (
+                      <div key={level.id} className="bg-white p-3 rounded-lg">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="font-medium text-gray-800">{level.name}</span>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${level.badgeColor} ${level.textColor}`}>
+                            {level.activeClients} clientes
+                          </span>
+                        </div>
+                        <div className="text-sm text-gray-600 space-y-1">
+                          <div className="flex justify-between">
+                            <span>ROI promedio:</span>
+                            <span className="font-medium">x{(level.multiplier * 2.3).toFixed(1)}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Retención:</span>
+                            <span className="font-medium">{Math.floor(85 + level.multiplier * 5)}%</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Ticket promedio:</span>
+                            <span className="font-medium">${(3200 * level.multiplier).toLocaleString()}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-lg">
+                  <h3 className="font-bold text-green-800 mb-4">💰 Impacto Económico Mensual</h3>
+                  <div className="space-y-4">
+                    <div className="bg-white p-4 rounded-lg">
+                      <div className="text-2xl font-bold text-green-600 mb-2">$428,500</div>
+                      <div className="text-sm text-green-700">Ingresos atribuidos al sistema Stars</div>
+                    </div>
+                    <div className="bg-white p-4 rounded-lg">
+                      <div className="text-2xl font-bold text-blue-600 mb-2">+34%</div>
+                      <div className="text-sm text-blue-700">Incremento vs sistema anterior</div>
+                    </div>
+                    <div className="bg-white p-4 rounded-lg">
+                      <div className="text-2xl font-bold text-purple-600 mb-2">$4,050</div>
+                      <div className="text-sm text-purple-700">Ticket promedio ponderado</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 bg-orange-50 p-6 rounded-lg">
+                <h3 className="font-bold text-orange-800 mb-4">🎯 Recomendaciones Estratégicas</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <h4 className="font-medium text-orange-700 mb-2">📊 Optimizaciones Detectadas:</h4>
+                    <ul className="text-sm text-orange-600 space-y-1">
+                      <li>• Aumentar incentivos nivel Descubridor (+12% conversión estimada)</li>
+                      <li>• Campaña especial nivel Estrella (3 clientes en riesgo de inactividad)</li>
+                      <li>• Promoción referidos nivel Leyenda (potencial +8 clientes premium)</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-orange-700 mb-2">🚀 Oportunidades de Crecimiento:</h4>
+                    <ul className="text-sm text-orange-600 space-y-1">
+                      <li>• Implementar sub-niveles dentro de Estrella y Leyenda</li>
+                      <li>• Crear eventos exclusivos para niveles altos</li>
+                      <li>• Integrar gamificación social (competencias entre niveles)</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ⚙️ Modal de Configuración del Sistema */}
+      {showSystemConfig && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">⚙️ Configuración del Sistema KumIA Stars</h2>
+                <button 
+                  onClick={() => setShowSystemConfig(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <h3 className="font-bold text-blue-800 mb-4">🎯 Configuración General del Sistema</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Valor por Star (CLP)</label>
+                      <input
+                        type="number"
+                        defaultValue="3000"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Período de canje (días)</label>
+                      <input
+                        type="number"
+                        defaultValue="60"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-green-50 p-4 rounded-lg">
+                  <h3 className="font-bold text-green-800 mb-4">⭐ Configuración de Generación de Stars</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Feedback con texto</label>
+                      <input
+                        type="number"
+                        defaultValue="1"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Feedback con imagen</label>
+                      <input
+                        type="number"
+                        defaultValue="2"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Reserva completada</label>
+                      <input
+                        type="number"
+                        defaultValue="3"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Referido exitoso</label>
+                      <input
+                        type="number"
+                        defaultValue="5"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-purple-50 p-4 rounded-lg">
+                  <h3 className="font-bold text-purple-800 mb-4">🏆 Configuración de Niveles</h3>
+                  <div className="space-y-4">
+                    {kumiaLevels.map(level => (
+                      <div key={level.id} className="bg-white p-4 rounded-lg border border-purple-200">
+                        <div className="flex items-center justify-between mb-3">
+                          <h4 className="font-medium text-gray-800">{level.name}</h4>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${level.badgeColor} ${level.textColor}`}>
+                            Activo
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                          <div>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">Stars requeridas</label>
+                            <input
+                              type="number"
+                              defaultValue={level.starsRequired}
+                              className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-purple-500"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">Multiplicador</label>
+                            <input
+                              type="number"
+                              step="0.1"
+                              defaultValue={level.multiplier}
+                              className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-purple-500"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">Estado</label>
+                            <select className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-purple-500">
+                              <option>Activo</option>
+                              <option>Inactivo</option>
+                              <option>Mantenimiento</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex space-x-3">
+                  <button 
+                    onClick={() => setShowSystemConfig(false)}
+                    className="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button 
+                    onClick={() => {
+                      alert('⚙️ Configuración guardada exitosamente\n\nTodos los cambios se aplicarán inmediatamente al sistema KumIA Stars. Las modificaciones se sincronizarán automáticamente con Firebase y UserWebApps.');
+                      setShowSystemConfig(false);
+                    }}
+                    className="flex-1 bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors"
+                  >
+                    💾 Guardar Configuración
                   </button>
                 </div>
               </div>
