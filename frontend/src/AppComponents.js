@@ -1137,44 +1137,99 @@ export const RewardsNFTsSection = () => {
 
                 <div className="bg-purple-50 p-4 rounded-lg">
                   <h3 className="font-bold text-purple-800 mb-4">🏆 Configuración de Niveles</h3>
+                  
+                  <div className="mb-4 p-3 bg-indigo-100 rounded-lg">
+                    <h4 className="font-medium text-indigo-800 mb-2">📋 Información Importante sobre Niveles</h4>
+                    <ul className="text-xs text-indigo-700 space-y-1">
+                      <li>• <strong>Stars Requeridas:</strong> Número de stars ADICIONALES necesarias para alcanzar ese nivel (no acumulativo)</li>
+                      <li>• <strong>Multiplicadores:</strong> Se recomiendan valores estándar para mantener equilibrio en el sistema</li>
+                      <li>• <strong>Estados:</strong> Solo cambiar a "Mantenimiento" si hay problemas técnicos temporales</li>
+                      <li>• <strong>Modificación por restaurante:</strong> Los valores base deben mantenerse consistentes en toda la red KUMIA</li>
+                    </ul>
+                  </div>
+
                   <div className="space-y-4">
-                    {kumiaLevels.map(level => (
+                    {kumiaLevels.map((level, index) => (
                       <div key={level.id} className="bg-white p-4 rounded-lg border border-purple-200">
                         <div className="flex items-center justify-between mb-3">
-                          <h4 className="font-medium text-gray-800">{level.name}</h4>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${level.badgeColor} ${level.textColor}`}>
-                            Activo
-                          </span>
+                          <div className="flex items-center space-x-3">
+                            <h4 className="font-medium text-gray-800">{level.name}</h4>
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${level.badgeColor} ${level.textColor}`}>
+                              Nivel {index + 1}
+                            </span>
+                          </div>
+                          <span className="text-xs text-gray-500">{level.activeClients} clientes activos</span>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                           <div>
-                            <label className="block text-xs font-medium text-gray-600 mb-1">Stars requeridas</label>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">
+                              Stars requeridas {index > 0 ? '(adicionales)' : '(base)'}
+                            </label>
                             <input
                               type="number"
                               defaultValue={level.starsRequired}
                               className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-purple-500"
+                              disabled={index === 0} // Descubridor no se puede cambiar
                             />
+                            {index > 0 && (
+                              <p className="text-xs text-gray-500 mt-1">
+                                Total para llegar: {kumiaLevels.slice(0, index + 1).reduce((sum, l) => sum + l.starsRequired, 0)} stars
+                              </p>
+                            )}
                           </div>
                           <div>
-                            <label className="block text-xs font-medium text-gray-600 mb-1">Multiplicador</label>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">Multiplicador (recomendado)</label>
                             <input
                               type="number"
                               step="0.1"
                               defaultValue={level.multiplier}
-                              className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-purple-500"
+                              className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-purple-500 bg-gray-50"
+                              title="Valor recomendado para mantener equilibrio del sistema"
+                            />
+                            <p className="text-xs text-gray-500 mt-1">Estándar KUMIA</p>
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">Capitalización estimada</label>
+                            <input
+                              type="text"
+                              defaultValue={level.capitalization}
+                              className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-purple-500 bg-gray-50"
+                              readOnly
+                              title="Calculado automáticamente basado en valor por star"
                             />
                           </div>
                           <div>
-                            <label className="block text-xs font-medium text-gray-600 mb-1">Estado</label>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">Estado del nivel</label>
                             <select className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-purple-500">
                               <option>Activo</option>
-                              <option>Inactivo</option>
                               <option>Mantenimiento</option>
                             </select>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {level.id === 'descubridor' ? 'Siempre activo' : 'Cambiar solo si necesario'}
+                            </p>
                           </div>
                         </div>
+                        
+                        {index === 0 && (
+                          <div className="mt-3 p-2 bg-gray-100 rounded">
+                            <p className="text-xs text-gray-600">
+                              <strong>Nivel base:</strong> No requiere stars previas y no se puede desactivar
+                            </p>
+                          </div>
+                        )}
                       </div>
                     ))}
+                  </div>
+                  
+                  <div className="mt-4 p-3 bg-amber-100 rounded-lg">
+                    <h4 className="font-medium text-amber-800 mb-2">⚠️ Recomendaciones de Configuración</h4>
+                    <ul className="text-xs text-amber-700 space-y-1">
+                      <li>• <strong>No modificar multiplicadores</strong> sin análisis previo - afecta el equilibrio económico</li>
+                      <li>• <strong>Stars requeridas</strong> se pueden ajustar según comportamiento de usuarios locales</li>
+                      <li>• <strong>Estados "Mantenimiento"</strong> solo para problemas temporales de NFTs o beneficios</li>
+                      <li>• <strong>Consistencia de red:</strong> Grandes cambios deben coordinarse con otros restaurantes KUMIA</li>
+                    </ul>
                   </div>
                 </div>
 
