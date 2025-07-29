@@ -1871,6 +1871,459 @@ export const RewardsNFTsSection = () => {
           </div>
         </div>
       )}
+
+      {/* 📧 Modal de Campaña Email */}
+      {showEmailCampaign && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">📧 Campaña Email - Nivel {showEmailCampaign.name}</h2>
+                  <p className="text-gray-600">Crea una campaña de email personalizada para {showEmailCampaign.activeClients} clientes</p>
+                </div>
+                <button 
+                  onClick={() => setShowEmailCampaign(null)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                {/* Configuración de la Campaña */}
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <h3 className="font-bold text-blue-800 mb-4">📋 Configuración de la Campaña</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Nombre de la Campaña</label>
+                      <input
+                        type="text"
+                        defaultValue={`Campaña ${showEmailCampaign.name} - ${new Date().toLocaleDateString()}`}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de Campaña</label>
+                      <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option>Promoción Especial</option>
+                        <option>Bienvenida</option>
+                        <option>Reactivación</option>
+                        <option>Evento Exclusivo</option>
+                        <option>Encuesta de Satisfacción</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Segmentación */}
+                <div className="bg-green-50 p-4 rounded-lg">
+                  <h3 className="font-bold text-green-800 mb-4">🎯 Segmentación y Alcance</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Estado del Cliente</label>
+                      <div className="space-y-2">
+                        <label className="flex items-center">
+                          <input type="checkbox" defaultChecked className="mr-2" />
+                          Activos ({showEmailCampaign.activeClients - Math.floor(showEmailCampaign.activeClients * 0.1)} clientes)
+                        </label>
+                        <label className="flex items-center">
+                          <input type="checkbox" className="mr-2" />
+                          Inactivos ({Math.floor(showEmailCampaign.activeClients * 0.1)} clientes)
+                        </label>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Filtros Adicionales</label>
+                      <div className="space-y-2">
+                        <label className="flex items-center">
+                          <input type="checkbox" className="mr-2" />
+                          Última visita &lt; 30 días
+                        </label>
+                        <label className="flex items-center">
+                          <input type="checkbox" className="mr-2" />
+                          Gasto total &gt; $50,000
+                        </label>
+                      </div>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg">
+                      <h4 className="font-medium text-gray-800 mb-2">📊 Alcance Estimado</h4>
+                      <div className="text-2xl font-bold text-green-600">{showEmailCampaign.activeClients}</div>
+                      <div className="text-sm text-gray-600">emails a enviar</div>
+                      <div className="text-xs text-gray-500 mt-1">Tasa apertura estimada: 25%</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Contenido del Email */}
+                <div className="bg-purple-50 p-4 rounded-lg">
+                  <h3 className="font-bold text-purple-800 mb-4">✉️ Contenido del Email</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Asunto del Email</label>
+                      <input
+                        type="text"
+                        defaultValue={`¡Oferta especial para clientes ${showEmailCampaign.name}! 🔥`}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Plantilla de Email</label>
+                      <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 mb-3">
+                        <option>Promoción IL MANDORLA</option>
+                        <option>Bienvenida KUMIA Stars</option>
+                        <option>Evento Exclusivo</option>
+                        <option>Reactivación Cliente</option>
+                      </select>
+                      <textarea
+                        rows="8"
+                        defaultValue={`Hola [NOMBRE],
+
+¡Tenemos una oferta especial para ti como cliente ${showEmailCampaign.name}!
+
+🔥 Disfruta de un ${showEmailCampaign.multiplier * 10}% de descuento en tu próxima visita
+⭐ Multiplica tus KUMIA Stars x${showEmailCampaign.multiplier}
+🎁 Acceso a nuestro menú exclusivo del mes
+
+Tu nivel ${showEmailCampaign.name} te da acceso a beneficios únicos. ¡No te los pierdas!
+
+Reserva ahora: [LINK_RESERVA]
+
+¡Te esperamos en IL MANDORLA!
+El equipo KUMIA`}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Programación */}
+                <div className="bg-orange-50 p-4 rounded-lg">
+                  <h3 className="font-bold text-orange-800 mb-4">⏰ Programación de Envío</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Fecha de Envío</label>
+                      <input
+                        type="date"
+                        defaultValue={new Date().toISOString().split('T')[0]}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Hora de Envío</label>
+                      <input
+                        type="time"
+                        defaultValue="10:00"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Zona Horaria</label>
+                      <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
+                        <option>America/Santiago (UTC-3)</option>
+                        <option>America/New_York (UTC-5)</option>
+                        <option>Europe/Madrid (UTC+1)</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Integración con Agentes IA */}
+                <div className="bg-gradient-to-r from-indigo-50 to-purple-50 p-4 rounded-lg border border-indigo-200">
+                  <h3 className="font-bold text-indigo-800 mb-4">🤖 Integración con Agentes IA</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Agente IA Responsable</label>
+                      <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option>📧 Email Marketing IA</option>
+                        <option>🎯 Upselling Master IA</option>
+                        <option>💎 KUMIA Loyalty IA</option>
+                        <option>📱 Community Manager IA</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Personalización IA</label>
+                      <div className="space-y-2">
+                        <label className="flex items-center">
+                          <input type="checkbox" defaultChecked className="mr-2" />
+                          Personalizar por historial de compras
+                        </label>
+                        <label className="flex items-center">
+                          <input type="checkbox" defaultChecked className="mr-2" />
+                          Incluir recomendaciones de platos
+                        </label>
+                        <label className="flex items-center">
+                          <input type="checkbox" className="mr-2" />
+                          Optimizar horario de envío por cliente
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Botones de Acción */}
+                <div className="flex space-x-3">
+                  <button 
+                    onClick={() => setShowEmailCampaign(null)}
+                    className="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button 
+                    onClick={() => {
+                      alert(`📧 VISTA PREVIA DEL EMAIL\n\n📋 Configuración:\n• Campaña: ${showEmailCampaign.name}\n• Destinatarios: ${showEmailCampaign.activeClients} clientes\n• Descuento: ${showEmailCampaign.multiplier * 10}%\n• Multiplicador Stars: x${showEmailCampaign.multiplier}\n\n💡 En producción se abrirá un preview completo del email con plantilla visual y opción de envío de prueba.`);
+                    }}
+                    className="flex-1 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+                  >
+                    👀 Vista Previa
+                  </button>
+                  <button 
+                    onClick={() => {
+                      alert(`✅ CAMPAÑA EMAIL PROGRAMADA\n\n🚀 Tu campaña "${showEmailCampaign.name}" ha sido programada exitosamente:\n\n📊 Resumen:\n• ${showEmailCampaign.activeClients} emails programados\n• Envío: Hoy a las 10:00 AM\n• Agente IA: Email Marketing IA\n• Personalización: Activada\n\n📈 Métricas esperadas:\n• Tasa de apertura: ~25%\n• Tasa de clicks: ~8%\n• Conversiones estimadas: ~15 clientes\n\nRecibirás un reporte completo 24h después del envío.`);
+                      setShowEmailCampaign(null);
+                    }}
+                    className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-2 rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all duration-200 font-bold"
+                  >
+                    📧 Programar Envío
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 📱 Modal de Campaña WhatsApp */}
+      {showWhatsAppCampaign && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">📱 Campaña WhatsApp - Nivel {showWhatsAppCampaign.name}</h2>
+                  <p className="text-gray-600">Crea una campaña de WhatsApp Business para {showWhatsAppCampaign.activeClients} clientes</p>
+                </div>
+                <button 
+                  onClick={() => setShowWhatsAppCampaign(null)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                {/* Configuración de la Campaña */}
+                <div className="bg-green-50 p-4 rounded-lg">
+                  <h3 className="font-bold text-green-800 mb-4">📋 Configuración de la Campaña WhatsApp</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Nombre de la Campaña</label>
+                      <input
+                        type="text"
+                        defaultValue={`WhatsApp ${showWhatsAppCampaign.name} - ${new Date().toLocaleDateString()}`}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de Mensaje</label>
+                      <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500">
+                        <option>Promoción con Multimedia</option>
+                        <option>Mensaje de Texto Simple</option>
+                        <option>Invitación a Reservar</option>
+                        <option>Encuesta Rápida</option>
+                        <option>Recordatorio de Visita</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Configuración de Envío Bulk */}
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <h3 className="font-bold text-blue-800 mb-4">📤 Configuración de Envío Masivo</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Modo de Envío</label>
+                      <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option>Envío Inmediato</option>
+                        <option>Envío Programado</option>
+                        <option>Envío Escalonado (cada 30 seg)</option>
+                        <option>Envío Inteligente (IA optimiza horario)</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Límite por Hora</label>
+                      <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option>Sin límite</option>
+                        <option>50 mensajes/hora</option>
+                        <option>100 mensajes/hora</option>
+                        <option>200 mensajes/hora</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Estado del Cliente</label>
+                      <div className="space-y-2">
+                        <label className="flex items-center">
+                          <input type="checkbox" defaultChecked className="mr-2" />
+                          Activos
+                        </label>
+                        <label className="flex items-center">
+                          <input type="checkbox" className="mr-2" />
+                          Inactivos (reactivación)
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Contenido del Mensaje */}
+                <div className="bg-emerald-50 p-4 rounded-lg">
+                  <h3 className="font-bold text-emerald-800 mb-4">💬 Contenido del Mensaje WhatsApp</h3>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Plantilla de Mensaje</label>
+                        <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 mb-3">
+                          <option>Promoción IL MANDORLA</option>
+                          <option>Invitación Especial</option>
+                          <option>Reactivación Cliente</option>
+                          <option>Encuesta Satisfacción</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Incluir Multimedia</label>
+                        <div className="space-y-2">
+                          <label className="flex items-center">
+                            <input type="checkbox" defaultChecked className="mr-2" />
+                            🖼️ Imagen del plato destacado
+                          </label>
+                          <label className="flex items-center">
+                            <input type="checkbox" className="mr-2" />
+                            📄 PDF con menú especial
+                          </label>
+                          <label className="flex items-center">
+                            <input type="checkbox" className="mr-2" />
+                            🎥 Video promocional
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Mensaje Personalizado</label>
+                      <textarea
+                        rows="6"
+                        defaultValue={`🔥 ¡Hola [NOMBRE]!
+
+Como cliente ${showWhatsAppCampaign.name}, tienes acceso a una oferta especial:
+
+✨ ${showWhatsAppCampaign.multiplier * 10}% de descuento en tu próxima visita
+⭐ Multiplica tus KUMIA Stars x${showWhatsAppCampaign.multiplier}
+🎁 Acceso a nuestro menú exclusivo
+
+🍖 ¡Ven a disfrutar las mejores carnes ahumadas de Santiago!
+
+Reserva aquí: [LINK_RESERVA]
+Válido hasta: [FECHA_LIMITE]
+
+IL MANDORLA Smokehouse 🥩`}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Integración con Agentes IA */}
+                <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-lg border border-purple-200">
+                  <h3 className="font-bold text-purple-800 mb-4">🤖 Integración con Agentes IA WhatsApp</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Agente IA para Seguimiento</label>
+                      <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        <option>📱 WhatsApp Concierge IA</option>
+                        <option>🎯 Upselling Master IA</option>
+                        <option>📞 Customer Service IA</option>
+                        <option>🏪 Reservations Manager IA</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Configuración Avanzada</label>
+                      <div className="space-y-2">
+                        <label className="flex items-center">
+                          <input type="checkbox" defaultChecked className="mr-2" />
+                          Respuesta automática a consultas
+                        </label>
+                        <label className="flex items-center">
+                          <input type="checkbox" defaultChecked className="mr-2" />
+                          Seguimiento de conversiones
+                        </label>
+                        <label className="flex items-center">
+                          <input type="checkbox" className="mr-2" />
+                          Recordatorio automático 24h después
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Programación y Métricas */}
+                <div className="bg-orange-50 p-4 rounded-lg">
+                  <h3 className="font-bold text-orange-800 mb-4">📊 Programación y Métricas Esperadas</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Fecha y Hora</label>
+                      <input
+                        type="datetime-local"
+                        defaultValue={new Date(Date.now() + 60*60*1000).toISOString().slice(0, 16)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      />
+                    </div>
+                    <div className="bg-white p-3 rounded-lg">
+                      <h4 className="font-medium text-gray-800 mb-2">📈 Métricas Esperadas</h4>
+                      <div className="text-sm space-y-1">
+                        <div>Entregas: ~95%</div>
+                        <div>Lecturas: ~85%</div>
+                        <div>Respuestas: ~25%</div>
+                        <div>Conversiones: ~12%</div>
+                      </div>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg">
+                      <h4 className="font-medium text-gray-800 mb-2">💰 ROI Estimado</h4>
+                      <div className="text-2xl font-bold text-green-600">+285%</div>
+                      <div className="text-sm text-gray-600">Retorno esperado</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Botones de Acción */}
+                <div className="flex space-x-3">
+                  <button 
+                    onClick={() => setShowWhatsAppCampaign(null)}
+                    className="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button 
+                    onClick={() => {
+                      alert(`📱 VISTA PREVIA WHATSAPP\n\n💬 Mensaje Preview:\n"🔥 ¡Hola Juan!\n\nComo cliente ${showWhatsAppCampaign.name}, tienes ${showWhatsAppCampaign.multiplier * 10}% descuento..."\n\n📊 Configuración:\n• ${showWhatsAppCampaign.activeClients} mensajes programados\n• Agente IA: WhatsApp Concierge\n• Multimedia: Imagen del plato incluida\n• ROI esperado: +285%\n\n💡 En producción se mostrará el preview completo con la imagen y formato de WhatsApp Business.`);
+                    }}
+                    className="flex-1 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+                  >
+                    👀 Vista Previa
+                  </button>
+                  <button 
+                    onClick={() => {
+                      alert(`✅ CAMPAÑA WHATSAPP PROGRAMADA\n\n🚀 Tu campaña WhatsApp "${showWhatsAppCampaign.name}" ha sido programada:\n\n📱 Resumen:\n• ${showWhatsAppCampaign.activeClients} mensajes programados\n• Envío: En 1 hora (escalonado)\n• Agente IA: WhatsApp Concierge activado\n• Multimedia: Imagen incluida\n\n📈 Proyecciones:\n• Entregas esperadas: ${Math.floor(showWhatsAppCampaign.activeClients * 0.95)}\n• Lecturas esperadas: ${Math.floor(showWhatsAppCampaign.activeClients * 0.85)}\n• Respuestas esperadas: ${Math.floor(showWhatsAppCampaign.activeClients * 0.25)}\n• Conversiones esperadas: ${Math.floor(showWhatsAppCampaign.activeClients * 0.12)}\n\n💰 ROI estimado: +285%\n\n📊 Recibirás reportes en tiempo real en el dashboard.`);
+                      setShowWhatsAppCampaign(null);
+                    }}
+                    className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-2 rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all duration-200 font-bold"
+                  >
+                    📱 Programar Campaña
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
