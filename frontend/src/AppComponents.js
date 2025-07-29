@@ -430,42 +430,11 @@ export const RewardsNFTsSection = () => {
 
   // 🔧 FUNCIONES DE MANEJO DE EVENTOS
   const handleViewClients = (level) => {
-    // Datos mock realistas para demostración
-    const mockClients = {
-      descubridor: [
-        { name: 'Ana Torres', email: 'ana.torres@email.com', stars: 28, lastVisit: '2025-01-25', totalSpent: 89000 },
-        { name: 'Luis Martín', email: 'luis.martin@email.com', stars: 15, lastVisit: '2025-01-20', totalSpent: 45000 },
-        { name: 'Carmen Silva', email: 'carmen.silva@email.com', stars: 32, lastVisit: '2025-01-28', totalSpent: 96000 }
-      ],
-      explorador: [
-        { name: 'Pedro Ruiz', email: 'pedro.ruiz@email.com', stars: 44, lastVisit: '2025-01-26', totalSpent: 132000 },
-        { name: 'Sofia Moreno', email: 'sofia.moreno@email.com', stars: 39, lastVisit: '2025-01-24', totalSpent: 117000 }
-      ],
-      destacado: [
-        { name: 'Diego Castro', email: 'diego.castro@email.com', stars: 56, lastVisit: '2025-01-27', totalSpent: 168000 },
-        { name: 'Elena Vargas', email: 'elena.vargas@email.com', stars: 52, lastVisit: '2025-01-23', totalSpent: 156000 }
-      ],
-      estrella: [
-        { name: 'Roberto Kim', email: 'roberto.kim@email.com', stars: 68, lastVisit: '2025-01-29', totalSpent: 204000 }
-      ],
-      leyenda: [
-        { name: 'Alexander Zúñiga', email: 'alexander.zuniga@email.com', stars: 89, lastVisit: '2025-01-28', totalSpent: 267000 },
-        { name: 'Valentina Chen', email: 'valentina.chen@email.com', stars: 95, lastVisit: '2025-01-26', totalSpent: 285000 }
-      ]
-    };
-
-    const clients = mockClients[level.id] || [];
-    const clientList = clients.map(client => 
-      `• ${client.name} (${client.email})\n  Stars: ${client.stars} | Última visita: ${client.lastVisit} | Total gastado: $${client.totalSpent.toLocaleString()}`
-    ).join('\n\n');
-
-    alert(`👥 CLIENTES NIVEL ${level.name.toUpperCase()}\n\n${level.activeClients} clientes activos:\n\n${clientList}\n\n💡 En producción se abrirá una vista completa con tabla filtrable y exportación.`);
+    setShowClientsList(level);
   };
 
   const handleConfigureLevel = (level) => {
-    const currentConfig = `CONFIGURACIÓN ACTUAL - ${level.name}:\n\n• Stars requeridas: ${level.starsRequired} ${level.id !== 'descubridor' ? '(adicionales al nivel anterior)' : '(nivel base)'}\n• Multiplicador: x${level.multiplier}\n• Clientes activos: ${level.activeClients}\n• Capitalización: ${level.capitalization}\n\nOPCIONES DE CONFIGURACIÓN:\n📝 Modificar beneficios y descripción\n💰 Ajustar rangos de capitalización\n🎁 Gestionar recompensas específicas del nivel\n📊 Ver análisis detallado de rendimiento\n\n💡 Los multiplicadores y stars requeridas se gestionan desde la configuración general del sistema.`;
-    
-    alert(currentConfig);
+    setShowLevelConfig(level);
   };
 
   const handleCompleteAnalysis = () => {
