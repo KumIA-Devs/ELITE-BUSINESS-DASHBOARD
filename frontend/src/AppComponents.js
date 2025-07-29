@@ -584,10 +584,16 @@ export const RewardsNFTsSection = () => {
           <p className="text-gray-600 mt-1">Gestión completa del programa de fidelización por niveles</p>
         </div>
         <div className="flex space-x-3">
-          <button className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-lg hover:from-orange-600 hover:to-red-600 transition-all duration-200 transform hover:scale-105">
+          <button 
+            onClick={handleCompleteAnalysis}
+            className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-lg hover:from-orange-600 hover:to-red-600 transition-all duration-200 transform hover:scale-105"
+          >
             📊 Análisis Completo
           </button>
-          <button className="bg-gradient-to-r from-emerald-500 to-green-500 text-white px-6 py-3 rounded-lg hover:from-emerald-600 hover:to-green-600 transition-all duration-200 transform hover:scale-105">
+          <button 
+            onClick={handleSystemConfig}
+            className="bg-gradient-to-r from-emerald-500 to-green-500 text-white px-6 py-3 rounded-lg hover:from-emerald-600 hover:to-green-600 transition-all duration-200 transform hover:scale-105"
+          >
             ⚙️ Configurar Sistema
           </button>
         </div>
