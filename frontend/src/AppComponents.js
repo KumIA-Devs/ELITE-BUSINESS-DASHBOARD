@@ -404,25 +404,47 @@ export const RewardsNFTsSection = () => {
 
       {/* Footer con acciones */}
       <div className="p-4 border-t border-gray-100">
-        <div className="flex space-x-2">
-          <button 
-            onClick={(e) => {
-              e.stopPropagation();
-              handleViewClients(level);
-            }}
-            className="flex-1 bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm hover:bg-gray-200 transition-colors"
-          >
-            👥 Ver Clientes
-          </button>
-          <button 
-            onClick={(e) => {
-              e.stopPropagation();
-              handleConfigureLevel(level);
-            }}
-            className="flex-1 bg-orange-100 text-orange-700 px-3 py-2 rounded-lg text-sm hover:bg-orange-200 transition-colors"
-          >
-            ⚙️ Configurar
-          </button>
+        <div className="space-y-2">
+          <div className="flex space-x-2">
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                handleViewClients(level);
+              }}
+              className="flex-1 bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm hover:bg-gray-200 transition-colors"
+            >
+              👥 Ver Clientes
+            </button>
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                handleConfigureLevel(level);
+              }}
+              className="flex-1 bg-orange-100 text-orange-700 px-3 py-2 rounded-lg text-sm hover:bg-orange-200 transition-colors"
+            >
+              ⚙️ Configurar
+            </button>
+          </div>
+          <div className="flex space-x-2">
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                handleEmailCampaign(level);
+              }}
+              className="flex-1 bg-blue-100 text-blue-700 px-3 py-2 rounded-lg text-sm hover:bg-blue-200 transition-colors"
+            >
+              📧 Campaña Email
+            </button>
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                handleWhatsAppCampaign(level);
+              }}
+              className="flex-1 bg-green-100 text-green-700 px-3 py-2 rounded-lg text-sm hover:bg-green-200 transition-colors"
+            >
+              📱 Campaña WhatsApp
+            </button>
+          </div>
         </div>
       </div>
     </div>
