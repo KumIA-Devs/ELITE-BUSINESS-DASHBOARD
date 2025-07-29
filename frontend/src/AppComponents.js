@@ -229,179 +229,260 @@ export const ROIViewer = () => {
 };
 
 // 🆕 RECOMPENSAS & NFTS SECTION AMPLIADA
+// 🌟 KUMIA STARS MULTILEVEL SYSTEM - RECOMPENSAS SECTION
 export const RewardsNFTsSection = () => {
-  const [rewards, setRewards] = useState([]);
-  const [topClients, setTopClients] = useState([]);
-  const [weeklyRedemptions, setWeeklyRedemptions] = useState([45, 52, 38, 67, 43, 71, 59]);
-  const [campaigns, setCampaigns] = useState([]);
-  const [showCreateCampaign, setShowCreateCampaign] = useState(false);
+  const [starsData, setStarsData] = useState({
+    totalStarsGenerated: 15847,
+    totalRedemptions: 234,
+    mostFrequentLevel: 'Explorador',
+    mostUnlockedNFT: 'NFT Explorador',
+    activeReferrals: 67
+  });
 
-  useEffect(() => {
-    fetchRewards();
-    fetchTopClients();
-    fetchCampaigns();
-  }, []);
+  const [selectedLevel, setSelectedLevel] = useState(null);
+  const [showSpecialRewards, setShowSpecialRewards] = useState(false);
+  const [showClientExport, setShowClientExport] = useState(false);
 
-  const fetchRewards = async () => {
-    try {
-      const response = await axios.get(`${API}/nft-rewards`);
-      setRewards(response.data);
-    } catch (error) {
-      console.error('Error fetching rewards:', error);
+  // 🎯 SISTEMA DE NIVELES KUMIA STARS
+  const kumiaLevels = [
+    {
+      id: 'descubridor',
+      name: 'Descubridor',
+      starsRange: '0-35',
+      starsRequired: 35,
+      multiplier: 1.0,
+      nftImage: 'https://images.unsplash.com/photo-1571008592377-e362723e8998?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzZ8MHwxfHNlYXJjaHw0fHxhY2hpZXZlbWVudCUyMG1lZGFsfGVufDB8fHx8MTc1MzgwMjM2NHww&ixlib=rb-4.1.0&q=85',
+      nftName: 'No aplica',
+      description: 'Nivel de entrada para nuevos usuarios del sistema KumIA',
+      benefit: 'Acceso básico al programa de fidelización',
+      activeClients: 45,
+      capitalization: '$0 - $105,000 CLP',
+      bgColor: 'from-gray-400 to-gray-500',
+      textColor: 'text-gray-700',
+      badgeColor: 'bg-gray-100'
+    },
+    {
+      id: 'explorador',
+      name: 'Explorador',
+      starsRange: '36-47',
+      starsRequired: 12, // Stars adicionales necesarias
+      multiplier: 1.2,
+      nftImage: 'https://images.unsplash.com/photo-1578410532485-e017ec847d23?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzh8MHwxfHNlYXJjaHwzfHxsb3lhbHR5JTIwYmFkZ2V8ZW58MHx8fHwxNzUzODAyMzgwfDA&ixlib=rb-4.1.0&q=85',
+      nftName: 'NFT "Explorador"',
+      description: 'Segundo nivel con beneficios mejorados y multiplier x1.2',
+      benefit: 'Descuentos especiales + acumulación 20% más rápida',
+      activeClients: 32,
+      capitalization: '$105,000 - $141,000 CLP',
+      bgColor: 'from-blue-400 to-blue-500',
+      textColor: 'text-blue-700',
+      badgeColor: 'bg-blue-100'
+    },
+    {
+      id: 'destacado',
+      name: 'Destacado',
+      starsRange: '48-59',
+      starsRequired: 12, // Stars adicionales necesarias
+      multiplier: 1.5,
+      nftImage: 'https://images.unsplash.com/photo-1565857102257-1e0055202c44?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzh8MHwxfHNlYXJjaHwyfHxsb3lhbHR5JTIwYmFkZ2V8ZW58MHx8fHwxNzUzODAyMzgwfDA&ixlib=rb-4.1.0&q=85',
+      nftName: 'NFT "Destacado"',
+      description: 'Nivel intermedio con reconocimiento premium y status',
+      benefit: 'Acceso VIP + mesa preferencial + multiplier x1.5',
+      activeClients: 18,
+      capitalization: '$141,000 - $177,000 CLP',
+      bgColor: 'from-purple-400 to-purple-500',
+      textColor: 'text-purple-700',
+      badgeColor: 'bg-purple-100'
+    },
+    {
+      id: 'estrella',
+      name: 'Estrella',
+      starsRange: '60-74',
+      starsRequired: 15, // Stars adicionales necesarias
+      multiplier: 1.8,
+      nftImage: 'https://images.unsplash.com/photo-1651002488760-b9640c8cc819?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzZ8MHwxfHNlYXJjaHwxfHxhY2hpZXZlbWVudCUyMG1lZGFsfGVufDB8fHx8MTc1MzgwMjM2NHww&ixlib=rb-4.1.0&q=85',
+      nftName: 'NFT "Estrella"',
+      description: 'Nivel prestigioso con beneficios exclusivos y alta valorización',
+      benefit: 'Eventos exclusivos + chef privado + multiplier x1.8',
+      activeClients: 8,
+      capitalization: '$177,000 - $222,000 CLP',
+      bgColor: 'from-yellow-400 to-orange-500',
+      textColor: 'text-orange-700',
+      badgeColor: 'bg-orange-100'
+    },
+    {
+      id: 'leyenda',
+      name: 'Leyenda KumIA',
+      starsRange: '75+',
+      starsRequired: 1, // Una star adicional para mantener
+      multiplier: 2.0,
+      nftImage: 'https://images.unsplash.com/photo-1718465388901-9c628510c01e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzh8MHwxfHNlYXJjaHwxfHxsb3lhbHR5JTIwYmFkZ2V8ZW58MHx8fHwxNzUzODAyMzgwfDA&ixlib=rb-4.1.0&q=85',
+      nftName: 'NFT "Leyenda KumIA"',
+      description: 'Nivel máximo de exclusividad y privilegios supremos',
+      benefit: 'Menú personalizado + experiencia única + multiplier x2.0',
+      activeClients: 3,
+      capitalization: '$222,000+ CLP',
+      bgColor: 'from-pink-500 to-red-500',
+      textColor: 'text-red-700',
+      badgeColor: 'bg-red-100'
     }
-  };
+  ];
 
-  const fetchTopClients = async () => {
-    try {
-      const response = await axios.get(`${API}/customers`);
-      const sortedClients = response.data.sort((a, b) => (b.points || 0) - (a.points || 0));
-      setTopClients(sortedClients.slice(0, 5));
-    } catch (error) {
-      console.error('Error fetching top clients:', error);
-    }
-  };
-
-  const fetchCampaigns = async () => {
-    // Mock data para campañas
-    setCampaigns([
-      { id: 1, name: 'Campaña Navidad', status: 'active', rewards: 25, engagement: 78 },
-      { id: 2, name: 'Clientes VIP', status: 'active', rewards: 12, engagement: 95 },
-      { id: 3, name: 'Verano 2024', status: 'completed', rewards: 56, engagement: 82 }
-    ]);
-  };
-
-  // 🆕 MÉTRICAS DE IMPACTO
-  const ImpactMetrics = () => (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-      <h3 className="text-lg font-bold text-gray-800 mb-4">📊 Métricas de Impacto</h3>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-green-50 p-4 rounded-lg text-center">
-          <div className="text-2xl font-bold text-green-600">+42%</div>
-          <div className="text-sm text-green-700">Retorno por NFT</div>
+  // 🏆 TARJETA DE NIVEL
+  const LevelCard = ({ level, index, isSelected, onClick }) => (
+    <div 
+      className={`bg-white rounded-xl shadow-lg border-2 transition-all duration-300 cursor-pointer transform hover:scale-105 ${
+        isSelected ? 'border-orange-500 shadow-xl' : 'border-gray-200 hover:border-orange-300'
+      }`}
+      onClick={() => onClick(level)}
+    >
+      {/* Header del Nivel */}
+      <div className={`bg-gradient-to-r ${level.bgColor} p-4 rounded-t-xl text-white`}>
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-xl font-bold">{level.name}</h3>
+            <p className="text-sm opacity-90">{level.starsRange} Stars</p>
+          </div>
+          <div className="text-right">
+            <div className="text-2xl font-bold">x{level.multiplier}</div>
+            <div className="text-xs opacity-90">Multiplicador</div>
+          </div>
         </div>
-        <div className="bg-blue-50 p-4 rounded-lg text-center">
-          <div className="text-2xl font-bold text-blue-600">$125</div>
-          <div className="text-sm text-blue-700">Costo por Adquisición</div>
+      </div>
+
+      {/* Imagen NFT */}
+      <div className="p-4">
+        <div className="w-full h-32 bg-gray-100 rounded-lg mb-4 overflow-hidden">
+          <img 
+            src={level.nftImage} 
+            alt={level.nftName}
+            className="w-full h-full object-cover"
+          />
         </div>
-        <div className="bg-purple-50 p-4 rounded-lg text-center">
-          <div className="text-2xl font-bold text-purple-600">87%</div>
-          <div className="text-sm text-purple-700">Tasa de Retención</div>
+
+        {/* Info del NFT */}
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <span className="font-medium text-gray-700">NFT Asociado:</span>
+            <span className={`px-2 py-1 rounded-full text-xs font-medium ${level.badgeColor} ${level.textColor}`}>
+              {level.nftName}
+            </span>
+          </div>
+          
+          <div className="flex justify-between items-center">
+            <span className="font-medium text-gray-700">Clientes Activos:</span>
+            <span className="font-bold text-gray-800">{level.activeClients}</span>
+          </div>
+
+          <div className="bg-gray-50 p-3 rounded-lg">
+            <h4 className="font-medium text-gray-700 mb-1">Beneficio Principal:</h4>
+            <p className="text-sm text-gray-600">{level.benefit}</p>
+          </div>
+
+          <div className="bg-emerald-50 p-3 rounded-lg">
+            <h4 className="font-medium text-emerald-700 mb-1">Capitalización:</h4>
+            <p className="text-sm text-emerald-600 font-medium">{level.capitalization}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer con acciones */}
+      <div className="p-4 border-t border-gray-100">
+        <div className="flex space-x-2">
+          <button className="flex-1 bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm hover:bg-gray-200 transition-colors">
+            👥 Ver Clientes
+          </button>
+          <button className="flex-1 bg-orange-100 text-orange-700 px-3 py-2 rounded-lg text-sm hover:bg-orange-200 transition-colors">
+            ⚙️ Configurar
+          </button>
         </div>
       </div>
     </div>
   );
 
-  // 🆕 SIMULADOR DE PUNTOS
-  const PointsSimulator = () => {
-    const [simulationData, setSimulationData] = useState({
-      visits: 5,
-      avgSpend: 3200,
-      pointsPerDollar: 1,
-      estimatedReturn: 0
-    });
-
-    const calculateReturn = () => {
-      const totalSpend = simulationData.visits * simulationData.avgSpend;
-      const totalPoints = totalSpend * simulationData.pointsPerDollar;
-      const estimatedReturn = totalPoints * 0.05; // 5% return rate
-      setSimulationData(prev => ({ ...prev, estimatedReturn }));
-    };
-
-    return (
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h3 className="text-lg font-bold text-gray-800 mb-4">🧮 Simulador de Puntos</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Visitas por mes</label>
-              <input
-                type="number"
-                value={simulationData.visits}
-                onChange={(e) => setSimulationData(prev => ({ ...prev, visits: parseInt(e.target.value) }))}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Gasto promedio</label>
-              <input
-                type="number"
-                value={simulationData.avgSpend}
-                onChange={(e) => setSimulationData(prev => ({ ...prev, avgSpend: parseInt(e.target.value) }))}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-              />
-            </div>
-            <button
-              onClick={calculateReturn}
-              className="w-full bg-purple-500 text-white py-2 px-4 rounded-lg hover:bg-purple-600 transition-colors"
-            >
-              Calcular Retorno
-            </button>
-          </div>
-          <div className="bg-purple-50 p-4 rounded-lg">
-            <h4 className="font-medium text-purple-800 mb-2">Resultado Estimado</h4>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm text-purple-700">Puntos generados:</span>
-                <span className="font-bold text-purple-800">{(simulationData.visits * simulationData.avgSpend).toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm text-purple-700">Retorno estimado:</span>
-                <span className="font-bold text-purple-800">${simulationData.estimatedReturn.toLocaleString()}</span>
-              </div>
-            </div>
-          </div>
+  // 📊 MÉTRICAS AGREGADAS
+  const AggregatedMetrics = () => (
+    <div className="bg-gradient-to-r from-orange-50 to-red-50 rounded-xl p-6 border border-orange-200">
+      <h3 className="text-lg font-bold text-orange-800 mb-4">📊 Métricas Generales del Sistema</h3>
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div className="bg-white p-4 rounded-lg text-center">
+          <div className="text-2xl font-bold text-orange-600">{starsData.totalStarsGenerated.toLocaleString()}</div>
+          <div className="text-sm text-orange-700">Total Stars Generadas</div>
+        </div>
+        <div className="bg-white p-4 rounded-lg text-center">
+          <div className="text-2xl font-bold text-green-600">{starsData.totalRedemptions}</div>
+          <div className="text-sm text-green-700">Recompensas Canjeadas</div>
+        </div>
+        <div className="bg-white p-4 rounded-lg text-center">
+          <div className="text-2xl font-bold text-blue-600">{starsData.mostFrequentLevel}</div>
+          <div className="text-sm text-blue-700">Nivel Más Frecuente</div>
+        </div>
+        <div className="bg-white p-4 rounded-lg text-center">
+          <div className="text-2xl font-bold text-purple-600">{starsData.mostUnlockedNFT}</div>
+          <div className="text-sm text-purple-700">NFT Más Desbloqueado</div>
+        </div>
+        <div className="bg-white p-4 rounded-lg text-center">
+          <div className="text-2xl font-bold text-pink-600">{starsData.activeReferrals}</div>
+          <div className="text-sm text-pink-700">Referidos Activos</div>
         </div>
       </div>
-    );
-  };
+    </div>
+  );
 
-  const NFTCard = ({ nft }) => (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all duration-200">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center">
-          <div className={`w-12 h-12 rounded-xl flex items-center justify-center mr-4 ${
-            nft.level === 'citizen_kumia' ? 'bg-gradient-to-br from-purple-500 to-pink-500' :
-            nft.level === 'oro' ? 'bg-gradient-to-br from-yellow-500 to-orange-500' :
-            nft.level === 'plata' ? 'bg-gradient-to-br from-gray-400 to-gray-500' :
-            'bg-gradient-to-br from-orange-500 to-red-500'
-          }`}>
-            <span className="text-white text-xl">🎁</span>
-          </div>
-          <div>
-            <h3 className="font-bold text-gray-800">{nft.name}</h3>
-            <p className="text-sm text-gray-600">{nft.level}</p>
-          </div>
+  // 🧠 LÓGICA DE FUNCIONAMIENTO
+  const SystemLogicExplanation = () => (
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <h3 className="text-lg font-bold text-gray-800 mb-4">🧠 Lógica del Sistema KumIA Stars</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <h4 className="font-medium text-gray-700 mb-3">⭐ Generación de Stars</h4>
+          <ul className="space-y-2 text-sm text-gray-600">
+            <li className="flex items-center"><span className="text-green-500 mr-2">•</span> Feedback con texto: 1 star base</li>
+            <li className="flex items-center"><span className="text-green-500 mr-2">•</span> Feedback con imagen: 2 stars base</li>
+            <li className="flex items-center"><span className="text-green-500 mr-2">•</span> Reserva completada: 3 stars base</li>
+            <li className="flex items-center"><span className="text-green-500 mr-2">•</span> Referido exitoso: 5 stars base</li>
+            <li className="flex items-center"><span className="text-orange-500 mr-2">•</span> Todas las acciones se multiplican por el nivel actual</li>
+          </ul>
         </div>
-        <div className="flex flex-col items-end">
-          <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">
-            {nft.points_required} pts
-          </span>
-          <span className="text-xs text-gray-500 mt-1">
-            Estado: {nft.status || 'Activo'}
-          </span>
-        </div>
-      </div>
-
-      <p className="text-sm text-gray-600 mb-4">{nft.description}</p>
-
-      <div className="mb-4">
-        <h4 className="text-sm font-medium text-gray-700 mb-2">Beneficios</h4>
-        <div className="space-y-1">
-          {Object.entries(nft.attributes || {}).map(([key, value]) => (
-            <div key={key} className="flex justify-between text-sm">
-              <span className="text-gray-600">{key}:</span>
-              <span className="font-medium">{value}</span>
-            </div>
-          ))}
+        <div>
+          <h4 className="font-medium text-gray-700 mb-3">🔄 Mecánica de Canje</h4>
+          <ul className="space-y-2 text-sm text-gray-600">
+            <li className="flex items-center"><span className="text-blue-500 mr-2">•</span> Al alcanzar stars mínimas → Puede canjear</li>
+            <li className="flex items-center"><span className="text-blue-500 mr-2">•</span> Período de canje: 60 días máximo</li>
+            <li className="flex items-center"><span className="text-red-500 mr-2">•</span> Al canjear: Stars = 0, Nivel ↑</li>
+            <li className="flex items-center"><span className="text-purple-500 mr-2">•</span> Nuevo multiplicador aplicado</li>
+            <li className="flex items-center"><span className="text-yellow-500 mr-2">•</span> NFT desbloqueado automáticamente</li>
+          </ul>
         </div>
       </div>
+      
+      <div className="mt-6 bg-emerald-50 p-4 rounded-lg">
+        <h4 className="font-medium text-emerald-800 mb-2">💡 Valor Económico por Star</h4>
+        <p className="text-sm text-emerald-700">
+          <strong>1 Star ≈ $3,000 CLP</strong> en capitalización del restaurante. 
+          Este valor representa el gasto promedio necesario para generar una star y mantener la rentabilidad del programa.
+        </p>
+      </div>
+    </div>
+  );
 
-      <div className="flex space-x-2">
-        <button className="flex-1 bg-purple-100 text-purple-700 px-3 py-2 rounded-lg text-sm hover:bg-purple-200 transition-colors">
-          ✏️ Editar
+  // 🛠️ FUNCIONALIDAD ADMINISTRATIVA
+  const AdminControls = () => (
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <button 
+          onClick={() => setShowClientExport(true)}
+          className="bg-blue-500 text-white px-4 py-3 rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center"
+        >
+          📊 Exportar Clientes por Nivel
         </button>
-        <button className="flex-1 bg-green-100 text-green-700 px-3 py-2 rounded-lg text-sm hover:bg-green-200 transition-colors">
-          ✅ Activar
+        <button className="bg-green-500 text-white px-4 py-3 rounded-lg hover:bg-green-600 transition-colors flex items-center justify-center">
+          📈 Análisis de Acciones por Nivel
+        </button>
+        <button 
+          onClick={() => setShowSpecialRewards(true)}
+          className="bg-purple-500 text-white px-4 py-3 rounded-lg hover:bg-purple-600 transition-colors flex items-center justify-center"
+        >
+          🎁 Recompensas Especiales
         </button>
       </div>
     </div>
@@ -409,197 +490,162 @@ export const RewardsNFTsSection = () => {
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold text-gray-800">🎁 Recompensas & NFTs</h2>
-          <p className="text-gray-600 mt-1">Gamificación para retención y engagement</p>
+          <h2 className="text-3xl font-bold text-gray-800">⭐ Sistema KumIA Stars Multilevel</h2>
+          <p className="text-gray-600 mt-1">Gestión completa del programa de fidelización por niveles</p>
         </div>
-        <button 
-          onClick={() => setShowCreateCampaign(true)}
-          className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-200 transform hover:scale-105"
-        >
-          🚀 Crear Nueva Campaña de Fidelización
-        </button>
-      </div>
-
-      {/* Métricas de Impacto */}
-      <ImpactMetrics />
-
-      {/* Weekly Redemptions Chart */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h3 className="text-lg font-bold mb-4">📊 Canjes Semanales</h3>
-        <div className="flex items-end justify-between h-32">
-          {weeklyRedemptions.map((value, index) => (
-            <div key={index} className="flex flex-col items-center">
-              <div className="text-xs text-gray-600 mb-1">{value}</div>
-              <div 
-                className="bg-gradient-to-t from-purple-400 to-pink-400 rounded-t-lg transition-all duration-500 w-8"
-                style={{ height: `${(value / 80) * 100}%` }}
-              ></div>
-              <span className="text-xs text-gray-500 mt-1">
-                {['L', 'M', 'X', 'J', 'V', 'S', 'D'][index]}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* 🆕 CAMPAÑAS ACTIVAS VS PASADAS */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h3 className="text-lg font-bold text-gray-800 mb-4">🎯 Campañas Activas vs Pasadas</h3>
-        <div className="space-y-4">
-          {campaigns.map(campaign => (
-            <div key={campaign.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-              <div className="flex items-center">
-                <div className={`w-3 h-3 rounded-full mr-3 ${
-                  campaign.status === 'active' ? 'bg-green-500' : 'bg-gray-400'
-                }`}></div>
-                <div>
-                  <h4 className="font-medium text-gray-800">{campaign.name}</h4>
-                  <p className="text-sm text-gray-600">{campaign.rewards} recompensas entregadas</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-4">
-                <div className="text-center">
-                  <div className="text-lg font-bold text-blue-600">{campaign.engagement}%</div>
-                  <div className="text-xs text-gray-600">Engagement</div>
-                </div>
-                <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                  campaign.status === 'active' 
-                    ? 'bg-green-100 text-green-800' 
-                    : 'bg-gray-100 text-gray-800'
-                }`}>
-                  {campaign.status === 'active' ? 'Activa' : 'Completada'}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* 🆕 HISTORIAL DE UPGRADES */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h3 className="text-lg font-bold text-gray-800 mb-4">📈 Historial de Upgrades</h3>
-        <div className="space-y-3">
-          {[
-            { client: 'Juan Pérez', from: 'Bronce', to: 'Plata', date: '2024-01-15', impact: '+25% gasto' },
-            { client: 'María García', from: 'Plata', to: 'Oro', date: '2024-01-12', impact: '+40% visitas' },
-            { client: 'Carlos López', from: 'Oro', to: 'Citizen KUMIA', date: '2024-01-08', impact: '+60% referidos' }
-          ].map((upgrade, index) => (
-            <div key={index} className="flex items-center justify-between p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg">
-              <div className="flex items-center">
-                <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-emerald-400 rounded-full flex items-center justify-center mr-3">
-                  <span className="text-white font-bold">↗</span>
-                </div>
-                <div>
-                  <h4 className="font-medium text-gray-800">{upgrade.client}</h4>
-                  <p className="text-sm text-gray-600">{upgrade.from} → {upgrade.to}</p>
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="text-sm font-medium text-green-600">{upgrade.impact}</div>
-                <div className="text-xs text-gray-500">{upgrade.date}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Simulador de Puntos */}
-      <PointsSimulator />
-
-      {/* Top Clients Ranking */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h3 className="text-lg font-bold mb-4">🏆 Ranking de Clientes Más Fieles</h3>
-        <div className="space-y-4">
-          {topClients.map((client, index) => (
-            <div key={client.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div className="flex items-center">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 ${
-                  index === 0 ? 'bg-yellow-500' : 
-                  index === 1 ? 'bg-gray-400' : 
-                  index === 2 ? 'bg-orange-500' : 
-                  'bg-gray-300'
-                }`}>
-                  <span className="text-white font-bold text-sm">#{index + 1}</span>
-                </div>
-                <div>
-                  <h4 className="font-medium text-gray-800">{client.name}</h4>
-                  <p className="text-sm text-gray-600">{client.nft_level}</p>
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="text-lg font-bold text-purple-600">{client.points || 0}</div>
-                <div className="text-sm text-gray-600">puntos</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* NFTs Grid */}
-      <div>
-        <h3 className="text-lg font-bold mb-4">🎯 NFTs Disponibles</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {rewards.map(nft => (
-            <NFTCard key={nft.id} nft={nft} />
-          ))}
-        </div>
-      </div>
-
-      {/* 🆕 EDITOR DE NIVELES */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h3 className="text-lg font-bold text-gray-800 mb-4">⚙️ Editor de Niveles</h3>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {['Bronce', 'Plata', 'Oro', 'Citizen KUMIA'].map(level => (
-            <div key={level} className="border border-gray-200 rounded-lg p-4">
-              <h4 className="font-medium text-gray-800 mb-2">{level}</h4>
-              <div className="space-y-2">
-                <input
-                  type="number"
-                  placeholder="Puntos requeridos"
-                  className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
-                />
-                <input
-                  type="text"
-                  placeholder="Beneficios"
-                  className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
-                />
-                <button className="w-full bg-purple-100 text-purple-700 px-3 py-2 rounded text-sm hover:bg-purple-200 transition-colors">
-                  Actualizar
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Create New Reward */}
-      <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 border border-purple-100">
-        <h3 className="text-lg font-bold text-purple-800 mb-4">✨ Crear Nueva Recompensa</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input
-            type="text"
-            placeholder="Nombre de la recompensa"
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-          />
-          <select className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-            <option>Seleccionar nivel</option>
-            <option value="bronce">Bronce</option>
-            <option value="plata">Plata</option>
-            <option value="oro">Oro</option>
-            <option value="citizen_kumia">Citizen KUMIA</option>
-          </select>
-          <input
-            type="number"
-            placeholder="Puntos requeridos"
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-          />
-          <button className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors">
-            Crear Recompensa
+        <div className="flex space-x-3">
+          <button className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-lg hover:from-orange-600 hover:to-red-600 transition-all duration-200 transform hover:scale-105">
+            📊 Análisis Completo
+          </button>
+          <button className="bg-gradient-to-r from-emerald-500 to-green-500 text-white px-6 py-3 rounded-lg hover:from-emerald-600 hover:to-green-600 transition-all duration-200 transform hover:scale-105">
+            ⚙️ Configurar Sistema
           </button>
         </div>
       </div>
+
+      {/* Métricas Agregadas */}
+      <AggregatedMetrics />
+
+      {/* 🏗️ ESTRUCTURA ESCALONADA DE NIVELES */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-lg font-bold text-gray-800 mb-6">🏗️ Estructura Escalonada de Niveles</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          {kumiaLevels.map((level, index) => (
+            <LevelCard 
+              key={level.id} 
+              level={level} 
+              index={index}
+              isSelected={selectedLevel?.id === level.id}
+              onClick={setSelectedLevel}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Lógica del Sistema */}
+      <SystemLogicExplanation />
+
+      {/* Controles Administrativos */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-lg font-bold text-gray-800 mb-4">🛠️ Funcionalidad Administrativa</h3>
+        <AdminControls />
+      </div>
+
+      {/* 🎯 Modal de Recompensas Especiales */}
+      {showSpecialRewards && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">🎁 Recompensas Especiales</h2>
+                <button 
+                  onClick={() => setShowSpecialRewards(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {kumiaLevels.map(level => (
+                  <div key={level.id} className="border border-gray-200 rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="font-bold text-gray-800">{level.name}</h3>
+                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${level.badgeColor} ${level.textColor}`}>
+                        {level.activeClients} clientes
+                      </span>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <input
+                        type="text"
+                        placeholder="Nombre de recompensa especial"
+                        className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      />
+                      <input
+                        type="date"
+                        className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      />
+                      <input
+                        type="number"
+                        placeholder="Duración (días)"
+                        className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      />
+                      <button className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors text-sm">
+                        ✨ Activar
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 📊 Modal de Exportación */}
+      {showClientExport && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-xl">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">📊 Exportar Clientes</h2>
+                <button 
+                  onClick={() => setShowClientExport(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Seleccionar Nivel</label>
+                  <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500">
+                    <option value="all">Todos los niveles</option>
+                    {kumiaLevels.map(level => (
+                      <option key={level.id} value={level.id}>{level.name} ({level.activeClients} clientes)</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Formato de Exportación</label>
+                  <div className="flex space-x-4">
+                    <label className="flex items-center">
+                      <input type="radio" name="format" value="excel" className="mr-2" defaultChecked />
+                      📊 Excel
+                    </label>
+                    <label className="flex items-center">
+                      <input type="radio" name="format" value="csv" className="mr-2" />
+                      📄 CSV
+                    </label>
+                    <label className="flex items-center">
+                      <input type="radio" name="format" value="pdf" className="mr-2" />
+                      📑 PDF
+                    </label>
+                  </div>
+                </div>
+
+                <div className="flex space-x-3">
+                  <button 
+                    onClick={() => setShowClientExport(false)}
+                    className="flex-1 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button className="flex-1 bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors">
+                    📥 Exportar Datos
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
