@@ -714,18 +714,17 @@ const DashboardSummary = ({ metrics }) => {
         </div>
       </div>
 
-      <ROIImpactBlock 
-        roiMultiplier={roiData.multiplier}
-        weeklyImpact={roiData.weeklyImpact}
-        monthlyRevenue={roiData.monthlyRevenue}
-      />
-
       <div className="space-y-6">
         <div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
-            💰 Impacto Económico
-            <span className="ml-2 text-sm bg-green-100 text-green-800 px-2 py-1 rounded-full">Principal</span>
-          </h3>
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-lg font-semibold text-gray-800 flex items-center">
+              💰 Impacto Económico
+              <span className="ml-2 text-sm bg-green-100 text-green-800 px-2 py-1 rounded-full">Principal</span>
+            </h3>
+            <div className="text-sm text-gray-500">
+              Impacto generado por KUMIA esta semana
+            </div>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <MetricsCard
               title="Ingresos Atribuidos"
@@ -765,6 +764,13 @@ const DashboardSummary = ({ metrics }) => {
             />
           </div>
         </div>
+
+        {/* Impacto ROI debajo de las cards */}
+        <ROIImpactBlock 
+          roiMultiplier={roiData.multiplier}
+          weeklyImpact={roiData.weeklyImpact}
+          monthlyRevenue={roiData.monthlyRevenue}
+        />
 
         <div>
           <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
