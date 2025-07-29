@@ -242,6 +242,9 @@ export const RewardsNFTsSection = () => {
   const [selectedLevel, setSelectedLevel] = useState(null);
   const [showSpecialRewards, setShowSpecialRewards] = useState(false);
   const [showClientExport, setShowClientExport] = useState(false);
+  const [showEditNFT, setShowEditNFT] = useState(null);
+  const [showSystemConfig, setShowSystemConfig] = useState(false);
+  const [showCompleteAnalysis, setShowCompleteAnalysis] = useState(false);
 
   // 🎯 SISTEMA DE NIVELES KUMIA STARS
   const kumiaLevels = [
