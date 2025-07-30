@@ -390,6 +390,21 @@ backend:
         agent: "testing"
         comment: "✅ TESTED: Firebase integration fallbacks working perfectly. Verified that all KUMIA features work correctly when Firebase is not available (expected in preview environment). Table availability, customer activity tracking, and all sync operations use proper fallback mechanisms. System is resilient and production-ready."
 
+  - task: "Content Factory Endpoints - Centro IA Marketing"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented comprehensive Content Factory functionality with video/image generation using RunwayML, Google Veo 3, Pika Labs integration, campaign management system, and cost calculation endpoints."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: All Content Factory endpoints working perfectly. Video generation endpoint creates processing jobs with cost estimation (50 credits for 10s RunwayML video). Image generation endpoint successfully generates 2 images using OpenAI DALL-E with fallback to mock images (4.0 credits cost). Cost estimation endpoint accurately calculates costs for both video (63.0 credits/$6.3 for 15s VEO) and image (9.0 credits/$0.9 for 3 premium images). Campaign creation endpoint successfully creates marketing campaigns with proper data structure. All endpoints handle authentication, error handling, and return proper JSON responses."
+
 frontend:
   - task: "Authentication UI and Context"
     implemented: true
