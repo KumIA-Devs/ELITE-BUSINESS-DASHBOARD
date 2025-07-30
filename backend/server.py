@@ -1616,6 +1616,230 @@ async def create_campaign(request: CampaignRequest, current_user: User = Depends
         logger.error(f"Campaign creation error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error creating campaign: {str(e)}")
 
+@api_router.post("/marketing/campaigns/segmented")
+async def create_segmented_campaign(request: CampaignRequest, current_user: User = Depends(get_current_user)):
+    """
+    Create segmented marketing campaign for specific customer levels
+    """
+    try:
+        # Get customer count for the target segment
+        segment_counts = {
+            "explorador": 32,
+            "destacado": 18,
+            "estrella": 8,
+            "leyenda": 3,
+            "todos": 61,
+            "inactivos": 12
+        }
+        
+        estimated_reach = segment_counts.get(request.target_level.lower(), 0)
+        
+        # Calculate expected conversion based on segment
+        conversion_rates = {
+            "explorador": "65%",
+            "destacado": "78%", 
+            "estrella": "85%",
+            "leyenda": "95%",
+            "todos": "72%",
+            "inactivos": "45%"
+        }
+        
+        expected_conversion = conversion_rates.get(request.target_level.lower(), "70%")
+        
+        campaign_data = {
+            "id": str(uuid.uuid4()),
+            "user_id": current_user.id,
+            "title": request.title,
+            "description": request.description,
+            "target_level": request.target_level,
+            "channels": request.channels,
+            "start_date": request.start_date or datetime.utcnow(),
+            "end_date": request.end_date,
+            "status": "active",
+            "campaign_type": "segmented",
+            "estimated_reach": estimated_reach,
+            "expected_conversion": expected_conversion,
+            "created_at": datetime.utcnow()
+        }
+        
+        await db.marketing_campaigns.insert_one(campaign_data)
+        
+        return {
+            "campaign_id": campaign_data["id"],
+            "status": "created",
+            "target_segment": request.target_level,
+            "estimated_reach": estimated_reach,
+            "expected_conversion": expected_conversion,
+            "message": f"Segmented campaign '{request.title}' created for {request.target_level} segment"
+        }
+        
+    except Exception as e:
+        logger.error(f"Segmented campaign creation error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error creating segmented campaign: {str(e)}")
+
+@api_router.get("/marketing/campaigns")
+async def get_campaigns(current_user: User = Depends(get_current_user)):
+    """
+    Get all marketing campaigns for current user
+    """
+    try:
+        campaigns = await db.marketing_campaigns.find({"user_id": current_user.id}).to_list(100)
+        return campaigns
+        
+    except Exception as e:
+        logger.error(f"Campaign retrieval error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error retrieving campaigns: {str(e)}")
+
+# Campaign lifecycle management
+@api_router.post("/marketing/campaigns/{campaign_id}/activate")
+async def activate_campaign(campaign_id: str, current_user: User = Depends(get_current_user)):
+    """
+    Activate a campaign
+    """
+    try:
+        result = await db.marketing_campaigns.update_one(
+            {"id": campaign_id, "user_id": current_user.id},
+            {
+                "$set": {
+                    "status": "active",
+                    "activated_at": datetime.utcnow()
+                }
+            }
+        )
+        
+        if result.modified_count == 0:
+            raise HTTPException(status_code=404, detail="Campaign not found")
+        
+        return {
+            "campaign_id": campaign_id,
+            "status": "activated",
+            "message": "Campaign activated successfully"
+        }
+        
+    except Exception as e:
+        logger.error(f"Campaign activation error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error activating campaign: {str(e)}")
+
+@api_router.post("/marketing/campaigns/{campaign_id}/deactivate")
+async def deactivate_campaign(campaign_id: str, current_user: User = Depends(get_current_user)):
+    """
+    Deactivate a campaign
+    """
+    try:
+        result = await db.marketing_campaigns.update_one(
+            {"id": campaign_id, "user_id": current_user.id},
+            {
+                "$set": {
+                    "status": "inactive",
+                    "deactivated_at": datetime.utcnow()
+                }
+            }
+        )
+        
+        if result.modified_count == 0:
+            raise HTTPException(status_code=404, detail="Campaign not found")
+        
+        return {
+            "campaign_id": campaign_id,
+            "status": "deactivated", 
+            "message": "Campaign deactivated successfully"
+        }
+        
+    except Exception as e:
+        logger.error(f"Campaign deactivation error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error deactivating campaign: {str(e)}")
+
+# A/B Testing endpoints
+@api_router.post("/marketing/ab-test")
+async def create_ab_test(request: dict, current_user: User = Depends(get_current_user)):
+    """
+    Create A/B test campaign
+    """
+    try:
+        ab_test_data = {
+            "id": str(uuid.uuid4()),
+            "user_id": current_user.id,
+            "name": request.get("name", "A/B Test"),
+            "variant_a": request.get("variant_a", {}),
+            "variant_b": request.get("variant_b", {}),
+            "traffic_split": request.get("traffic_split", "50% / 50%"),
+            "duration_days": request.get("duration_days", 7),
+            "primary_metric": request.get("primary_metric", "conversion_rate"),
+            "status": "active",
+            "created_at": datetime.utcnow(),
+            "results": {
+                "variant_a": {"impressions": 0, "conversions": 0, "rate": "0%"},
+                "variant_b": {"impressions": 0, "conversions": 0, "rate": "0%"},
+                "winner": None
+            }
+        }
+        
+        await db.ab_tests.insert_one(ab_test_data)
+        
+        return {
+            "ab_test_id": ab_test_data["id"],
+            "status": "created",
+            "message": f"A/B test '{ab_test_data['name']}' created successfully"
+        }
+        
+    except Exception as e:
+        logger.error(f"A/B test creation error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error creating A/B test: {str(e)}")
+
+# Credit management endpoints
+@api_router.get("/credits/balance")
+async def get_credit_balance(current_user: User = Depends(get_current_user)):
+    """
+    Get user's credit balance
+    """
+    try:
+        # In production, this would fetch from user's credit account
+        # For now, return mock data
+        return {
+            "user_id": current_user.id,
+            "current_balance": 1250,
+            "currency": "credits",
+            "last_updated": datetime.utcnow()
+        }
+        
+    except Exception as e:
+        logger.error(f"Credit balance error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error retrieving credit balance: {str(e)}")
+
+@api_router.post("/credits/purchase")
+async def purchase_credits(request: dict, current_user: User = Depends(get_current_user)):
+    """
+    Purchase credits (simulation)
+    """
+    try:
+        credit_amount = request.get("amount", 500)
+        package_cost = request.get("cost", 50)
+        
+        # Simulate credit purchase
+        purchase_data = {
+            "id": str(uuid.uuid4()),
+            "user_id": current_user.id,
+            "credits_purchased": credit_amount,
+            "cost_usd": package_cost,
+            "status": "completed",
+            "payment_method": "credit_card",
+            "created_at": datetime.utcnow()
+        }
+        
+        await db.credit_purchases.insert_one(purchase_data)
+        
+        return {
+            "purchase_id": purchase_data["id"],
+            "credits_added": credit_amount,
+            "new_balance": 1250 + credit_amount,  # Mock calculation
+            "status": "completed",
+            "message": f"Successfully purchased {credit_amount} credits for ${package_cost}"
+        }
+        
+    except Exception as e:
+        logger.error(f"Credit purchase error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error purchasing credits: {str(e)}")
+
 async def simulate_video_generation(job_id: str):
     """
     Simulate video generation process
