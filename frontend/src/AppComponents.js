@@ -1945,6 +1945,622 @@ Ejemplo: "¡Hola! Como cliente ${showSegmentModal.nivel}, tienes acceso exclusiv
           </div>
         </div>
       )}
+
+      {/* Modal Configuración de Juegos */}
+      {showConfigModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">🎯 Configuración General de Juegos</h2>
+                <button 
+                  onClick={() => setShowConfigModal(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <h3 className="text-lg font-bold text-gray-800">⭐ Configuración de Recompensas</h3>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Máximo Stars Reales por Sesión (Global)
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="5"
+                      defaultValue="2"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Límite global para evitar abuso del sistema</p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Tiempo mínimo entre sesiones (minutos)
+                    </label>
+                    <input
+                      type="number"
+                      min="5"
+                      max="60"
+                      defaultValue="15"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Sesiones máximas por cliente por día
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="10"
+                      defaultValue="3"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">Activar sistema de juegos</span>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" className="sr-only peer" defaultChecked />
+                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="text-lg font-bold text-gray-800">🕒 Horarios de Operación</h3>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Hora de inicio
+                      </label>
+                      <input
+                        type="time"
+                        defaultValue="12:00"
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Hora de fin
+                      </label>
+                      <input
+                        type="time"
+                        defaultValue="23:00"
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Días activos
+                    </label>
+                    <div className="space-y-2">
+                      {['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'].map((dia) => (
+                        <label key={dia} className="flex items-center">
+                          <input type="checkbox" className="mr-2" defaultChecked />
+                          {dia}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-3 mt-6">
+                <button 
+                  onClick={() => setShowConfigModal(false)}
+                  className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button 
+                  onClick={() => {
+                    alert('✅ Configuración de juegos actualizada exitosamente!');
+                    setShowConfigModal(false);
+                  }}
+                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  💾 Guardar Configuración
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal UserWebApp Preview */}
+      {showPreviewModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">📊 UserWebApp Preview - Juegos</h2>
+                <button 
+                  onClick={() => setShowPreviewModal(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Vista Móvil */}
+                <div className="bg-gray-100 rounded-xl p-4">
+                  <h3 className="text-lg font-bold text-gray-800 mb-4 text-center">📱 Vista Móvil</h3>
+                  <div className="max-w-xs mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
+                    {/* Header */}
+                    <div className="bg-gradient-to-r from-purple-500 to-blue-500 px-4 py-6 text-white text-center">
+                      <h2 className="text-xl font-bold">🎮 KumIA Games</h2>
+                      <p className="text-sm opacity-90">¡Juega y gana Stars!</p>
+                    </div>
+
+                    {/* Games Grid */}
+                    <div className="p-4 space-y-3">
+                      <div className="bg-blue-50 rounded-lg p-3">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-medium text-blue-800">🧠 KumiSudoku</span>
+                          <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">2★</span>
+                        </div>
+                        <p className="text-xs text-gray-600">Sudoku express 4x4</p>
+                        <button className="w-full mt-2 bg-blue-500 text-white py-1 rounded text-sm">
+                          ▶️ Jugar
+                        </button>
+                      </div>
+
+                      <div className="bg-green-50 rounded-lg p-3">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-medium text-green-800">🃏 KumIA Duel</span>
+                          <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">2★</span>
+                        </div>
+                        <p className="text-xs text-gray-600">Duelo de preguntas</p>
+                        <button className="w-full mt-2 bg-green-500 text-white py-1 rounded text-sm">
+                          ▶️ Jugar (2P)
+                        </button>
+                      </div>
+
+                      <div className="bg-purple-50 rounded-lg p-3">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-medium text-purple-800">🤫 Quién Soy Yo</span>
+                          <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">2★</span>
+                        </div>
+                        <p className="text-xs text-gray-600">Adivinanza grupal</p>
+                        <button className="w-full mt-2 bg-purple-500 text-white py-1 rounded text-sm">
+                          ▶️ Jugar (3+P)
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* QR Scanner */}
+                    <div className="p-4 border-t border-gray-200">
+                      <div className="bg-yellow-50 rounded-lg p-3 text-center">
+                        <div className="text-2xl mb-2">📱</div>
+                        <p className="text-xs text-yellow-800">Escanea el QR de tu mesa</p>
+                        <button className="mt-2 bg-yellow-500 text-white px-3 py-1 rounded text-xs">
+                          📷 Escanear
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Stats y Analytics */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-bold text-gray-800">📊 Analytics de Juegos</h3>
+                  
+                  <div className="bg-blue-50 rounded-lg p-4">
+                    <h4 className="font-medium text-blue-800 mb-2">Engagement por Juego</h4>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span>KumIA Duel:</span>
+                        <span className="font-bold text-blue-600">96%</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Pac-KumIA:</span>
+                        <span className="font-bold text-blue-600">92%</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Versus Tap:</span>
+                        <span className="font-bold text-blue-600">89%</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-green-50 rounded-lg p-4">
+                    <h4 className="font-medium text-green-800 mb-2">Stars Distribuidas Hoy</h4>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-green-600">156</div>
+                      <div className="text-sm text-green-700">134 Reales + 22 Simbólicas</div>
+                    </div>
+                  </div>
+
+                  <div className="bg-purple-50 rounded-lg p-4">
+                    <h4 className="font-medium text-purple-800 mb-2">Horario Peak</h4>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-purple-600">19:30-21:00</div>
+                      <div className="text-sm text-purple-700">73% de participación</div>
+                    </div>
+                  </div>
+
+                  <div className="bg-orange-50 rounded-lg p-4">
+                    <h4 className="font-medium text-orange-800 mb-2">Tiempo Extra por Mesa</h4>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-orange-600">+18 min</div>
+                      <div className="text-sm text-orange-700">Promedio con juegos activos</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end mt-6">
+                <button 
+                  onClick={() => setShowPreviewModal(false)}
+                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  ✅ Entendido
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Configurar Juego Individual */}
+      {showGameConfigModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-gray-800">⚙️ Configurar: {showGameConfigModal.nombre}</h2>
+                <button 
+                  onClick={() => setShowGameConfigModal(null)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Stars Reales por Ganador
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="2"
+                      defaultValue={showGameConfigModal.starsReales}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      KumiSmile Stars
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="5"
+                      defaultValue={showGameConfigModal.starsSimbolicas}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Máximo Stars Reales por Sesión
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="2"
+                    defaultValue={showGameConfigModal.maxStarsPorSesion}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                  <p className="text-xs text-red-500 mt-1">Máximo 2 stars reales por sesión por política KumIA</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Descripción del Juego
+                  </label>
+                  <textarea
+                    defaultValue={showGameConfigModal.descripcion}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    rows="3"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Dificultad
+                    </label>
+                    <select 
+                      defaultValue={showGameConfigModal.dificultad}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="Fácil">Fácil</option>
+                      <option value="Media">Media</option>
+                      <option value="Alta">Alta</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Duración Estimada
+                    </label>
+                    <input
+                      type="text"
+                      defaultValue={showGameConfigModal.duracion}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      placeholder="ej: 5-8 min"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600">Juego activo</span>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      className="sr-only peer" 
+                      defaultChecked={showGameConfigModal.activo}
+                    />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                  </label>
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-3 mt-6">
+                <button 
+                  onClick={() => setShowGameConfigModal(null)}
+                  className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button 
+                  onClick={() => handleUpdateGameConfig(showGameConfigModal.id, {
+                    starsReales: 2,
+                    maxStarsPorSesion: 2,
+                    activo: true
+                  })}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  💾 Guardar Cambios
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Vista Previa Juego */}
+      {showGamePreviewModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-gray-800">🎮 Vista Previa: {showGamePreviewModal.nombre}</h2>
+                <button 
+                  onClick={() => setShowGamePreviewModal(null)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Simulación de pantalla móvil */}
+              <div className="bg-gray-100 rounded-xl p-4">
+                <div className="bg-white rounded-lg shadow-lg p-4">
+                  <div className="text-center mb-4">
+                    <div className="text-4xl mb-2">{showGamePreviewModal.nombre.charAt(0)}</div>
+                    <h3 className="text-lg font-bold text-gray-800">{showGamePreviewModal.nombre}</h3>
+                    <p className="text-sm text-gray-600">{showGamePreviewModal.descripcion}</p>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center p-2 bg-blue-50 rounded-lg">
+                      <span className="text-sm text-blue-700">Objetivo:</span>
+                      <span className="text-sm font-medium text-blue-800">{showGamePreviewModal.objetivo}</span>
+                    </div>
+                    
+                    <div className="flex justify-between items-center p-2 bg-green-50 rounded-lg">
+                      <span className="text-sm text-green-700">Duración:</span>
+                      <span className="text-sm font-medium text-green-800">{showGamePreviewModal.duracion}</span>
+                    </div>
+                    
+                    <div className="flex justify-between items-center p-2 bg-purple-50 rounded-lg">
+                      <span className="text-sm text-purple-700">Dificultad:</span>
+                      <span className="text-sm font-medium text-purple-800">{showGamePreviewModal.dificultad}</span>
+                    </div>
+
+                    <div className="bg-yellow-50 rounded-lg p-3">
+                      <div className="text-center">
+                        <div className="text-lg font-bold text-yellow-700">
+                          ⭐ {showGamePreviewModal.starsReales} Stars Reales
+                        </div>
+                        <div className="text-sm text-yellow-600">
+                          + {showGamePreviewModal.starsSimbolicas} KumiSmile Stars
+                        </div>
+                      </div>
+                    </div>
+
+                    <button className="w-full bg-green-500 text-white py-3 rounded-lg font-medium hover:bg-green-600 transition-colors">
+                      🎮 ¡Comenzar Juego!
+                    </button>
+
+                    <div className="text-center">
+                      <p className="text-xs text-gray-500">
+                        Máximo {showGamePreviewModal.maxStarsPorSesion} stars reales por sesión
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end mt-6">
+                <button 
+                  onClick={() => setShowGamePreviewModal(null)}
+                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  ✅ Entendido
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Configuración de Seguridad */}
+      {showSecurityModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-gray-800">🔐 Configuración de Seguridad</h2>
+                <button 
+                  onClick={() => setShowSecurityModal(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Radio Geofencing (metros)
+                    </label>
+                    <input
+                      type="number"
+                      value={seguridadConfig.radiusGeofencing}
+                      onChange={(e) => setSeguridadConfig(prev => ({...prev, radiusGeofencing: parseInt(e.target.value)}))}
+                      min="10"
+                      max="200"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Tiempo máximo por sesión (min)
+                    </label>
+                    <input
+                      type="number"
+                      value={seguridadConfig.tiempoMaximoSesion}
+                      onChange={(e) => setSeguridadConfig(prev => ({...prev, tiempoMaximoSesion: parseInt(e.target.value)}))}
+                      min="5"
+                      max="120"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Sesiones máximas por cliente
+                    </label>
+                    <input
+                      type="number"
+                      value={seguridadConfig.sesionesMaximasPorCliente}
+                      onChange={(e) => setSeguridadConfig(prev => ({...prev, sesionesMaximasPorCliente: parseInt(e.target.value)}))}
+                      min="1"
+                      max="5"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Tiempo de espera mínimo (min)
+                    </label>
+                    <input
+                      type="number"
+                      value={seguridadConfig.tiempoEsperaMinimo}
+                      onChange={(e) => setSeguridadConfig(prev => ({...prev, tiempoEsperaMinimo: parseInt(e.target.value)}))}
+                      min="0"
+                      max="60"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <h4 className="font-medium text-gray-700">Opciones de Seguridad</h4>
+                  
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">Validación por Geolocalización</span>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input 
+                        type="checkbox" 
+                        className="sr-only peer" 
+                        checked={seguridadConfig.validacionGeolocation}
+                        onChange={(e) => setSeguridadConfig(prev => ({...prev, validacionGeolocation: e.target.checked}))}
+                      />
+                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    </label>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">QR Dinámico por Mesa</span>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input 
+                        type="checkbox" 
+                        className="sr-only peer" 
+                        checked={seguridadConfig.validacionQR}
+                        onChange={(e) => setSeguridadConfig(prev => ({...prev, validacionQR: e.target.checked}))}
+                      />
+                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                    </label>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">Anti-fraude Avanzado</span>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input 
+                        type="checkbox" 
+                        className="sr-only peer" 
+                        checked={seguridadConfig.antifraudeAvanzado}
+                        onChange={(e) => setSeguridadConfig(prev => ({...prev, antifraudeAvanzado: e.target.checked}))}
+                      />
+                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-600"></div>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-3 mt-6">
+                <button 
+                  onClick={() => setShowSecurityModal(false)}
+                  className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button 
+                  onClick={() => {
+                    alert('✅ Configuración de seguridad actualizada exitosamente!');
+                    setShowSecurityModal(false);
+                  }}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  💾 Guardar Configuración
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
