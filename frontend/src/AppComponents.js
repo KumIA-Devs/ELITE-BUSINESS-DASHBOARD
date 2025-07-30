@@ -10128,5 +10128,6 @@ export default {
   ConfigurationSection,
   ClientsSection,
   ReservationsSection,
-  AIAgentsSection
+  AIAgentsSection,
+  InteligenciaCompetitiva
 };
