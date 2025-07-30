@@ -1609,8 +1609,7 @@ async def create_campaign(request: CampaignRequest, current_user: User = Depends
         return {
             "campaign_id": campaign_data["id"],
             "status": "created",
-            "message": "Campaign created successfully",
-            "campaign": campaign_data
+            "message": f"Campaign '{request.title}' created successfully"
         }
         
     except Exception as e:
