@@ -31,3 +31,7 @@ itsdangerous==2.2.0
 firebase-admin>=6.0.0
 google-cloud-firestore>=2.0.0
 google-cloud-functions>=1.0.0
+runwayml>=1.0.0
+opencv-python>=4.8.0
+pillow>=10.0.0
+base64>=1.0.0
