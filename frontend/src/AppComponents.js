@@ -32,6 +32,7 @@ export const CentroIAMarketing = () => {
   const [showCreditsModal, setShowCreditsModal] = useState(false);
   const [showABTestModal, setShowABTestModal] = useState(false);
   const [userBalance, setUserBalance] = useState(1250); // Créditos del usuario
+  const [estimatedCost, setEstimatedCost] = useState(0);
 
   // Función para descargar video
   const handleDownloadVideo = async () => {
