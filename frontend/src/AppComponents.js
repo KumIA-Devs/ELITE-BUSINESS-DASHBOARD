@@ -405,55 +405,177 @@ export const ROIViewer = () => {
             <p className="text-gray-600 text-sm">Comparativa antes/después de la activación de KumIA Stars</p>
           </div>
           <div className="flex space-x-2">
-            <button className="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm hover:bg-blue-200 transition-colors">
+            <button 
+              onClick={() => setTicketEvolutionFilter('7d')}
+              className={`px-3 py-1 rounded-lg text-sm transition-colors ${
+                ticketEvolutionFilter === '7d' 
+                ? 'bg-blue-500 text-white' 
+                : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+              }`}
+            >
               7D
             </button>
-            <button className="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-sm hover:bg-gray-200 transition-colors">
+            <button 
+              onClick={() => setTicketEvolutionFilter('30d')}
+              className={`px-3 py-1 rounded-lg text-sm transition-colors ${
+                ticketEvolutionFilter === '30d' 
+                ? 'bg-blue-500 text-white' 
+                : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+              }`}
+            >
               30D
             </button>
-            <button className="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-sm hover:bg-gray-200 transition-colors">
+            <button 
+              onClick={() => setTicketEvolutionFilter('90d')}
+              className={`px-3 py-1 rounded-lg text-sm transition-colors ${
+                ticketEvolutionFilter === '90d' 
+                ? 'bg-blue-500 text-white' 
+                : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+              }`}
+            >
               90D
             </button>
           </div>
         </div>
 
-        {/* Gráfico simulado con datos */}
-        <div className="h-64 bg-gradient-to-t from-gray-50 to-white rounded-lg p-4 mb-6">
-          <div className="flex justify-between items-end h-full">
-            {ticketEvolution.datosHistoricos.map((punto, index) => (
-              <div key={index} className="flex flex-col items-center">
-                <div 
-                  className={`w-6 rounded-t transition-all duration-500 ${
-                    punto.periodo === 'pre-kumia' ? 'bg-gray-400' : 
-                    punto.periodo === 'activacion' ? 'bg-orange-500' : 'bg-green-500'
-                  }`}
-                  style={{ height: `${(punto.ticket / 4500) * 100}%` }}
-                  title={`${punto.fecha}: $${punto.ticket.toLocaleString()}`}
-                ></div>
-                <div className="text-xs text-gray-500 mt-1 transform -rotate-45 w-8">
-                  {punto.fecha.split('-')[1]}/{punto.fecha.split('-')[2]}
-                </div>
+        {/* Gráfico de línea mejorado con datos reales */}
+        <div className="h-64 bg-gradient-to-t from-gray-50 to-white rounded-lg p-4 mb-6 relative">
+          <div className="absolute top-2 left-4 text-xs text-gray-500">
+            Ticket Promedio (CLP)
+          </div>
+          <div className="absolute bottom-2 right-4 text-xs text-gray-500">
+            Período: {ticketEvolutionFilter === '7d' ? 'Últimos 7 días' : ticketEvolutionFilter === '30d' ? 'Últimos 30 días' : 'Últimos 90 días'}
+          </div>
+          
+          {/* Línea de referencia KumIA */}
+          <div className="absolute inset-4">
+            <div className="relative h-full w-full">
+              {/* Grid de fondo */}
+              <div className="absolute inset-0 grid grid-cols-8 opacity-20">
+                {Array.from({length: 8}).map((_, i) => (
+                  <div key={i} className="border-r border-gray-300"></div>
+                ))}
               </div>
-            ))}
+              <div className="absolute inset-0 grid grid-rows-4 opacity-20">
+                {Array.from({length: 4}).map((_, i) => (
+                  <div key={i} className="border-b border-gray-300"></div>
+                ))}
+              </div>
+
+              {/* Línea de activación KumIA */}
+              {ticketEvolution.datosHistoricos.some(p => p.periodo === 'activacion') && (
+                <div 
+                  className="absolute border-l-2 border-dashed border-orange-500 h-full"
+                  style={{ 
+                    left: `${(ticketEvolution.datosHistoricos.findIndex(p => p.periodo === 'activacion') / (ticketEvolution.datosHistoricos.length - 1)) * 100}%` 
+                  }}
+                >
+                  <div className="absolute -top-6 -left-16 bg-orange-500 text-white text-xs px-2 py-1 rounded">
+                    Activación KumIA
+                  </div>
+                </div>
+              )}
+
+              {/* Línea del gráfico */}
+              <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <polyline
+                  fill="none"
+                  stroke="url(#gradient)"
+                  strokeWidth="0.5"
+                  points={ticketEvolution.datosHistoricos.map((punto, index) => {
+                    const x = (index / (ticketEvolution.datosHistoricos.length - 1)) * 100;
+                    const minTicket = Math.min(...ticketEvolution.datosHistoricos.map(p => p.ticket));
+                    const maxTicket = Math.max(...ticketEvolution.datosHistoricos.map(p => p.ticket));
+                    const y = 100 - ((punto.ticket - minTicket) / (maxTicket - minTicket)) * 80 - 10;
+                    return `${x},${y}`;
+                  }).join(' ')}
+                />
+                <defs>
+                  <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#9CA3AF" />
+                    <stop offset="50%" stopColor="#F97316" />
+                    <stop offset="100%" stopColor="#10B981" />
+                  </linearGradient>
+                </defs>
+              </svg>
+
+              {/* Puntos de datos */}
+              {ticketEvolution.datosHistoricos.map((punto, index) => {
+                const x = (index / (ticketEvolution.datosHistoricos.length - 1)) * 100;
+                const minTicket = Math.min(...ticketEvolution.datosHistoricos.map(p => p.ticket));
+                const maxTicket = Math.max(...ticketEvolution.datosHistoricos.map(p => p.ticket));
+                const y = 100 - ((punto.ticket - minTicket) / (maxTicket - minTicket)) * 80 - 10;
+                
+                return (
+                  <div
+                    key={index}
+                    className={`absolute w-3 h-3 rounded-full -translate-x-1.5 -translate-y-1.5 cursor-pointer group ${
+                      punto.periodo === 'pre-kumia' ? 'bg-gray-400' : 
+                      punto.periodo === 'activacion' ? 'bg-orange-500' : 'bg-green-500'
+                    }`}
+                    style={{ 
+                      left: `${x}%`, 
+                      top: `${y}%` 
+                    }}
+                    title={`${punto.fecha}: $${punto.ticket.toLocaleString()}`}
+                  >
+                    {/* Tooltip */}
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                      {punto.fecha.split('-').reverse().join('/')}: ${punto.ticket.toLocaleString()}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
 
+        {/* Estadísticas del período */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="text-center p-4 bg-gray-50 rounded-lg">
-            <div className="text-2xl font-bold text-gray-600">$2,633</div>
+            <div className="text-2xl font-bold text-gray-600">
+              ${Math.round(ticketEvolution.datosHistoricos.filter(p => p.periodo === 'pre-kumia').reduce((sum, p) => sum + p.ticket, 0) / ticketEvolution.datosHistoricos.filter(p => p.periodo === 'pre-kumia').length || 0).toLocaleString()}
+            </div>
             <div className="text-sm text-gray-500">Promedio Pre-KumIA</div>
-            <div className="text-xs text-gray-400 mt-1">May - Jun 15, 2024</div>
+            <div className="text-xs text-gray-400 mt-1">
+              {ticketEvolution.datosHistoricos.filter(p => p.periodo === 'pre-kumia').length} datos
+            </div>
           </div>
           <div className="text-center p-4 bg-orange-50 rounded-lg border-2 border-orange-200">
-            <div className="text-2xl font-bold text-orange-600">Jun 15</div>
+            <div className="text-2xl font-bold text-orange-600">
+              {ticketEvolution.datosHistoricos.find(p => p.periodo === 'activacion')?.fecha.split('-').reverse().join('/') || 'Jun 15'}
+            </div>
             <div className="text-sm text-orange-700">Activación KumIA</div>
             <div className="text-xs text-orange-500 mt-1">Punto de inflexión</div>
           </div>
           <div className="text-center p-4 bg-green-50 rounded-lg">
-            <div className="text-2xl font-bold text-green-600">$3,830</div>
+            <div className="text-2xl font-bold text-green-600">
+              ${Math.round(ticketEvolution.datosHistoricos.filter(p => p.periodo === 'post-kumia').reduce((sum, p) => sum + p.ticket, 0) / ticketEvolution.datosHistoricos.filter(p => p.periodo === 'post-kumia').length || 0).toLocaleString()}
+            </div>
             <div className="text-sm text-green-700">Promedio Post-KumIA</div>
             <div className="text-xs text-green-500 mt-1">
-              <span className="font-bold">+45.4%</span> incremento
+              <span className="font-bold">
+                +{(() => {
+                  const preKumia = ticketEvolution.datosHistoricos.filter(p => p.periodo === 'pre-kumia').reduce((sum, p) => sum + p.ticket, 0) / ticketEvolution.datosHistoricos.filter(p => p.periodo === 'pre-kumia').length || 1;
+                  const postKumia = ticketEvolution.datosHistoricos.filter(p => p.periodo === 'post-kumia').reduce((sum, p) => sum + p.ticket, 0) / ticketEvolution.datosHistoricos.filter(p => p.periodo === 'post-kumia').length || 0;
+                  return ((postKumia - preKumia) / preKumia * 100).toFixed(1);
+                })()}%</span> incremento
+            </div>
+          </div>
+        </div>
+
+        {/* Información adicional del filtro */}
+        <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+          <div className="flex items-center justify-between text-sm">
+            <div className="text-blue-800">
+              <strong>Período seleccionado:</strong> {
+                ticketEvolutionFilter === '7d' ? 'Últimos 7 días (3 puntos de datos)' :
+                ticketEvolutionFilter === '30d' ? 'Últimos 30 días (6 puntos de datos)' :
+                'Últimos 90 días (todos los datos históricos)'
+              }
+            </div>
+            <div className="text-blue-600">
+              {ticketEvolution.datosHistoricos.length} puntos de datos mostrados
             </div>
           </div>
         </div>
