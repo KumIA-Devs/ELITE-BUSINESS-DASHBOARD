@@ -272,9 +272,9 @@ backend:
 
   - task: "OpenAI Chat Integration"
     implemented: true
-    working: true
+    working: false
     file: "/app/backend/server.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: false
     status_history:
@@ -284,6 +284,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "✅ TESTED: OpenAI chat integration works perfectly. All 5 channels (WhatsApp, Instagram, Facebook, TikTok, General) tested with different personalities. Responses generated correctly, conversation history stored and retrieved successfully."
+      - working: false
+        agent: "testing"
+        comment: "❌ MINOR CONFIGURATION ISSUE: OpenAI chat endpoint returns 500 error due to invalid/expired API key (sk-proj-...a24A). Core functionality implemented correctly but API key needs renewal. KUMIA Gemini chat works perfectly as alternative (1334 chars response). System architecture solid, only API key configuration needed."
 
   - task: "Restaurant Configuration API"
     implemented: true
