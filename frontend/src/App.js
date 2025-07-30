@@ -7,7 +7,7 @@ import { getAnalytics } from 'firebase/analytics';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 import axios from 'axios';
 import './App.css';
-import { ROIViewer, RewardsNFTsSection, IntegrationsSection, ConfigurationSection, ClientsSection, ReservationsSection, AIAgentsSection } from './AppComponents';
+import { ROIViewer, RewardsNFTsSection, IntegrationsSection, ConfigurationSection, ClientsSection, ReservationsSection, AIAgentsSection, CentroIAMarketing, InteligenciaCompetitiva, JuegosMultijugador, GestionUserWebApp, TuFacturacionKumia } from './AppComponents';
 import { firebaseConfig, firebaseServices, offlineConfig } from './firebaseConfig';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
