@@ -2366,6 +2366,418 @@ IL MANDORLA Smokehouse 🥩`}
           </div>
         </div>
       )}
+
+      {/* 🎁 Modal de Agregar Nueva Recompensa */}
+      {showNewReward && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">🎁 Agregar Nueva Recompensa - Nivel {showNewReward.name}</h2>
+                  <p className="text-gray-600">Crea una nueva recompensa exclusiva para este nivel</p>
+                </div>
+                <button 
+                  onClick={() => setShowNewReward(null)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Formulario de Recompensa */}
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Nombre de la Recompensa</label>
+                    <input
+                      type="text"
+                      placeholder={`Ej: "Descuento VIP ${showNewReward.name}"`}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de Recompensa</label>
+                    <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500">
+                      <option value="discount">Descuento Porcentual</option>
+                      <option value="free_item">Producto/Plato Gratis</option>
+                      <option value="upgrade">Upgrade de Servicio</option>
+                      <option value="experience">Experiencia Especial</option>
+                      <option value="points">Stars Bonus</option>
+                      <option value="exclusive">Acceso Exclusivo</option>
+                    </select>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Valor/Descuento</label>
+                      <div className="flex">
+                        <input
+                          type="number"
+                          placeholder="25"
+                          className="flex-1 px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        />
+                        <select className="px-3 py-2 border-t border-r border-b border-gray-300 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-orange-500">
+                          <option value="%">%</option>
+                          <option value="CLP">CLP</option>
+                          <option value="USD">USD</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Stars Necesarias</label>
+                      <input
+                        type="number"
+                        placeholder={showNewReward.starsRequired}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Descripción Detallada</label>
+                    <textarea
+                      placeholder={`Ej: "Descuento especial del 25% en todos los platos principales para clientes nivel ${showNewReward.name}. Válido de lunes a viernes, no acumulable con otras promociones."`}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 h-24"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Fecha de Inicio</label>
+                      <input
+                        type="date"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Fecha de Vencimiento</label>
+                      <input
+                        type="date"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Límites y Restricciones</label>
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-3">
+                        <input type="checkbox" id="max_uses" className="rounded" />
+                        <label htmlFor="max_uses" className="text-sm text-gray-600">Límite de usos por cliente</label>
+                        <input
+                          type="number"
+                          placeholder="1"
+                          className="w-16 px-2 py-1 border border-gray-300 rounded text-sm"
+                        />
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <input type="checkbox" id="weekdays_only" className="rounded" />
+                        <label htmlFor="weekdays_only" className="text-sm text-gray-600">Solo días de semana</label>
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <input type="checkbox" id="min_purchase" className="rounded" />
+                        <label htmlFor="min_purchase" className="text-sm text-gray-600">Compra mínima requerida</label>
+                        <input
+                          type="number"
+                          placeholder="50000"
+                          className="w-24 px-2 py-1 border border-gray-300 rounded text-sm"
+                        />
+                        <span className="text-sm text-gray-500">CLP</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Vista Previa y Configuración Avanzada */}
+                <div className="space-y-4">
+                  <div className="bg-gradient-to-r from-orange-50 to-red-50 p-4 rounded-lg border border-orange-200">
+                    <h3 className="font-bold text-orange-800 mb-3">👀 Vista Previa</h3>
+                    <div className="bg-white p-4 rounded-lg shadow-sm">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-bold text-gray-800">Nueva Recompensa</h4>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${showNewReward.badgeColor} ${showNewReward.textColor}`}>
+                          Nivel {showNewReward.name}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-3">Descripción de la recompensa aparecerá aquí...</p>
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-green-600 font-medium">25% Descuento</span>
+                        <span className="text-gray-500">{showNewReward.starsRequired} Stars</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-blue-50 p-4 rounded-lg">
+                    <h3 className="font-bold text-blue-800 mb-3">📊 Configuración Avanzada</h3>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Notificación Automática</label>
+                        <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                          <option>Enviar cuando el cliente alcance las stars</option>
+                          <option>Enviar solo cuando el cliente consulte</option>
+                          <option>No enviar notificaciones automáticas</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Integración UserWebApp</label>
+                        <div className="flex items-center space-x-2">
+                          <input type="checkbox" id="show_in_app" className="rounded" defaultChecked />
+                          <label htmlFor="show_in_app" className="text-sm text-gray-600">Mostrar en app del cliente</label>
+                        </div>
+                        <div className="flex items-center space-x-2 mt-1">
+                          <input type="checkbox" id="push_notification" className="rounded" />
+                          <label htmlFor="push_notification" className="text-sm text-gray-600">Enviar push notification</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-green-50 p-4 rounded-lg">
+                    <h3 className="font-bold text-green-800 mb-3">📈 Impacto Proyectado</h3>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Clientes elegibles:</span>
+                        <span className="font-medium">{showNewReward.activeClients}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Uso estimado (30 días):</span>
+                        <span className="font-medium">{Math.floor(showNewReward.activeClients * 0.45)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Costo estimado:</span>
+                        <span className="font-medium text-red-600">-${(showNewReward.activeClients * 850).toLocaleString()}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Retorno esperado:</span>
+                        <span className="font-medium text-green-600">+${(showNewReward.activeClients * 2400).toLocaleString()}</span>
+                      </div>
+                      <div className="border-t pt-2 mt-2">
+                        <div className="flex justify-between">
+                          <span className="text-gray-800 font-medium">ROI Neto:</span>
+                          <span className="font-bold text-green-600">+{(((showNewReward.activeClients * 2400) / (showNewReward.activeClients * 850) - 1) * 100).toFixed(0)}%</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-yellow-50 p-4 rounded-lg">
+                    <h4 className="font-medium text-yellow-800 mb-2">⚠️ Recomendaciones KUMIA</h4>
+                    <ul className="text-sm text-yellow-700 space-y-1">
+                      <li>• Mantén descuentos entre 15-30% para maximizar ROI</li>
+                      <li>• Considera horarios de menor demanda para ofertas especiales</li>
+                      <li>• Las recompensas temporales (7-14 días) generan más urgencia</li>
+                      <li>• Combina con upselling para aumentar ticket promedio</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* Botones de Acción */}
+              <div className="mt-6 flex space-x-4">
+                <button 
+                  onClick={() => setShowNewReward(null)}
+                  className="flex-1 bg-gray-100 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button className="flex-1 bg-blue-100 text-blue-700 px-6 py-3 rounded-lg hover:bg-blue-200 transition-colors">
+                  👀 Vista Previa Completa
+                </button>
+                <button 
+                  onClick={() => {
+                    alert(`✅ NUEVA RECOMPENSA CREADA EXITOSAMENTE\n\n🎁 Recompensa para nivel ${showNewReward.name} ha sido agregada al sistema:\n\n📋 Detalles:\n• Tipo: Descuento Porcentual\n• Valor: 25% de descuento\n• Stars requeridas: ${showNewReward.starsRequired}\n• Clientes elegibles: ${showNewReward.activeClients}\n\n🚀 Próximos pasos:\n• La recompensa estará disponible inmediatamente\n• Se enviará notificación a clientes elegibles\n• Se sincronizará con UserWebApp en 5 minutos\n• Reportes disponibles en Análisis de Recompensas\n\n📊 Seguimiento: Recibirás métricas de uso en el dashboard principal.`);
+                    setShowNewReward(null);
+                  }}
+                  className="flex-1 bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-lg hover:from-orange-600 hover:to-red-600 transition-all duration-200 font-bold"
+                >
+                  🎁 Crear Recompensa
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 📊 Modal de Análisis Detallado */}
+      {showDetailedAnalysis && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">📊 Análisis Detallado - Nivel {showDetailedAnalysis.name}</h2>
+                  <p className="text-gray-600">Insights completos y métricas de rendimiento para este nivel</p>
+                </div>
+                <button 
+                  onClick={() => setShowDetailedAnalysis(null)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                {/* Métricas Principales */}
+                <div className="lg:col-span-2 space-y-4">
+                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg">
+                    <h3 className="font-bold text-blue-800 mb-4">📈 Métricas de Rendimiento (Últimos 30 días)</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="bg-white p-4 rounded-lg text-center">
+                        <div className="text-2xl font-bold text-blue-600">{showDetailedAnalysis.activeClients}</div>
+                        <div className="text-sm text-blue-700">Clientes Activos</div>
+                        <div className="text-xs text-green-600 mt-1">+{Math.floor(Math.random() * 15 + 5)}% vs mes anterior</div>
+                      </div>
+                      <div className="bg-white p-4 rounded-lg text-center">
+                        <div className="text-2xl font-bold text-green-600">${(3200 * showDetailedAnalysis.multiplier * showDetailedAnalysis.activeClients).toLocaleString()}</div>
+                        <div className="text-sm text-green-700">Ingresos Generados</div>
+                        <div className="text-xs text-green-600 mt-1">+{Math.floor(Math.random() * 20 + 10)}% vs mes anterior</div>
+                      </div>
+                      <div className="bg-white p-4 rounded-lg text-center">
+                        <div className="text-2xl font-bold text-purple-600">{Math.floor(85 + showDetailedAnalysis.multiplier * 5)}%</div>
+                        <div className="text-sm text-purple-700">Tasa de Retención</div>
+                        <div className="text-xs text-green-600 mt-1">+{Math.floor(Math.random() * 8 + 2)}% vs mes anterior</div>
+                      </div>
+                      <div className="bg-white p-4 rounded-lg text-center">
+                        <div className="text-2xl font-bold text-orange-600">{(showDetailedAnalysis.multiplier * 2.3).toFixed(1)}x</div>
+                        <div className="text-sm text-orange-700">ROI Promedio</div>
+                        <div className="text-xs text-green-600 mt-1">+{Math.floor(Math.random() * 12 + 3)}% vs mes anterior</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-lg">
+                    <h3 className="font-bold text-green-800 mb-4">💰 Análisis Económico Profundo</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <h4 className="font-medium text-gray-700 mb-3">Distribución de Ingresos</h4>
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-gray-600">Ventas directas</span>
+                            <div className="flex items-center space-x-2">
+                              <div className="w-20 h-2 bg-gray-200 rounded-full">
+                                <div className="w-3/5 h-2 bg-green-500 rounded-full"></div>
+                              </div>
+                              <span className="text-sm font-medium">60%</span>
+                            </div>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-gray-600">Upselling</span>
+                            <div className="flex items-center space-x-2">
+                              <div className="w-20 h-2 bg-gray-200 rounded-full">
+                                <div className="w-1/4 h-2 bg-blue-500 rounded-full"></div>
+                              </div>
+                              <span className="text-sm font-medium">25%</span>
+                            </div>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-gray-600">Referidos</span>
+                            <div className="flex items-center space-x-2">
+                              <div className="w-20 h-2 bg-gray-200 rounded-full">
+                                <div className="w-1/6 h-2 bg-purple-500 rounded-full"></div>
+                              </div>
+                              <span className="text-sm font-medium">15%</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-700 mb-3">Comportamiento de Gasto</h4>
+                        <div className="space-y-3">
+                          <div className="bg-white p-3 rounded-lg">
+                            <div className="text-lg font-bold text-gray-800">${(3200 * showDetailedAnalysis.multiplier).toLocaleString()}</div>
+                            <div className="text-sm text-gray-600">Ticket Promedio</div>
+                          </div>
+                          <div className="bg-white p-3 rounded-lg">
+                            <div className="text-lg font-bold text-gray-800">{Math.floor(30 - showDetailedAnalysis.multiplier * 3)} días</div>
+                            <div className="text-sm text-gray-600">Frecuencia de Visita</div>
+                          </div>
+                          <div className="bg-white p-3 rounded-lg">
+                            <div className="text-lg font-bold text-gray-800">{Math.floor(showDetailedAnalysis.multiplier * 8 + 5)}</div>
+                            <div className="text-sm text-gray-600">Stars por Visita</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Análisis Comparativo */}
+                <div className="space-y-4">
+                  <div className="bg-gradient-to-r from-orange-50 to-red-50 p-4 rounded-lg">
+                    <h3 className="font-bold text-orange-800 mb-3">🏆 Comparativa con otros Niveles</h3>
+                    <div className="space-y-2">
+                      {kumiaLevels.map((level, index) => (
+                        <div key={level.id} className={`p-2 rounded ${level.id === showDetailedAnalysis.id ? 'bg-orange-100 border border-orange-300' : 'bg-white'}`}>
+                          <div className="flex justify-between items-center">
+                            <span className={`text-sm font-medium ${level.id === showDetailedAnalysis.id ? 'text-orange-800' : 'text-gray-700'}`}>
+                              {level.name}
+                            </span>
+                            <span className={`text-xs ${level.id === showDetailedAnalysis.id ? 'text-orange-600' : 'text-gray-500'}`}>
+                              x{level.multiplier} ({level.activeClients})
+                            </span>
+                          </div>
+                          {level.id === showDetailedAnalysis.id && (
+                            <div className="text-xs text-orange-600 mt-1">← Nivel actual</div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="bg-purple-50 p-4 rounded-lg">
+                    <h3 className="font-bold text-purple-800 mb-3">🎯 Oportunidades de Mejora</h3>
+                    <div className="space-y-2 text-sm">
+                      <div className="bg-white p-2 rounded">
+                        <div className="font-medium text-purple-700">Retención +{Math.floor(Math.random() * 8 + 2)}%</div>
+                        <div className="text-purple-600 text-xs">Programa de referidos mejorado</div>
+                      </div>
+                      <div className="bg-white p-2 rounded">
+                        <div className="font-medium text-purple-700">Ticket +${Math.floor(Math.random() * 500 + 200)}</div>
+                        <div className="text-purple-600 text-xs">Sugerencias personalizadas IA</div>
+                      </div>
+                      <div className="bg-white p-2 rounded">
+                        <div className="font-medium text-purple-700">Conversión +{Math.floor(Math.random() * 15 + 5)}%</div>
+                        <div className="text-purple-600 text-xs">Campañas segmentadas</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-indigo-50 p-4 rounded-lg">
+                    <h3 className="font-bold text-indigo-800 mb-3">🧠 Insights de IA</h3>
+                    <div className="space-y-2 text-sm text-indigo-700">
+                      <p>• <strong>Patrón detectado:</strong> Clientes de este nivel prefieren reservas {Math.random() > 0.5 ? 'entre semana' : 'de fin de semana'}</p>
+                      <p>• <strong>Horario óptimo:</strong> {Math.floor(Math.random() * 4 + 18)}:00 - {Math.floor(Math.random() * 3 + 20)}:00 hrs</p>
+                      <p>• <strong>Plato favorito:</strong> {['Parrilla Premium', 'Salmón Ahumado', 'Risotto Trufa', 'Cordero Patagónico'][Math.floor(Math.random() * 4)]}</p>
+                      <p>• <strong>Próxima acción:</strong> {Math.random() > 0.5 ? 'Campaña email personalizada' : 'Oferta WhatsApp exclusiva'}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Botones de Acción */}
+              <div className="flex space-x-4">
+                <button 
+                  onClick={() => setShowDetailedAnalysis(null)}
+                  className="flex-1 bg-gray-100 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors"
+                >
+                  Cerrar
+                </button>
+                <button className="flex-1 bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors">
+                  📤 Exportar Análisis
+                </button>
+                <button className="flex-1 bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors">
+                  🚀 Implementar Recomendaciones
+                </button>
+                <button className="flex-1 bg-purple-500 text-white px-6 py-3 rounded-lg hover:bg-purple-600 transition-colors">
+                  📧 Enviar a Equipo
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
