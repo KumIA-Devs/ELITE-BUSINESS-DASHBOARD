@@ -475,7 +475,7 @@ export const ROIViewer = () => {
         </div>
 
         {/* Gráfico de línea mejorado con datos reales */}
-        <div className="h-64 bg-gradient-to-t from-gray-50 to-white rounded-lg p-4 mb-6 relative">
+        <div className="h-64 bg-gradient-to-t from-gray-50 to-white rounded-lg p-4 mb-6 relative overflow-hidden">
           <div className="absolute top-2 left-4 text-xs text-gray-500">
             Ticket Promedio (CLP)
           </div>
@@ -483,82 +483,24 @@ export const ROIViewer = () => {
             Período: {ticketEvolutionFilter === '7d' ? 'Últimos 7 días' : ticketEvolutionFilter === '30d' ? 'Últimos 30 días' : 'Últimos 90 días'}
           </div>
           
-          {/* Línea de referencia KumIA */}
-          <div className="absolute inset-4">
-            <div className="relative h-full w-full">
-              {/* Grid de fondo */}
-              <div className="absolute inset-0 grid grid-cols-8 opacity-20">
-                {Array.from({length: 8}).map((_, i) => (
-                  <div key={i} className="border-r border-gray-300"></div>
-                ))}
-              </div>
-              <div className="absolute inset-0 grid grid-rows-4 opacity-20">
-                {Array.from({length: 4}).map((_, i) => (
-                  <div key={i} className="border-b border-gray-300"></div>
-                ))}
-              </div>
-
-              {/* Línea de activación KumIA */}
-              {ticketEvolution.datosHistoricos.some(p => p.periodo === 'activacion') && (
-                <div 
-                  className="absolute border-l-2 border-dashed border-orange-500 h-full"
-                  style={{ 
-                    left: `${(ticketEvolution.datosHistoricos.findIndex(p => p.periodo === 'activacion') / (ticketEvolution.datosHistoricos.length - 1)) * 100}%` 
-                  }}
-                >
-                  <div className="absolute -top-6 -left-16 bg-orange-500 text-white text-xs px-2 py-1 rounded">
-                    Activación KumIA
-                  </div>
-                </div>
-              )}
-
-              {/* Línea del gráfico */}
-              <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                <polyline
-                  fill="none"
-                  stroke="url(#gradient)"
-                  strokeWidth="0.5"
-                  points={ticketEvolution.datosHistoricos.map((punto, index) => {
-                    const x = (index / (ticketEvolution.datosHistoricos.length - 1)) * 100;
-                    const minTicket = Math.min(...ticketEvolution.datosHistoricos.map(p => p.ticket));
-                    const maxTicket = Math.max(...ticketEvolution.datosHistoricos.map(p => p.ticket));
-                    const y = 100 - ((punto.ticket - minTicket) / (maxTicket - minTicket)) * 80 - 10;
-                    return `${x},${y}`;
-                  }).join(' ')}
-                />
-                <defs>
-                  <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#9CA3AF" />
-                    <stop offset="50%" stopColor="#F97316" />
-                    <stop offset="100%" stopColor="#10B981" />
-                  </linearGradient>
-                </defs>
-              </svg>
-
-              {/* Puntos de datos interactivos */}
-              {ticketEvolution.datosHistoricos.map((punto, index) => {
-                const x = (index / (ticketEvolution.datosHistoricos.length - 1)) * 100;
-                const minTicket = Math.min(...ticketEvolution.datosHistoricos.map(p => p.ticket));
-                const maxTicket = Math.max(...ticketEvolution.datosHistoricos.map(p => p.ticket));
-                // Asegurar que y esté en el rango correcto
-                const normalizedY = ((punto.ticket - minTicket) / (maxTicket - minTicket)) * 80 + 10;
-                const y = 100 - normalizedY;
-                
-                return (
-                  <div
-                    key={index}
-                    className={`absolute w-4 h-4 rounded-full -translate-x-2 -translate-y-2 cursor-pointer group border-2 border-white shadow-lg transition-all duration-200 hover:scale-125 ${
-                      punto.periodo === 'pre-kumia' ? 'bg-gray-400 hover:bg-gray-500' : 
+          {/* Contenedor del gráfico */}
+          <div className="absolute inset-4 flex justify-between items-end" style={{ height: 'calc(100% - 2rem)' }}>
+            {ticketEvolution.datosHistoricos.map((punto, index) => {
+              const height = ((punto.ticket - Math.min(...ticketEvolution.datosHistoricos.map(p => p.ticket))) / 
+                            (Math.max(...ticketEvolution.datosHistoricos.map(p => p.ticket)) - Math.min(...ticketEvolution.datosHistoricos.map(p => p.ticket)))) * 80 + 10;
+              
+              return (
+                <div key={index} className="flex flex-col items-center group relative">
+                  {/* Punto interactivo */}
+                  <div 
+                    className={`w-4 h-4 rounded-full cursor-pointer transition-all duration-200 hover:scale-150 z-10 border-2 border-white shadow-lg ${
+                      punto.periodo === 'pre-kumia' ? 'bg-gray-500 hover:bg-gray-600' : 
                       punto.periodo === 'activacion' ? 'bg-orange-500 hover:bg-orange-600' : 'bg-green-500 hover:bg-green-600'
                     }`}
-                    style={{ 
-                      left: `${x}%`, 
-                      top: `${y}%`,
-                      zIndex: 10
-                    }}
+                    style={{ marginBottom: `${height}%` }}
                   >
-                    {/* Tooltip mejorado */}
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 shadow-xl">
+                    {/* Tooltip */}
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 shadow-xl pointer-events-none">
                       <div className="font-bold">{punto.fecha.split('-').reverse().join('/')}</div>
                       <div className="text-gray-300">${punto.ticket.toLocaleString()} CLP</div>
                       <div className={`text-xs ${
@@ -568,13 +510,32 @@ export const ROIViewer = () => {
                         {punto.periodo === 'pre-kumia' ? 'Pre-KumIA' : 
                          punto.periodo === 'activacion' ? 'Activación' : 'Post-KumIA'}
                       </div>
-                      {/* Flecha del tooltip */}
                       <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
                     </div>
                   </div>
-                );
-              })}
-            </div>
+                  
+                  {/* Línea de conexión */}
+                  {index < ticketEvolution.datosHistoricos.length - 1 && (
+                    <div 
+                      className={`absolute w-full h-0.5 ${
+                        punto.periodo === 'pre-kumia' ? 'bg-gray-400' : 'bg-green-400'
+                      }`}
+                      style={{ 
+                        top: `${100 - height - 2}%`,
+                        left: '50%',
+                        right: '-50%',
+                        zIndex: 1
+                      }}
+                    ></div>
+                  )}
+                  
+                  {/* Etiqueta de fecha */}
+                  <div className="text-xs text-gray-500 mt-2 transform -rotate-45 origin-center">
+                    {punto.fecha.split('-')[1]}/{punto.fecha.split('-')[2]}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
