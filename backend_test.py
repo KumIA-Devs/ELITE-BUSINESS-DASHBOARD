@@ -1003,7 +1003,70 @@ class BackendTester:
         
         return False
 
-    def run_focused_tests(self):
+    def run_content_factory_tests(self):
+        """Run the specific Content Factory tests requested by the user"""
+        print("🎯 Starting Content Factory Backend API Tests")
+        print("=" * 60)
+        print(f"Backend URL: {self.base_url}")
+        print("Testing Content Factory endpoints as requested:")
+        print("1. Authentication verification - login with admin@ilmandorla.com/admin123")
+        print("2. Video generation endpoint - POST /api/content-factory/video/generate")
+        print("3. Image generation endpoint - POST /api/content-factory/image/generate")
+        print("4. Cost estimation endpoint - POST /api/content-factory/cost-estimate")
+        print("5. Campaign creation - POST /api/marketing/campaigns")
+        print("=" * 60)
+        
+        # 1. Authentication verification
+        auth_success = self.test_legacy_login()
+        
+        # 2. Video generation endpoint (requires auth)
+        video_success = False
+        if auth_success:
+            video_success = self.test_content_factory_video_generation()
+        
+        # 3. Image generation endpoint (requires auth)
+        image_success = False
+        if auth_success:
+            image_success = self.test_content_factory_image_generation()
+        
+        # 4. Cost estimation endpoint (requires auth)
+        cost_success = False
+        if auth_success:
+            cost_success = self.test_content_factory_cost_estimate()
+        
+        # 5. Campaign creation endpoint (requires auth)
+        campaign_success = False
+        if auth_success:
+            campaign_success = self.test_marketing_campaigns()
+        
+        # Print Content Factory summary
+        print("=" * 60)
+        print("📋 CONTENT FACTORY TEST SUMMARY")
+        print("=" * 60)
+        
+        tests = [
+            ("Authentication Verification", auth_success),
+            ("Video Generation Endpoint", video_success),
+            ("Image Generation Endpoint", image_success),
+            ("Cost Estimation Endpoint", cost_success),
+            ("Campaign Creation Endpoint", campaign_success)
+        ]
+        
+        passed = sum(1 for _, success in tests if success)
+        total = len(tests)
+        
+        for test_name, success in tests:
+            status = "✅" if success else "❌"
+            print(f"{status} {test_name}")
+        
+        print(f"\nResults: {passed}/{total} Content Factory tests passed")
+        
+        if passed == total:
+            print("🎉 All Content Factory tests passed!")
+            return True
+        else:
+            print("⚠️  Some Content Factory tests failed - check details above")
+            return False
         """Run the specific tests requested by the user"""
         print("🎯 Starting Focused Backend API Tests")
         print("=" * 60)
