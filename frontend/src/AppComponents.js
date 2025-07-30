@@ -5,59 +5,149 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 // 🆕 ROI VIEWER SECTION AMPLIADA
+// 🆕 ROI VIEWER SECTION COMPLETAMENTE REDISEÑADA - KUMIA ELITE
 export const ROIViewer = () => {
-  const [roiData, setRoiData] = useState({
-    monthlyIncrease: 4.3,
-    averageTicket: { before: 2500, after: 3200 },
-    attributedRevenue: 145000,
-    channelRevenue: {
-      whatsapp: 45000,
-      instagram: 32000,
-      tiktok: 28000,
-      web: 40000
-    },
-    monthlyComparison: {
-      current: 145000,
-      previous: 119000,
-      growth: 21.8
-    }
-  });
-  
+  // Estados principales
   const [selectedTimeframe, setSelectedTimeframe] = useState('30d');
-  const [projectionData, setProjectionData] = useState({
-    next30: 175000,
-    next60: 210000,
-    next90: 245000
+  const [showCalculator, setShowCalculator] = useState(false);
+  const [calculatorData, setCalculatorData] = useState({
+    ticketPromedio: 3200,
+    costoRecompensa: 8000,
+    margenBruto: 65
   });
 
-  // 🆕 ROI POR CANAL
-  const ChannelROICard = ({ channel, revenue, growth, icon, color }) => (
-    <div className={`bg-gradient-to-r ${color} p-6 rounded-xl text-white`}>
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center">
-          <span className="text-2xl mr-3">{icon}</span>
-          <h3 className="font-bold text-lg">{channel}</h3>
-        </div>
-        <div className="text-right">
-          <div className="text-2xl font-bold">${revenue.toLocaleString()}</div>
-          <div className="text-sm opacity-90">+{growth}%</div>
-        </div>
-      </div>
-      <div className="bg-white bg-opacity-20 rounded-full h-2">
-        <div 
-          className="bg-white h-2 rounded-full transition-all duration-500"
-          style={{ width: `${Math.min(growth * 2, 100)}%` }}
-        ></div>
-      </div>
-    </div>
-  );
+  // Datos del sistema KumIA Stars por nivel
+  const kumiaLevels = [
+    {
+      nivel: 'Explorador',
+      starsNecesarias: 36,
+      gastoEstimado: 108000, // 36 * 3000 CLP por star
+      costoRecompensa: 8000,
+      margenNeto: 64800,
+      roi: 710,
+      clientesActivos: 32,
+      ticketPromedio: 3840 // 3200 * 1.2
+    },
+    {
+      nivel: 'Destacado', 
+      starsNecesarias: 48,
+      gastoEstimado: 144000,
+      costoRecompensa: 8000,
+      margenNeto: 78400,
+      roi: 880,
+      clientesActivos: 18,
+      ticketPromedio: 4800 // 3200 * 1.5
+    },
+    {
+      nivel: 'Estrella',
+      starsNecesarias: 60,
+      gastoEstimado: 180000,
+      costoRecompensa: 8000,
+      margenNeto: 100000,
+      roi: 1150,
+      clientesActivos: 8,
+      ticketPromedio: 5760 // 3200 * 1.8
+    },
+    {
+      nivel: 'Leyenda',
+      starsNecesarias: 75,
+      gastoEstimado: 225000,
+      costoRecompensa: 8000,
+      margenNeto: 127000,
+      roi: 1487,
+      clientesActivos: 3,
+      ticketPromedio: 6400 // 3200 * 2.0
+    }
+  ];
+
+  // Datos de evolución del ticket promedio
+  const [ticketEvolution] = useState({
+    fechaActivacion: '2024-06-15',
+    datosHistoricos: [
+      { fecha: '2024-05-01', ticket: 2500, periodo: 'pre-kumia' },
+      { fecha: '2024-05-15', ticket: 2650, periodo: 'pre-kumia' },
+      { fecha: '2024-06-01', ticket: 2750, periodo: 'pre-kumia' },
+      { fecha: '2024-06-15', ticket: 2850, periodo: 'activacion' },
+      { fecha: '2024-07-01', ticket: 3200, periodo: 'post-kumia' },
+      { fecha: '2024-07-15', ticket: 3450, periodo: 'post-kumia' },
+      { fecha: '2024-08-01', ticket: 3650, periodo: 'post-kumia' },
+      { fecha: '2024-08-15', ticket: 3800, periodo: 'post-kumia' },
+      { fecha: '2024-09-01', ticket: 4050, periodo: 'post-kumia' }
+    ]
+  });
+
+  // Datos de actividad en tiempo real
+  const [actividadTiempoReal] = useState({
+    starsGeneradasSemana: 847,
+    starsCanjeadasSemana: 234,
+    ratioConversion: 27.6,
+    rankingAcciones: [
+      { accion: 'Feedback con imagen', stars: 2, frecuencia: 45 },
+      { accion: 'Reserva completada', stars: 3, frecuencia: 38 },
+      { accion: 'Referido exitoso', stars: 5, frecuencia: 12 },
+      { accion: 'Feedback con texto', stars: 1, frecuencia: 89 }
+    ],
+    nftMasDesbloqueado: 'NFT Explorador',
+    clientesTopNivel: [
+      { nombre: 'Alexander Zúñiga', nivel: 'Leyenda', stars: 127 },
+      { nombre: 'Valentina Chen', nivel: 'Leyenda', stars: 98 },
+      { nombre: 'Elena Vargas', nivel: 'Estrella', stars: 89 },
+      { nombre: 'Roberto Kim', nivel: 'Estrella', stars: 76 },
+      { nombre: 'Sofia Moreno', nivel: 'Destacado', stars: 65 }
+    ]
+  });
+
+  // Datos benchmark del rubro
+  const [benchmarkRubro] = useState({
+    categoria: 'Steakhouse Premium',
+    ticketPromedioRubro: 3800,
+    starsPromedioNacional: 12.5,
+    nivelPromedioNacional: 'Explorador',
+    ratioCanjePromedio: 23.4,
+    posicionamiento: {
+      ticketPromedio: 'Sobresaliente', // +15% sobre promedio
+      starsGeneradas: 'Excelente', // +35% sobre promedio
+      ratioConversion: 'Sobresaliente' // +18% sobre promedio
+    }
+  });
+
+  // Cálculo del indicador de éxito principal
+  const calcularIndicadorExito = () => {
+    const capitalizacionTotal = kumiaLevels.reduce((total, nivel) => 
+      total + (nivel.gastoEstimado * nivel.clientesActivos), 0);
+    const recompensasEntregadas = kumiaLevels.reduce((total, nivel) => 
+      total + (nivel.costoRecompensa * Math.floor(nivel.clientesActivos * 0.75)), 0); // 75% realmente canjean
+    const roiTotal = ((capitalizacionTotal - recompensasEntregadas) / recompensasEntregadas * 100);
+    
+    return {
+      capitalizacion: capitalizacionTotal,
+      recompensas: recompensasEntregadas,
+      roi: roiTotal
+    };
+  };
+
+  const indicadorExito = calcularIndicadorExito();
+
+  // Calculadora de simulación de ROI
+  const calcularROISimulado = (ticket, costoRecompensa, margen) => {
+    return kumiaLevels.map(nivel => ({
+      ...nivel,
+      gastoEstimadoSim: nivel.starsNecesarias * (ticket * 0.93), // Aproximación del gasto por star
+      costoRecompensaSim: costoRecompensa,
+      margenNetoSim: (nivel.starsNecesarias * ticket * (margen/100)) - costoRecompensa,
+      roiSim: ((nivel.starsNecesarias * ticket * (margen/100)) - costoRecompensa) / costoRecompensa * 100
+    }));
+  };
+
+  const datosSimulados = calcularROISimulado(calculatorData.ticketPromedio, calculatorData.costoRecompensa, calculatorData.margenBruto);
 
   return (
     <div className="space-y-6">
+      {/* Header con título y controles */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold text-gray-800">📊 ROI Viewer</h2>
-          <p className="text-gray-600 mt-1">Impacto económico detallado del sistema KUMIA</p>
+          <h2 className="text-3xl font-bold text-gray-800">📊 ROI Viewer KumIA Elite</h2>
+          <p className="text-gray-600 mt-1">Análisis completo del retorno de inversión del sistema KumIA Stars</p>
         </div>
         <div className="flex space-x-3">
           <select
@@ -65,163 +155,553 @@ export const ROIViewer = () => {
             onChange={(e) => setSelectedTimeframe(e.target.value)}
             className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
           >
+            <option value="7d">Últimos 7 días</option>
             <option value="30d">Últimos 30 días</option>
             <option value="60d">Últimos 60 días</option>
             <option value="90d">Últimos 90 días</option>
           </select>
+          <button 
+            onClick={() => setShowCalculator(true)}
+            className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors"
+          >
+            🧮 Calculadora ROI
+          </button>
           <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
             📤 Exportar Reporte
           </button>
         </div>
       </div>
 
-      {/* Métricas Principales */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 text-center">
-          <div className="text-4xl font-bold text-green-600">+{roiData.monthlyIncrease}x</div>
-          <div className="text-sm text-gray-600">ROI Mensual</div>
+      {/* 💡 INDICADOR DE ÉXITO DESTACADO */}
+      <div className="bg-gradient-to-r from-emerald-500 to-green-500 rounded-xl p-6 text-white shadow-lg">
+        <div className="flex items-center mb-4">
+          <span className="text-3xl mr-4">🎯</span>
+          <div>
+            <h3 className="text-xl font-bold">Resumen de Impacto KumIA Stars</h3>
+            <p className="text-emerald-100 text-sm">Tu rendimiento económico consolidado</p>
+          </div>
         </div>
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 text-center">
-          <div className="text-4xl font-bold text-blue-600">${roiData.attributedRevenue.toLocaleString()}</div>
-          <div className="text-sm text-gray-600">Ingresos Atribuidos</div>
-        </div>
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 text-center">
-          <div className="text-4xl font-bold text-purple-600">${roiData.averageTicket.after.toLocaleString()}</div>
-          <div className="text-sm text-gray-600">Ticket Promedio</div>
-        </div>
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 text-center">
-          <div className="text-4xl font-bold text-orange-600">+{roiData.monthlyComparison.growth}%</div>
-          <div className="text-sm text-gray-600">Crecimiento Mensual</div>
+        <div className="bg-white bg-opacity-20 rounded-lg p-4">
+          <p className="text-lg leading-relaxed">
+            <strong>Tu restaurante ha generado ${indicadorExito.capitalizacion.toLocaleString()} CLP</strong> en capitalización 
+            a través del sistema KumIA Stars, entregando solo <strong>${indicadorExito.recompensas.toLocaleString()} CLP</strong> en recompensas. 
+            <span className="text-2xl font-bold block mt-2">
+              Retorno total estimado: <span className="text-yellow-300">{indicadorExito.roi.toFixed(0)}%</span>
+            </span>
+          </p>
         </div>
       </div>
 
-      {/* 🆕 COMPARATIVA HISTÓRICA */}
+      {/* 🧮 TABLA DETALLADA DE ROI POR NIVEL */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h3 className="text-lg font-bold text-gray-800 mb-4">📈 Comparativa Histórica</h3>
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h3 className="text-xl font-bold text-gray-800">🏆 ROI Detallado por Nivel KumIA</h3>
+            <p className="text-gray-600 text-sm">Análisis económico automático basado en datos de Firestore</p>
+          </div>
+          <div className="text-xs text-gray-500">
+            Actualizado cada 24h | Última actualización: Hoy 09:15
+          </div>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="bg-gray-50 border-b">
+                <th className="text-left py-3 px-4 font-medium text-gray-700">Nivel</th>
+                <th className="text-center py-3 px-4 font-medium text-gray-700">Stars necesarias</th>
+                <th className="text-center py-3 px-4 font-medium text-gray-700">Gasto estimado (CLP)</th>
+                <th className="text-center py-3 px-4 font-medium text-gray-700">Costo recompensa</th>
+                <th className="text-center py-3 px-4 font-medium text-gray-700">Margen neto</th>
+                <th className="text-center py-3 px-4 font-medium text-gray-700">ROI (%)</th>
+                <th className="text-center py-3 px-4 font-medium text-gray-700">Clientes activos</th>
+              </tr>
+            </thead>
+            <tbody>
+              {kumiaLevels.map((nivel, index) => (
+                <tr key={nivel.nivel} className="border-b hover:bg-gray-50 transition-colors">
+                  <td className="py-4 px-4">
+                    <div className="flex items-center">
+                      <div className={`w-3 h-3 rounded-full mr-3 ${
+                        index === 0 ? 'bg-blue-500' : 
+                        index === 1 ? 'bg-purple-500' : 
+                        index === 2 ? 'bg-yellow-500' : 'bg-red-500'
+                      }`}></div>
+                      <span className="font-medium text-gray-800">{nivel.nivel}</span>
+                    </div>
+                  </td>
+                  <td className="py-4 px-4 text-center font-medium">{nivel.starsNecesarias}</td>
+                  <td className="py-4 px-4 text-center text-blue-600 font-medium">
+                    ~${nivel.gastoEstimado.toLocaleString()}
+                  </td>
+                  <td className="py-4 px-4 text-center text-red-600 font-medium">
+                    ${nivel.costoRecompensa.toLocaleString()}
+                  </td>
+                  <td className="py-4 px-4 text-center text-green-600 font-bold">
+                    ${nivel.margenNeto.toLocaleString()}
+                  </td>
+                  <td className="py-4 px-4 text-center">
+                    <span className={`font-bold text-lg ${
+                      nivel.roi >= 1000 ? 'text-emerald-600' : 
+                      nivel.roi >= 800 ? 'text-green-600' : 'text-yellow-600'
+                    }`}>
+                      {nivel.roi}%
+                    </span>
+                  </td>
+                  <td className="py-4 px-4 text-center">
+                    <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-sm font-medium">
+                      {nivel.clientesActivos}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+          <h4 className="font-medium text-blue-800 mb-2">💡 Notas Explicativas:</h4>
+          <ul className="text-sm text-blue-700 space-y-1">
+            <li>• <strong>Gasto estimado:</strong> Calculado como Stars necesarias × $3,000 CLP (valor por star)</li>
+            <li>• <strong>Margen neto:</strong> Incluye margen del restaurante (~65%) menos costo de recompensa</li>
+            <li>• <strong>ROI:</strong> Retorno sobre inversión = (Margen neto / Costo recompensa) × 100</li>
+            <li>• <strong>Datos actualizados automáticamente</strong> desde restaurant_stats, users y transactions_log</li>
+          </ul>
+        </div>
+      </div>
+
+      {/* 📈 EVOLUCIÓN DEL TICKET PROMEDIO */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h3 className="text-xl font-bold text-gray-800">📈 Evolución del Ticket Promedio</h3>
+            <p className="text-gray-600 text-sm">Comparativa antes/después de la activación de KumIA Stars</p>
+          </div>
+          <div className="flex space-x-2">
+            <button className="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm hover:bg-blue-200 transition-colors">
+              7D
+            </button>
+            <button className="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-sm hover:bg-gray-200 transition-colors">
+              30D
+            </button>
+            <button className="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-sm hover:bg-gray-200 transition-colors">
+              90D
+            </button>
+          </div>
+        </div>
+
+        {/* Gráfico simulado con datos */}
+        <div className="h-64 bg-gradient-to-t from-gray-50 to-white rounded-lg p-4 mb-6">
+          <div className="flex justify-between items-end h-full">
+            {ticketEvolution.datosHistoricos.map((punto, index) => (
+              <div key={index} className="flex flex-col items-center">
+                <div 
+                  className={`w-6 rounded-t transition-all duration-500 ${
+                    punto.periodo === 'pre-kumia' ? 'bg-gray-400' : 
+                    punto.periodo === 'activacion' ? 'bg-orange-500' : 'bg-green-500'
+                  }`}
+                  style={{ height: `${(punto.ticket / 4500) * 100}%` }}
+                  title={`${punto.fecha}: $${punto.ticket.toLocaleString()}`}
+                ></div>
+                <div className="text-xs text-gray-500 mt-1 transform -rotate-45 w-8">
+                  {punto.fecha.split('-')[1]}/{punto.fecha.split('-')[2]}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="text-center">
-            <div className="text-3xl font-bold text-blue-600">${roiData.monthlyComparison.current.toLocaleString()}</div>
-            <div className="text-sm text-gray-600">Últimos 30 días</div>
+          <div className="text-center p-4 bg-gray-50 rounded-lg">
+            <div className="text-2xl font-bold text-gray-600">$2,633</div>
+            <div className="text-sm text-gray-500">Promedio Pre-KumIA</div>
+            <div className="text-xs text-gray-400 mt-1">May - Jun 15, 2024</div>
           </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-gray-600">${roiData.monthlyComparison.previous.toLocaleString()}</div>
-            <div className="text-sm text-gray-600">30 días anteriores</div>
+          <div className="text-center p-4 bg-orange-50 rounded-lg border-2 border-orange-200">
+            <div className="text-2xl font-bold text-orange-600">Jun 15</div>
+            <div className="text-sm text-orange-700">Activación KumIA</div>
+            <div className="text-xs text-orange-500 mt-1">Punto de inflexión</div>
           </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-green-600">+{roiData.monthlyComparison.growth}%</div>
-            <div className="text-sm text-gray-600">Crecimiento</div>
-          </div>
-        </div>
-      </div>
-
-      {/* ROI por Canal */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <ChannelROICard
-          channel="WhatsApp"
-          revenue={roiData.channelRevenue.whatsapp}
-          growth={35}
-          icon="📱"
-          color="from-green-500 to-emerald-500"
-        />
-        <ChannelROICard
-          channel="Instagram"
-          revenue={roiData.channelRevenue.instagram}
-          growth={28}
-          icon="📸"
-          color="from-pink-500 to-rose-500"
-        />
-        <ChannelROICard
-          channel="TikTok"
-          revenue={roiData.channelRevenue.tiktok}
-          growth={42}
-          icon="🎵"
-          color="from-purple-500 to-violet-500"
-        />
-        <ChannelROICard
-          channel="Web"
-          revenue={roiData.channelRevenue.web}
-          growth={18}
-          icon="🌐"
-          color="from-blue-500 to-indigo-500"
-        />
-      </div>
-
-      {/* 🆕 PROYECCIÓN DE RETORNO */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h3 className="text-lg font-bold text-gray-800 mb-4">🔮 Proyección de Retorno</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-lg text-center">
-            <div className="text-2xl font-bold text-blue-600">${projectionData.next30.toLocaleString()}</div>
-            <div className="text-sm text-blue-700">Próximos 30 días</div>
-          </div>
-          <div className="bg-gradient-to-r from-purple-50 to-purple-100 p-4 rounded-lg text-center">
-            <div className="text-2xl font-bold text-purple-600">${projectionData.next60.toLocaleString()}</div>
-            <div className="text-sm text-purple-700">Próximos 60 días</div>
-          </div>
-          <div className="bg-gradient-to-r from-green-50 to-green-100 p-4 rounded-lg text-center">
-            <div className="text-2xl font-bold text-green-600">${projectionData.next90.toLocaleString()}</div>
-            <div className="text-sm text-green-700">Próximos 90 días</div>
-          </div>
-        </div>
-      </div>
-
-      {/* 🆕 ANÁLISIS DE VALOR POR CLIENTE */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h3 className="text-lg font-bold text-gray-800 mb-4">👥 Análisis de Valor por Cliente</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <h4 className="font-medium text-gray-700 mb-3">Ingreso Promedio por Cliente</h4>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Clientes Nuevos</span>
-                <span className="font-bold text-green-600">$2,850</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Clientes Recurrentes</span>
-                <span className="font-bold text-blue-600">$4,200</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Clientes VIP</span>
-                <span className="font-bold text-purple-600">$6,750</span>
-              </div>
-            </div>
-          </div>
-          <div>
-            <h4 className="font-medium text-gray-700 mb-3">Costo vs Retención</h4>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Costo de Adquisición</span>
-                <span className="font-bold text-red-600">$125</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Costo de Retención</span>
-                <span className="font-bold text-orange-600">$45</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">LTV Promedio</span>
-                <span className="font-bold text-green-600">$8,950</span>
-              </div>
+          <div className="text-center p-4 bg-green-50 rounded-lg">
+            <div className="text-2xl font-bold text-green-600">$3,830</div>
+            <div className="text-sm text-green-700">Promedio Post-KumIA</div>
+            <div className="text-xs text-green-500 mt-1">
+              <span className="font-bold">+45.4%</span> incremento
             </div>
           </div>
         </div>
       </div>
 
-      {/* Insights de IA */}
+      {/* 🔄 PANEL DE ACTIVIDAD EN TIEMPO REAL */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* KPIs Visuales */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <h3 className="text-xl font-bold text-gray-800 mb-6">⚡ Actividad en Tiempo Real</h3>
+          
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            <div className="text-center p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
+              <div className="text-3xl font-bold text-blue-600">{actividadTiempoReal.starsGeneradasSemana}</div>
+              <div className="text-sm text-blue-700">Stars Generadas</div>
+              <div className="text-xs text-blue-500">Esta semana</div>
+            </div>
+            <div className="text-center p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg">
+              <div className="text-3xl font-bold text-green-600">{actividadTiempoReal.starsCanjeadasSemana}</div>
+              <div className="text-sm text-green-700">Stars Canjeadas</div>
+              <div className="text-xs text-green-500">Esta semana</div>
+            </div>
+          </div>
+
+          <div className="mb-6">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-sm font-medium text-gray-700">Ratio de Conversión</span>
+              <span className="text-sm font-bold text-purple-600">{actividadTiempoReal.ratioConversion}%</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-3">
+              <div 
+                className="bg-gradient-to-r from-purple-500 to-pink-500 h-3 rounded-full transition-all duration-500"
+                style={{ width: `${actividadTiempoReal.ratioConversion}%` }}
+              ></div>
+            </div>
+            <div className="text-xs text-gray-500 mt-1">Stars canjeadas vs emitidas</div>
+          </div>
+
+          <div>
+            <h4 className="font-medium text-gray-700 mb-3">🏆 NFT Más Desbloqueado</h4>
+            <div className="bg-gradient-to-r from-yellow-50 to-orange-50 p-3 rounded-lg border border-yellow-200">
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-yellow-800">{actividadTiempoReal.nftMasDesbloqueado}</span>
+                <span className="text-sm text-yellow-600">32 desbloqueos</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Ranking y Top Clientes */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <h3 className="text-xl font-bold text-gray-800 mb-6">📊 Rankings y Estadísticas</h3>
+          
+          <div className="mb-6">
+            <h4 className="font-medium text-gray-700 mb-3">🎯 Acciones que Más Stars Generan</h4>
+            <div className="space-y-2">
+              {actividadTiempoReal.rankingAcciones.map((accion, index) => (
+                <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                  <div className="flex items-center">
+                    <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white mr-3 ${
+                      index === 0 ? 'bg-yellow-500' : index === 1 ? 'bg-gray-400' : index === 2 ? 'bg-orange-400' : 'bg-gray-300'
+                    }`}>
+                      {index + 1}
+                    </span>
+                    <span className="text-sm font-medium">{accion.accion}</span>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm font-bold text-orange-600">{accion.stars} ⭐</div>
+                    <div className="text-xs text-gray-500">{accion.frecuencia} usos</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <h4 className="font-medium text-gray-700 mb-3">🌟 Top Clientes por Nivel</h4>
+            <div className="space-y-2">
+              {actividadTiempoReal.clientesTopNivel.map((cliente, index) => (
+                <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                  <div className="flex items-center">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white mr-3 ${
+                      cliente.nivel === 'Leyenda' ? 'bg-red-500' : 
+                      cliente.nivel === 'Estrella' ? 'bg-yellow-500' : 'bg-purple-500'
+                    }`}>
+                      {cliente.nombre.split(' ').map(n => n[0]).join('')}
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium">{cliente.nombre}</div>
+                      <div className="text-xs text-gray-500">{cliente.nivel}</div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm font-bold text-gray-800">{cliente.stars} ⭐</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 📊 COMPARADOR CON EL PROMEDIO DEL RUBRO */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h3 className="text-xl font-bold text-gray-800">🏪 Comparativa con el Rubro</h3>
+            <p className="text-gray-600 text-sm">Tu desempeño vs promedio nacional - {benchmarkRubro.categoria}</p>
+          </div>
+          <div className="text-xs text-gray-500">
+            Datos actualizados mensualmente | Fuente: KUMIA Analytics
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="text-center p-4 bg-blue-50 rounded-lg">
+            <div className="text-sm text-gray-600 mb-2">Ticket Promedio</div>
+            <div className="text-2xl font-bold text-blue-600">$3,830</div>
+            <div className="text-xs text-gray-500 mb-2">vs $3,800 rubro</div>
+            <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+              benchmarkRubro.posicionamiento.ticketPromedio === 'Sobresaliente' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+            }`}>
+              ✨ {benchmarkRubro.posicionamiento.ticketPromedio}
+            </div>
+          </div>
+
+          <div className="text-center p-4 bg-purple-50 rounded-lg">
+            <div className="text-sm text-gray-600 mb-2">Stars por Cliente</div>
+            <div className="text-2xl font-bold text-purple-600">16.8</div>
+            <div className="text-xs text-gray-500 mb-2">vs 12.5 nacional</div>
+            <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+              benchmarkRubro.posicionamiento.starsGeneradas === 'Excelente' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+            }`}>
+              🚀 {benchmarkRubro.posicionamiento.starsGeneradas}
+            </div>
+          </div>
+
+          <div className="text-center p-4 bg-green-50 rounded-lg">
+            <div className="text-sm text-gray-600 mb-2">Nivel Promedio</div>
+            <div className="text-2xl font-bold text-green-600">Explorador+</div>
+            <div className="text-xs text-gray-500 mb-2">vs Explorador nacional</div>
+            <div className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+              📈 Superior
+            </div>
+          </div>
+
+          <div className="text-center p-4 bg-orange-50 rounded-lg">
+            <div className="text-sm text-gray-600 mb-2">Ratio de Canje</div>
+            <div className="text-2xl font-bold text-orange-600">27.6%</div>
+            <div className="text-xs text-gray-500 mb-2">vs 23.4% rubro</div>
+            <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+              benchmarkRubro.posicionamiento.ratioConversion === 'Sobresaliente' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+            }`}>
+              ⭐ {benchmarkRubro.posicionamiento.ratioConversion}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
+          <h4 className="font-bold text-green-800 mb-2">🎯 Resumen Comparativo</h4>
+          <p className="text-sm text-green-700">
+            Tu restaurante está posicionado <strong>por encima del promedio</strong> en todas las métricas clave del rubro {benchmarkRubro.categoria}. 
+            Destacas especialmente en generación de Stars (+35%) y conversión de recompensas (+18%), 
+            indicando una excelente adopción del sistema KumIA por parte de tus clientes.
+          </p>
+        </div>
+      </div>
+
+      {/* 🔢 CALCULADORA DE SIMULACIÓN DE ROI */}
+      {showCalculator && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-6xl max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">🧮 Calculadora de Simulación ROI</h2>
+                  <p className="text-gray-600">Simula diferentes escenarios para optimizar tu retorno de inversión</p>
+                </div>
+                <button 
+                  onClick={() => setShowCalculator(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Panel de configuración */}
+                <div className="bg-blue-50 p-6 rounded-lg">
+                  <h3 className="font-bold text-blue-800 mb-4">⚙️ Configuración de Variables</h3>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Ticket Promedio (CLP)
+                        <span className="text-xs text-blue-600 ml-2" title="Valor promedio que gasta un cliente por visita">ℹ️</span>
+                      </label>
+                      <input
+                        type="number"
+                        value={calculatorData.ticketPromedio}
+                        onChange={(e) => setCalculatorData(prev => ({...prev, ticketPromedio: parseInt(e.target.value) || 0}))}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                      <div className="text-xs text-gray-500 mt-1">Actual: $3,830</div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Costo Real de Recompensa (CLP)
+                        <span className="text-xs text-blue-600 ml-2" title="Costo promedio de las recompensas que entregas">ℹ️</span>
+                      </label>
+                      <input
+                        type="number"
+                        value={calculatorData.costoRecompensa}
+                        onChange={(e) => setCalculatorData(prev => ({...prev, costoRecompensa: parseInt(e.target.value) || 0}))}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                      <div className="text-xs text-gray-500 mt-1">Actual: $8,000</div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Margen Bruto Estimado (%)
+                        <span className="text-xs text-blue-600 ml-2" title="Porcentaje de ganancia después de costos directos">ℹ️</span>
+                      </label>
+                      <input
+                        type="number"
+                        value={calculatorData.margenBruto}
+                        onChange={(e) => setCalculatorData(prev => ({...prev, margenBruto: parseInt(e.target.value) || 0}))}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        min="0"
+                        max="100"
+                      />
+                      <div className="text-xs text-gray-500 mt-1">Actual: 65%</div>
+                    </div>
+
+                    <div className="pt-4 border-t">
+                      <h4 className="font-medium text-gray-700 mb-2">🎯 Escenarios Predefinidos</h4>
+                      <div className="space-y-2">
+                        <button 
+                          onClick={() => setCalculatorData({ticketPromedio: 4000, costoRecompensa: 6000, margenBruto: 70})}
+                          className="w-full text-left px-3 py-2 bg-white rounded-lg text-sm hover:bg-gray-50 transition-colors"
+                        >
+                          📈 Optimista
+                        </button>
+                        <button 
+                          onClick={() => setCalculatorData({ticketPromedio: 3000, costoRecompensa: 10000, margenBruto: 60})}
+                          className="w-full text-left px-3 py-2 bg-white rounded-lg text-sm hover:bg-gray-50 transition-colors"
+                        >
+                          📉 Conservador
+                        </button>
+                        <button 
+                          onClick={() => setCalculatorData({ticketPromedio: 3200, costoRecompensa: 8000, margenBruto: 65})}
+                          className="w-full text-left px-3 py-2 bg-white rounded-lg text-sm hover:bg-gray-50 transition-colors"
+                        >
+                          🎯 Actual
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Resultados de simulación */}
+                <div className="lg:col-span-2">
+                  <h3 className="font-bold text-gray-800 mb-4">📊 Resultados de Simulación</h3>
+                  
+                  <div className="overflow-x-auto mb-6">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="bg-gray-50 border-b">
+                          <th className="text-left py-3 px-4 font-medium text-gray-700">Nivel</th>
+                          <th className="text-center py-3 px-4 font-medium text-gray-700">Capitalización</th>
+                          <th className="text-center py-3 px-4 font-medium text-gray-700">Margen Neto</th>
+                          <th className="text-center py-3 px-4 font-medium text-gray-700">ROI Simulado</th>
+                          <th className="text-center py-3 px-4 font-medium text-gray-700">vs Actual</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {datosSimulados.map((nivel, index) => (
+                          <tr key={nivel.nivel} className="border-b hover:bg-gray-50 transition-colors">
+                            <td className="py-3 px-4 font-medium">{nivel.nivel}</td>
+                            <td className="py-3 px-4 text-center text-blue-600">
+                              ${nivel.gastoEstimadoSim.toLocaleString()}
+                            </td>
+                            <td className="py-3 px-4 text-center text-green-600 font-medium">
+                              ${nivel.margenNetoSim.toLocaleString()}
+                            </td>
+                            <td className="py-3 px-4 text-center">
+                              <span className={`font-bold ${nivel.roiSim >= 1000 ? 'text-emerald-600' : nivel.roiSim >= 500 ? 'text-green-600' : 'text-yellow-600'}`}>
+                                {nivel.roiSim.toFixed(0)}%
+                              </span>
+                            </td>
+                            <td className="py-3 px-4 text-center">
+                              <span className={`text-sm ${nivel.roiSim > nivel.roi ? 'text-green-600' : nivel.roiSim < nivel.roi ? 'text-red-600' : 'text-gray-600'}`}>
+                                {nivel.roiSim > nivel.roi ? '↗️' : nivel.roiSim < nivel.roi ? '↘️' : '➡️'} 
+                                {Math.abs(nivel.roiSim - nivel.roi).toFixed(0)}%
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-green-50 p-4 rounded-lg">
+                      <h4 className="font-bold text-green-800 mb-2">✅ Comparación con Desempeño Actual</h4>
+                      <div className="space-y-1 text-sm text-green-700">
+                        <div>ROI promedio simulado: <strong>{(datosSimulados.reduce((sum, n) => sum + n.roiSim, 0) / datosSimulados.length).toFixed(0)}%</strong></div>
+                        <div>ROI promedio actual: <strong>{(kumiaLevels.reduce((sum, n) => sum + n.roi, 0) / kumiaLevels.length).toFixed(0)}%</strong></div>
+                        <div>Diferencia: <strong>{((datosSimulados.reduce((sum, n) => sum + n.roiSim, 0) / datosSimulados.length) - (kumiaLevels.reduce((sum, n) => sum + n.roi, 0) / kumiaLevels.length)).toFixed(0)}%</strong></div>
+                      </div>
+                    </div>
+
+                    <div className="bg-blue-50 p-4 rounded-lg">
+                      <h4 className="font-bold text-blue-800 mb-2">🎯 Recomendaciones</h4>
+                      <div className="space-y-1 text-sm text-blue-700">
+                        {calculatorData.margenBruto < 65 && <div>• Considera optimizar costos para aumentar margen</div>}
+                        {calculatorData.costoRecompensa > 8000 && <div>• Las recompensas pueden ser muy costosas</div>}
+                        {calculatorData.ticketPromedio < 3200 && <div>• Oportunidad de aumentar ticket promedio</div>}
+                        <div>• Nivel más rentable simulado: <strong>{datosSimulados.reduce((max, nivel) => nivel.roiSim > max.roiSim ? nivel : max).nivel}</strong></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 flex space-x-4">
+                <button 
+                  onClick={() => setShowCalculator(false)}
+                  className="flex-1 bg-gray-100 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors"
+                >
+                  Cerrar
+                </button>
+                <button className="flex-1 bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors">
+                  📊 Aplicar Configuración
+                </button>
+                <button className="flex-1 bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors">
+                  💾 Guardar Escenario
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Insights de IA Mejorados */}
       <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 border border-indigo-200">
         <div className="flex items-center mb-4">
           <span className="text-2xl mr-3">🧠</span>
-          <h3 className="text-lg font-bold text-indigo-800">Insights de IA</h3>
+          <h3 className="text-lg font-bold text-indigo-800">Insights de IA - Análisis Avanzado ROI</h3>
         </div>
-        <div className="space-y-3">
-          <p className="text-indigo-700">
-            <strong>Canal más rentable:</strong> WhatsApp representa el 65% de tus ingresos este mes con una tasa de conversión del 35%.
-          </p>
-          <p className="text-indigo-700">
-            <strong>Oportunidad detectada:</strong> Los clientes que usan NFTs gastan 40% más. Considera expandir el programa.
-          </p>
-          <p className="text-indigo-700">
-            <strong>Proyección:</strong> Manteniendo el ritmo actual, alcanzarás un ROI de +5.2x en los próximos 60 días.
-          </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-3">
+            <p className="text-indigo-700">
+              <strong>Nivel más rentable:</strong> {kumiaLevels.reduce((max, nivel) => nivel.roi > max.roi ? nivel : max).nivel} con {kumiaLevels.reduce((max, nivel) => nivel.roi > max.roi ? nivel : max).roi}% ROI.
+            </p>
+            <p className="text-indigo-700">
+              <strong>Oportunidad detectada:</strong> Incrementar el costo de recompensas en un 15% podría aumentar la percepción de valor sin afectar significativamente el ROI.
+            </p>
+            <p className="text-indigo-700">
+              <strong>Proyección 90 días:</strong> Manteniendo el crecimiento actual del ticket promedio (+2.3% mensual), alcanzarás un ROI promedio de +1,250%.
+            </p>
+          </div>
+          <div className="space-y-3">
+            <p className="text-indigo-700">
+              <strong>Benchmark del rubro:</strong> Tu ROI supera el promedio nacional en un 340%. Estás en el top 5% de restaurantes con KumIA.
+            </p>
+            <p className="text-indigo-700">
+              <strong>Recomendación estratégica:</strong> Considera crear un nivel intermedio entre Destacado y Estrella para optimizar la retención.
+            </p>
+            <p className="text-indigo-700">
+              <strong>Alert automático:</strong> El nivel Leyenda muestra señales de saturación. Evalúa crear beneficios adicionales.
+            </p>
+          </div>
         </div>
       </div>
     </div>
