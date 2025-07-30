@@ -1,20 +1,29 @@
 <analysis>
-The AI engineer successfully transitioned the IL MANDORLA application, initially from MVP to Super App, by refining existing modules and implementing new features. A significant portion of the work involved enhancing the Agentes IA section with specialized AI agents and integrating an in-dashboard Gemini chat. The engineer also evolved the Integraciones section to include a comprehensive ERP integration with detailed synchronization options and improved UI/UX. The development process was highly iterative, driven by extensive user feedback. Recently, the focus shifted to a complete overhaul of the Recompensas section, implementing a detailed KumIA Stars Multilevel system with tiered levels, metrics, administrative functions, and a complex Star logic. This involved numerous frontend UI/UX enhancements and bug fixes, including dynamic charts and professional modals, as well as initial backend considerations. The latest iterations primarily addressed user-reported bugs and UI/UX refinements in both the Dashboard and Rewards sections.
+The AI engineer's work trajectory demonstrates a systematic approach to evolving the IL MANDORLA application from an MVP to a Super App and then integrating significant new functionalities. The initial phase focused on refining existing modules, particularly Agentes IA and Integraciones, alongside a major overhaul of the Recompensas section to implement the KumIA Stars Multilevel system. This involved extensive UI/UX enhancements, bug fixes, and backend considerations. A key challenge was resolving scope-related JavaScript errors in React components. Following the successful completion of the Recompensas section and extensive bug fixes in the ROI Viewer dashboard (which consumed significant budget), the focus shifted to a highly ambitious expansion. The current work involves adding five new, complex modules to the KumIA Dashboard, covering AI Marketing, Competitive Intelligence, Multiplayer Games, User Web App Management, and Financial Billing. The engineer is diligently adding new React components for these modules, preparing for their integration into the main dashboard navigation.
 </analysis>
 
 <product_requirements>
-The IL MANDORLA Smokehouse dashboard, part of the KUMIA ELITE system, aims to centralize restaurant operations. Core features include secure Google OAuth2, real-time metrics, comprehensive Menu, Reservations, Feedback, Rewards/NFTs, Client/Wallet management, and AI agent training, all with a mobile-first UI. The Super App vision extends this to a consumer-facing UserApp with AI-powered customer service, Google Reviews integration, multiplayer games, and MercadoPago. A key component is a 100% AI marketing agency with specialized AI agents. An in-dashboard Gemini chat for business intelligence is crucial.
+The IL MANDORLA Smokehouse dashboard, part of the KUMIA ELITE system, aims to centralize restaurant operations with features like secure Google OAuth2, real-time metrics, Menu, Reservations, Feedback, Rewards/NFTs, Client/Wallet management, and AI agent training, emphasizing a mobile-first UI. The Super App vision extends to a consumer-facing UserApp with AI customer service, Google Reviews integration, multiplayer games, and MercadoPago. A 100% AI marketing agency with specialized agents and an in-dashboard Gemini chat for business intelligence are crucial.
 
-The Recompensas section overhaul requires displaying a tiered KumIA Stars Multilevel system (Descubridor, Explorador, Destacado, Estrella, Leyenda) with associated Stars, Multipliers, and unique NFTs. It must show aggregated metrics (Total Stars, Rewards Redeemed, Most Frequent Level, NFT most unlocked, Active Referrals) and explain the underlying logic (Star generation from feedback, reservations, referrals; multiplier application; level/NFT unlocks; non-loss of level on redemption). Administrative functionality is needed to view/export clients by level/NFT, analyze frequent actions, activate/deactivate reward types, and add Recompensas Especiales. The design should be sober, digital, and progressive, aligning with KumIA branding. A detailed Star value and redemption logic, with a 60-day redemption limit and level-up resets, is specified.
+The Recompensas section was overhauled to display a tiered KumIA Stars Multilevel system (Descubridor to Leyenda) with associated Stars, Multipliers, and NFTs. It requires aggregated metrics, star generation logic (feedback, reservations, referrals), and administrative functions (view/export clients, analyze actions, manage reward types, add Recompensas Especiales). The design must be sober, digital, and progressive.
+
+Recently, the ROI Viewer section received a complete redesign to provide clear, comparative, and actionable economic performance data for administrators. This includes a detailed ROI per level table (derived from Firestore data), average ticket evolution charts, real-time activity panels (Stars generated, conversion ratios, action rankings, NFTs, top clients), industry benchmark comparisons, a summary success indicator, and an interactive ROI simulation calculator.
+
+The latest, most significant expansion involves adding five new hierarchical modules to the Dashboard:
+1.  **AI Marketing Center:** For automated campaigns, intelligent segmentation, push notifications, A/B testing, and AI-powered video generation (Google Veo, RunwayML, Pika Labs).
+2.  **Competitive Intelligence:** Benchmark comparisons, regional trends, competitor review scanning, and strategic recommendations.
+3.  **Multiplayer Games:** Dashboard panel for activating and managing real-time, table-specific games for customers (single, pair, group player types) with both symbolic (KumiSmile) and real (KumIA) Star rewards. Features secure activation (QR/code+geolocation), session logic, and fraud detection.
+4.  **User Web App Management:** Visual editor for the customer-facing WebApp (logo, colors, welcome message, rewards visibility), real-time previews, client wallet visualization, and AI-driven content.
+5.  **KumIA Billing:** Monthly module summaries, electronic invoicing, payment history, dynamic ROI simulator, and plan updates.
 </product_requirements>
 
 <key_technical_concepts>
 -   **Full-Stack Development**: React (Frontend), FastAPI (Backend), MongoDB (Database).
--   **AI/LLM Integration**: Google Gemini API.
+-   **AI/LLM Integration**: Google Gemini API, Google Veo, RunwayML API, Pika Labs.
 -   **Authentication**: Google OAuth2, Firebase Authentication, JWT.
--   **Database**: Firestore (for KumIA Stars system: users, nft_metadata, actions_log, restaurant_stats, transactions_log).
--   **Cloud Functions**: Firebase Functions (onActionCompleted, onLevelUp, onStarRedemption, onCalculateRestaurantROI).
--   **UI/UX**: Mobile-First Design, Tailwind CSS, Dynamic Charts (e.g., for growth).
+-   **Database**: Firestore (for KumIA Stars, ROI, and new modules: users, nft_metadata, actions_log, restaurant_stats, transactions_log, game_sessions, webapp_config, rubro_metrics, marketing_ai_campaigns).
+-   **Cloud Functions**: Firebase Functions (e.g., onActionCompleted, onLevelUp).
+-   **UI/UX**: Mobile-First Design, Tailwind CSS, Dynamic Charts, Professional Modals.
 -   **Third-Party Integrations**: Meta Business Suite, Google My Business API, WhatsApp Business API.
 </key_technical_concepts>
 
@@ -22,62 +31,50 @@ The Recompensas section overhaul requires displaying a tiered KumIA Stars Multil
 
 
 -   ****:
-    -   **Importance**: The central FastAPI application managing API routes and business logic.
-    -   **Changes Made**: Integrated Google Gemini API for KUMIA Business Intelligence chat. Inferred new endpoints will be added for the KumIA Stars system.
+    -   **Importance**: The central FastAPI application managing API routes and business logic. It handles data fetching and updates for the various dashboard sections.
+    -   **Changes Made**: Integrated Google Gemini API for KUMIA Business Intelligence chat. New endpoints are inferred to have been added or will be added to support the KumIA Stars system, ROI Viewer data, and the newly requested modules (AI Marketing, Competitive Intelligence, Games, WebApp Config, Billing).
 -   ****:
     -   **Importance**: Stores environment variables for backend services, including API keys.
-    -   **Changes Made**:  added. Expected to hold Firebase/Google Cloud credentials for KumIA Stars backend.
+    -   **Changes Made**:  was added. Expected to hold Firebase/Google Cloud credentials for KumIA Stars backend, and potentially API keys for new AI integrations (Google Veo, RunwayML, Pika Labs).
 -   ****:
-    -   **Importance**: Main React application file, likely holding core routes, state management, and overall layout.
-    -   **Changes Made**: The Dashboard section ( and its sub-components like ) was heavily refactored. Impacto generado por Kumia esta semana section moved below main cards. Expandir Kumia button made functional, opening a professional modal with expansion analysis.  updated to display a real line chart with interactive points and detailed metrics.
+    -   **Importance**: Main React application file, holding core routes, state management, and overall layout of the KumIA Dashboard. It orchestrates which section is displayed based on navigation.
+    -   **Changes Made**: The Dashboard section ( and ) was heavily refactored. Impacto generado por Kumia esta semana section moved below main cards. Expandir Kumia button made functional with a professional modal.  was updated to display a real line chart. This file is currently being updated to include the new navigation links and render the new components (CentroIAMarketing, InteligenciaCompetitiva, JuegosMultijugador, GestionUserWebApp, TuFacturacionKumIA) under their respective routes/sections.
 -   ****:
-    -   **Importance**: Contains the majority of the React components, including sections for AI Agents, Integrations, and now the overhauled Rewards/NFTs.
+    -   **Importance**: Contains the majority of the React components, including sections for AI Agents, Integrations, Rewards/NFTs, and the ROI Viewer. This file is the primary recipient of new UI component implementations.
     -   **Changes Made**:
-        -   ****: Completely refactored to implement the KumIA Stars Multilevel system. Includes:
-            -   Tiered level cards (Descubridor, Explorador, etc.) with Stars, Multipliers, NFTs (placeholders, with new upload functionality).
-            -   Aggregate metrics at the top.
-            -   Section for KumIA Stars logic explanation.
-            -   Administrative functionality with working buttons:
-                -   Análisis Completo and Configurar Sistema now open professional modals.
-                -   Ver Clientes on cards opens a professional client list modal with search, filters, and export/email campaign buttons (currently mock data).
-                -   Configurar on cards opens a professional level configuration modal.
-                -   Exportar Clientes por Nivel offers multi-format export (export quality still pending optimization).
-                -   Análisis de acciones por Nivel opens a professional analytics modal.
-                -   Recompensas Especiales has an improved interface for creating promotions (activation/preview buttons still pending connection).
-            -   Star generation configuration expanded to include games, payment platform usage, and purchase amount, with detailed explanations.
-            -   Professional modals for Email and WhatsApp campaign setup were added.
-        -   **AI Agents Section ()**: Previously updated to replace generic assistants, implement modals for action buttons, reorganize layout, and update chat to Gemini.
-        -   **Integrations Section ()**: Previously updated for comprehensive ERP integration, removal of OpenAI, inclusion of visual logos, and synchronization options.
+        -   ****: Completely refactored for the KumIA Stars Multilevel system. Tiered level cards, aggregate metrics, star logic explanation, and administrative functions (e.g., Análisis Completo, Configurar Sistema, Ver Clientes, Configurar level cards, Exportar Clientes por Nivel, Análisis de acciones por Nivel, Recompensas Especiales) were implemented, opening professional modals. Crucially, missing  handlers for + Agregar nueva recompensa and Ver Análisis detallado buttons were added, alongside their respective professional modals. A critical fix involved moving the  function's scope to be accessible within .
+        -   ****: The entire component was completely redesigned and replaced to meet the new ROI Viewer requirements (detailed table, average ticket evolution chart, real-time activity panel, competitor benchmark, success indicator, simulation calculator). Subsequent significant bug fixes addressed non-functional filters (timeframe, chart filters), a non-working Exportar Reporte button, and a non-rendering/non-interactive line chart for Evolución del ticket promedio, including adding  import.
+        -   **New Modules**: Five new components have been added: , , , , and , each encapsulating the UI and logic for their respective sections as per the detailed specifications.
 -   ****:
-    -   **Importance**: Documents testing protocols, user problem statements, and communication.
-    -   **Changes Made**: Updated to reflect successful backend tests for KumIA Stars system and numerous frontend functional confirmations for both Dashboard and Rewards sections.
+    -   **Importance**: Documents testing protocols, user problem statements, and communication. It serves as a continuous log of work status and bug reports.
+    -   **Changes Made**: Regularly updated to reflect successful backend and frontend tests for the KumIA Stars system, Dashboard, and ROI Viewer sections. It also documented the ongoing bug fixes for the ROI Viewer and the commencement of the new module implementations.
 </code_architecture>
 
 <pending_tasks>
 -   Full integration of WhatsApp Business API (currently mocked for campaigns).
--   Implementation of multiplayer games for customers (backend/frontend).
 -   MercadoPago integration for in-app payment processing.
--   Full AI Content Factory and Predictive Business Intelligence.
--   Competitive intelligence monitoring from public sources.
+-   Full AI Content Factory and Predictive Business Intelligence (beyond initial modules).
+-   Competitive intelligence monitoring from public sources (backend scrapers/models).
 -   Deployment of UserWebApp.
--   Website updates (Partners section with logos, Integrations landing page, Cost calculator, Testimonials).
+-   Website updates (Partners section, Integrations landing page, Cost calculator, Testimonials).
 -   Connect Activate Promotion and Preview buttons in Recompensas Especiales section.
 -   Optimize quality of exported data formats (Excel, CSV, PDF) for Exportar Clientes por Nivel.
 -   Connect email/WhatsApp campaign functionality to AI agents.
 </pending_tasks>
 
 <current_work>
-Immediately prior to this summary, the AI engineer was focused on addressing a new round of user feedback and bug fixes for the recently implemented Recompensas section and the main Dashboard.
+Immediately prior to this summary, the AI engineer successfully completed a high-priority task of overhauling and thoroughly debugging the ROI Viewer section of the Dashboard. This involved implementing a complex new design with a detailed ROI table, average ticket evolution chart, real-time activity panel, industry comparison, success indicator, and an interactive simulation calculator. Critical bug fixes were applied to ensure all filters (e.g., 7 dias, 30 dias, 60 dias, 90 dias), the Exportar Reporte button, and the interactive elements of the Evolución del ticket promedio chart (including data rendering and line display) are fully functional. The engineer declared the ROI Viewer section entirely resolved and production-ready.
 
-For the **Dashboard**:
-The layout was reorganized, specifically moving the Impacto generado por Kumia esta semana section below the main metrics cards. The Expandir Kumia button, which was duplicated and non-functional, has been fixed; it now opens a professional modal detailing expansion analysis, steps, and investment plans. The Crecimiento semanal de ingresos section, previously lacking a proper visual, was enhanced with a professional line growth chart displaying real data and interactive points.
+Following this, the AI engineer received a new, extensive set of product requirements for PROMPT MAESTRO – NUEVAS SECCIONES DEL DASHBOARD KUMIA + USERWEBAPP GAMIFICADA. The current work involves the initial implementation phase for these five new dashboard modules. The engineer has begun by creating the React components for each of these modules in :
+-    (Module 1)
+-    (Module 2)
+-    (Module 3)
+-    (Module 4)
+-    (Module 5)
 
-For the **Recompensas section**:
-The Ver Clientes and Configurar buttons on the level cards, which the user reported as still not professionally functional or editable, were updated to open comprehensive, professional modals. The Ver Clientes modal now displays a detailed client list with search/filter capabilities, and export/email campaign buttons. The Configurar modal provides a full editing interface for level management. The Feedback con video option was restored in the Configuración de Generación de Stars. The Análisis de acción por Nivel button was fixed to open a professional analytics dashboard. Additionally, new modals for Email and WhatsApp campaign setup were added, triggered by their respective buttons within the Ver Clientes modal.
-
-The last action taken was implementing improvements for the + Agregar nueva recompensa and Ver Análisis detallado buttons within the Configurar modal of the Rewards section.
+Each component has been added with placeholder UI elements and initial structure as per the user's detailed functional requirements. The engineer is currently in the process of integrating these newly created components into the main dashboard navigation within , which is the immediate next step. The  module, in particular, is noted for its complexity due to the integrated security and gamification logic.
 </current_work>
 
 <optional_next_step>
-I will continue implementing the improvements for the + Agregar nueva recompensa and Ver Análisis detallado buttons in the Recompensas section.
+Update the main dashboard navigation in  to include the 5 new modules that have been added.
 </optional_next_step>
