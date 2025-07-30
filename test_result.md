@@ -732,11 +732,9 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Enhanced Image Generation with New Content Types"
-    - "Segmentation Campaign Functionality"
+    - "OpenAI Chat Integration"
   stuck_tasks:
-    - "Enhanced Image Generation with New Content Types"
-    - "Segmentation Campaign Functionality"
+    - "OpenAI Chat Integration"
   test_all: false
   test_priority: "high_first"
 
