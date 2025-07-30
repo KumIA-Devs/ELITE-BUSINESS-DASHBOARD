@@ -28,7 +28,70 @@ export const CentroIAMarketing = () => {
   const [generatedContent, setGeneratedContent] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [previewContent, setPreviewContent] = useState(null);
-  const [estimatedCost, setEstimatedCost] = useState(0);
+  const [showPublishModal, setShowPublishModal] = useState(false);
+  const [showCreditsModal, setShowCreditsModal] = useState(false);
+  const [showABTestModal, setShowABTestModal] = useState(false);
+  const [userBalance, setUserBalance] = useState(1250); // Créditos del usuario
+
+  // Función para descargar video
+  const handleDownloadVideo = async () => {
+    try {
+      if (generatedContent && generatedContent.url) {
+        const link = document.createElement('a');
+        link.href = `${process.env.REACT_APP_BACKEND_URL}${generatedContent.url}`;
+        link.download = `kumia-video-${Date.now()}.mp4`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    } catch (error) {
+      console.error('Error downloading video:', error);
+      alert('❌ Error al descargar el video. Intenta nuevamente.');
+    }
+  };
+
+  // Función para manejar compra de créditos
+  const handleBuyCredits = (amount) => {
+    // Simular compra de créditos
+    setUserBalance(prev => prev + amount);
+    setShowCreditsModal(false);
+    alert(`✅ ¡Compra exitosa! Agregados ${amount} créditos a tu cuenta.`);
+  };
+
+  // Función para crear campaña
+  const handleCreateCampaign = async (campaignData) => {
+    try {
+      const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${BACKEND_URL}/api/marketing/campaigns`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(campaignData)
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      alert(`✅ Campaña "${campaignData.title}" creada exitosamente!`);
+      setShowCampaignModal(false);
+      
+    } catch (error) {
+      console.error('Error creating campaign:', error);
+      alert('❌ Error al crear la campaña. Intenta nuevamente.');
+    }
+  };
+
+  // Función para desactivar campaña
+  const handleDeactivateCampaign = (campaign) => {
+    setCampaignsAI(prev => prev.map(c => 
+      c.id === campaign.id ? { ...c, active: false } : c
+    ));
+    alert(`🔴 Campaña "${campaign.title}" desactivada exitosamente.`);
+  };
 
   // Campañas sugeridas por IA
   const [campaignsAI, setCampaignsAI] = useState([
