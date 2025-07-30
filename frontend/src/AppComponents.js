@@ -453,15 +453,15 @@ export const CentroIAMarketing = () => {
               </div>
               <div className="flex space-x-2">
                 <button 
-                  onClick={() => handleActivateCampaign(campaign)}
-                  disabled={campaign.active}
+                  onClick={() => campaign.active ? handleDeactivateCampaign(campaign) : handleActivateCampaign(campaign)}
+                  disabled={false}
                   className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
                     campaign.active 
-                      ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                      ? 'bg-red-500 text-white hover:bg-red-600'
                       : 'bg-gray-800 text-white hover:bg-gray-900'
                   }`}
                 >
-                  {campaign.active ? '✅ Activada' : '🚀 Activar Campaña'}
+                  {campaign.active ? '🔴 Desactivar' : '🚀 Activar Campaña'}
                 </button>
                 <button 
                   onClick={() => setShowEditCampaign(campaign)}
