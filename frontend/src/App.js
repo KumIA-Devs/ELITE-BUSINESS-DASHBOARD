@@ -2871,12 +2871,22 @@ const Dashboard = () => {
         return <ReservationsSection />;
       case 'ai-agents':
         return <AIAgentsSection />;
+      case 'centro-ia-marketing':
+        return <CentroIAMarketing />;
+      case 'inteligencia-competitiva':
+        return <InteligenciaCompetitiva />;
+      case 'juegos-multijugador':
+        return <JuegosMultijugador />;
+      case 'gestion-user-webapp':
+        return <GestionUserWebApp />;
       case 'rewards':
         return <RewardsNFTsSection />;
       case 'roi-viewer':
         return <ROIViewer />;
       case 'integrations':
         return <IntegrationsSection />;
+      case 'tu-facturacion-kumia':
+        return <TuFacturacionKumia />;
       case 'settings':
         return <ConfigurationSection />;
       default:
