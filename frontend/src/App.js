@@ -2846,9 +2846,14 @@ const Dashboard = () => {
     { id: 'feedback', label: 'Feedback', icon: '💬', badge: '12' },
     { id: 'reservations', label: 'Reservas', icon: '📅', badge: '5' },
     { id: 'ai-agents', label: 'Agentes IA', icon: '🤖', badge: '4' },
+    { id: 'centro-ia-marketing', label: 'Centro IA Marketing', icon: '🧩', badge: 'AI' },
+    { id: 'inteligencia-competitiva', label: 'Inteligencia Competitiva', icon: '🧠', badge: 'INTEL' },
+    { id: 'juegos-multijugador', label: 'Juegos Multijugador', icon: '🎮', badge: '47' },
+    { id: 'gestion-user-webapp', label: 'Gestión User WebApp', icon: '📱', badge: 'LIVE' },
     { id: 'rewards', label: 'Recompensas', icon: '🎁', badge: null },
     { id: 'roi-viewer', label: 'ROI Viewer', icon: '📊', badge: '+4.3x' },
     { id: 'integrations', label: 'Integraciones', icon: '🔗', badge: '2/5' },
+    { id: 'tu-facturacion-kumia', label: 'Tu Facturación KumIA', icon: '💳', badge: '$180K' },
     { id: 'settings', label: 'Configuración', icon: '⚙️', badge: null }
   ];
 
