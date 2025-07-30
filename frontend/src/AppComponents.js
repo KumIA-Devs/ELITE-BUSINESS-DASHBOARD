@@ -4,17 +4,34 @@ import axios from 'axios';
 // 🧩 MÓDULO 1: CENTRO DE IA MARKETING
 export const CentroIAMarketing = () => {
   const [activeCampaign, setActiveCampaign] = useState(null);
-  const [showContentFactory, setShowContentFactory] = useState(false);
+  const [showVideoFactory, setShowVideoFactory] = useState(false);
+  const [showImageFactory, setShowImageFactory] = useState(false);
   const [showCampaignModal, setShowCampaignModal] = useState(false);
+  const [showEditCampaign, setShowEditCampaign] = useState(null);
+  const [showSegmentModal, setShowSegmentModal] = useState(null);
+  const [showEditPush, setShowEditPush] = useState(false);
   const [videoGeneration, setVideoGeneration] = useState({
+    prompt: '',
     style: 'cinematica',
-    duration: '10s',
+    duration: 10,
     platform: 'instagram',
-    brandingLevel: 'alto'
+    brandingLevel: 'alto',
+    model: 'runwayml'
   });
+  const [imageGeneration, setImageGeneration] = useState({
+    prompt: '',
+    style: 'fotografico',
+    format: 'post',
+    platform: 'instagram',
+    count: 1
+  });
+  const [generatedContent, setGeneratedContent] = useState(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [previewContent, setPreviewContent] = useState(null);
+  const [estimatedCost, setEstimatedCost] = useState(0);
 
   // Campañas sugeridas por IA
-  const campaignsAI = [
+  const [campaignsAI, setCampaignsAI] = useState([
     {
       id: 1,
       title: "Promo Sorpresa Nivel Destacado",
@@ -23,7 +40,8 @@ export const CentroIAMarketing = () => {
       estimatedReach: 18,
       expectedROI: "320%",
       urgency: "alta",
-      channels: ["WhatsApp", "Push"]
+      channels: ["WhatsApp", "Push"],
+      active: false
     },
     {
       id: 2,
@@ -33,7 +51,8 @@ export const CentroIAMarketing = () => {
       estimatedReach: 45,
       expectedROI: "180%",
       urgency: "media",
-      channels: ["Email", "WhatsApp"]
+      channels: ["Email", "WhatsApp"],
+      active: false
     },
     {
       id: 3,
@@ -43,9 +62,10 @@ export const CentroIAMarketing = () => {
       estimatedReach: 11,
       expectedROI: "450%",
       urgency: "baja",
-      channels: ["Push", "En Local"]
+      channels: ["Push", "En Local"],
+      active: false
     }
-  ];
+  ]);
 
   // Segmentación inteligente
   const segmentos = [
@@ -55,57 +75,215 @@ export const CentroIAMarketing = () => {
     { nivel: "Leyenda", clientes: 3, ultimaVisita: "< 30 días", conversionRate: "95%" }
   ];
 
-  // Campañas A/B activas
-  const campaignAB = [
-    { id: 1, name: "WhatsApp vs Push", status: "Activa", aperturas: "78% vs 45%", conversiones: "12% vs 8%", ganador: "WhatsApp" },
-    { id: 2, name: "Descuento vs Producto Gratis", status: "Finalizada", aperturas: "65% vs 70%", conversiones: "15% vs 18%", ganador: "Producto Gratis" }
-  ];
+  // Push automáticos configurables
+  const [pushNotifications, setPushNotifications] = useState([
+    {
+      id: 1,
+      title: "Recordatorio de Reserva",
+      description: "2 horas antes • WhatsApp",
+      active: true,
+      deliveryRate: "89%",
+      trigger: "2_hours_before",
+      channels: ["WhatsApp"]
+    },
+    {
+      id: 2,
+      title: "Feedback Post-Visita",
+      description: "24 horas después • Push + Email",
+      active: true,
+      deliveryRate: "76%",
+      trigger: "24_hours_after",
+      channels: ["Push", "Email"]
+    },
+    {
+      id: 3,
+      title: "Promoción Cumpleaños",
+      description: "7 días antes • Todos los canales",
+      active: true,
+      deliveryRate: "94%",
+      trigger: "7_days_before_birthday",
+      channels: ["WhatsApp", "Push", "Email"]
+    }
+  ]);
+
+  // Funciones para activar campañas
+  const handleActivateCampaign = async (campaign) => {
+    try {
+      setCampaignsAI(prev => prev.map(c => 
+        c.id === campaign.id ? { ...c, active: true } : c
+      ));
+      
+      // Simulación de activación de campaña
+      alert(`✅ Campaña "${campaign.title}" activada exitosamente!\n\n📊 Alcance: ${campaign.estimatedReach} clientes\n💰 ROI esperado: ${campaign.expectedROI}\n📱 Canales: ${campaign.channels.join(", ")}`);
+      
+    } catch (error) {
+      console.error('Error activating campaign:', error);
+      alert('❌ Error al activar la campaña. Intenta nuevamente.');
+    }
+  };
+
+  // Función para cálculo de costos de video
+  const calculateVideoCost = (duration, model) => {
+    const pricing = {
+      runwayml: 5, // créditos por segundo
+      pika: 3.5,
+      veo: 4.2
+    };
+    return pricing[model] * duration;
+  };
+
+  // Función para cálculo de costos de imagen
+  const calculateImageCost = (count, style) => {
+    const baseCost = 2; // créditos por imagen
+    const styleCost = style === 'premium' ? 1.5 : 1;
+    return count * baseCost * styleCost;
+  };
+
+  // Función para generar video
+  const handleGenerateVideo = async () => {
+    if (!videoGeneration.prompt.trim()) {
+      alert('Por favor ingresa una descripción para el video');
+      return;
+    }
+
+    setIsGenerating(true);
+    setEstimatedCost(calculateVideoCost(videoGeneration.duration, videoGeneration.model));
+    
+    try {
+      // Simulación de generación de video
+      setTimeout(() => {
+        setGeneratedContent({
+          type: 'video',
+          url: '/api/placeholder-video.mp4',
+          metadata: {
+            duration: videoGeneration.duration,
+            platform: videoGeneration.platform,
+            cost: calculateVideoCost(videoGeneration.duration, videoGeneration.model)
+          }
+        });
+        setIsGenerating(false);
+      }, 3000);
+      
+    } catch (error) {
+      console.error('Error generating video:', error);
+      setIsGenerating(false);
+      alert('❌ Error al generar el video. Intenta nuevamente.');
+    }
+  };
+
+  // Función para generar imagen
+  const handleGenerateImage = async () => {
+    if (!imageGeneration.prompt.trim()) {
+      alert('Por favor ingresa una descripción para la imagen');
+      return;
+    }
+
+    setIsGenerating(true);
+    setEstimatedCost(calculateImageCost(imageGeneration.count, imageGeneration.style));
+    
+    try {
+      // Simulación de generación de imagen
+      setTimeout(() => {
+        setGeneratedContent({
+          type: 'image',
+          urls: Array.from({length: imageGeneration.count}, (_, i) => `/api/placeholder-image-${i+1}.jpg`),
+          metadata: {
+            format: imageGeneration.format,
+            platform: imageGeneration.platform,
+            cost: calculateImageCost(imageGeneration.count, imageGeneration.style)
+          }
+        });
+        setIsGenerating(false);
+      }, 2000);
+      
+    } catch (error) {
+      console.error('Error generating image:', error);
+      setIsGenerating(false);
+      alert('❌ Error al generar la imagen. Intenta nuevamente.');
+    }
+  };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-3xl font-bold text-gray-800">🧩 Centro de IA Marketing</h2>
-          <p className="text-gray-600 mt-1">Núcleo operativo para campañas automatizadas y fidelización inteligente</p>
+      {/* Header Reorganizado con Funciones Principales */}
+      <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 border border-blue-200">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="text-3xl font-bold text-gray-800">🧩 Centro de IA Marketing</h2>
+            <p className="text-gray-600 mt-1">Núcleo operativo para campañas automatizadas y fidelización inteligente</p>
+          </div>
         </div>
-        <div className="flex space-x-3">
+        
+        {/* Funciones Principales Destacadas */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <button 
-            onClick={() => setShowContentFactory(true)}
-            className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors"
+            onClick={() => setShowVideoFactory(true)}
+            className="bg-gradient-to-r from-purple-500 to-purple-600 text-white p-4 rounded-xl hover:from-purple-600 hover:to-purple-700 transition-all transform hover:scale-105 shadow-lg"
           >
-            🎬 Content Factory
+            <div className="text-center">
+              <div className="text-2xl mb-2">🎬</div>
+              <h3 className="font-bold text-lg">Content Factory Video</h3>
+              <p className="text-purple-100 text-sm">AI Video Generator</p>
+            </div>
           </button>
+          
+          <button 
+            onClick={() => setShowImageFactory(true)}
+            className="bg-gradient-to-r from-green-500 to-green-600 text-white p-4 rounded-xl hover:from-green-600 hover:to-green-700 transition-all transform hover:scale-105 shadow-lg"
+          >
+            <div className="text-center">
+              <div className="text-2xl mb-2">🎨</div>
+              <h3 className="font-bold text-lg">Content Factory Image</h3>
+              <p className="text-green-100 text-sm">Posts & Carouseles</p>
+            </div>
+          </button>
+          
           <button 
             onClick={() => setShowCampaignModal(true)}
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+            className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-4 rounded-xl hover:from-blue-600 hover:to-blue-700 transition-all transform hover:scale-105 shadow-lg"
           >
-            📢 Nueva Campaña
+            <div className="text-center">
+              <div className="text-2xl mb-2">📢</div>
+              <h3 className="font-bold text-lg">Nueva Campaña</h3>
+              <p className="text-blue-100 text-sm">Crear campaña personalizada</p>
+            </div>
           </button>
         </div>
       </div>
 
-      {/* Campañas Sugeridas por IA */}
+      {/* Campañas Sugeridas por IA - Mejorada */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h3 className="text-xl font-bold text-gray-800 mb-4">🤖 Campañas Sugeridas por IA</h3>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-xl font-bold text-gray-800">🤖 Campañas Sugeridas por IA</h3>
+          <span className="text-sm text-gray-500">Optimizadas con datos en tiempo real</span>
+        </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {campaignsAI.map((campaign) => (
-            <div key={campaign.id} className={`border-2 rounded-lg p-4 cursor-pointer transition-all ${
+            <div key={campaign.id} className={`border-2 rounded-lg p-4 transition-all ${
+              campaign.active ? 'border-green-300 bg-green-50' :
               campaign.urgency === 'alta' ? 'border-red-200 bg-red-50 hover:border-red-300' :
               campaign.urgency === 'media' ? 'border-orange-200 bg-orange-50 hover:border-orange-300' :
-              'border-green-200 bg-green-50 hover:border-green-300'
+              'border-blue-200 bg-blue-50 hover:border-blue-300'
             }`}>
               <div className="flex items-center justify-between mb-3">
                 <h4 className="font-bold text-gray-800">{campaign.title}</h4>
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                  campaign.urgency === 'alta' ? 'bg-red-100 text-red-800' :
-                  campaign.urgency === 'media' ? 'bg-orange-100 text-orange-800' :
-                  'bg-green-100 text-green-800'
-                }`}>
-                  {campaign.urgency.toUpperCase()}
-                </span>
+                <div className="flex space-x-1">
+                  {campaign.active && (
+                    <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
+                      ACTIVA
+                    </span>
+                  )}
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    campaign.urgency === 'alta' ? 'bg-red-100 text-red-800' :
+                    campaign.urgency === 'media' ? 'bg-orange-100 text-orange-800' :
+                    'bg-blue-100 text-blue-800'
+                  }`}>
+                    {campaign.urgency.toUpperCase()}
+                  </span>
+                </div>
               </div>
               <p className="text-sm text-gray-700 mb-3">{campaign.description}</p>
-              <div className="space-y-2 text-xs">
+              <div className="space-y-2 text-xs mb-3">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Alcance estimado:</span>
                   <span className="font-medium">{campaign.estimatedReach} clientes</span>
@@ -119,18 +297,31 @@ export const CentroIAMarketing = () => {
                   <span className="font-medium">{campaign.channels.join(", ")}</span>
                 </div>
               </div>
-              <button 
-                onClick={() => setActiveCampaign(campaign)}
-                className="w-full mt-3 bg-gray-800 text-white py-2 rounded-lg hover:bg-gray-900 transition-colors text-sm"
-              >
-                🚀 Activar Campaña
-              </button>
+              <div className="flex space-x-2">
+                <button 
+                  onClick={() => handleActivateCampaign(campaign)}
+                  disabled={campaign.active}
+                  className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    campaign.active 
+                      ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                      : 'bg-gray-800 text-white hover:bg-gray-900'
+                  }`}
+                >
+                  {campaign.active ? '✅ Activada' : '🚀 Activar Campaña'}
+                </button>
+                <button 
+                  onClick={() => setShowEditCampaign(campaign)}
+                  className="px-3 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-sm"
+                >
+                  ✏️
+                </button>
+              </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Segmentación Inteligente */}
+      {/* Segmentación Inteligente - Mejorada */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <h3 className="text-xl font-bold text-gray-800 mb-4">🎯 Segmentación Inteligente</h3>
         <div className="overflow-x-auto">
@@ -152,7 +343,10 @@ export const CentroIAMarketing = () => {
                   <td className="py-4 px-4 text-center text-green-600">{segmento.ultimaVisita}</td>
                   <td className="py-4 px-4 text-center font-bold text-blue-600">{segmento.conversionRate}</td>
                   <td className="py-4 px-4 text-center">
-                    <button className="bg-blue-100 text-blue-700 px-3 py-1 rounded-lg text-sm hover:bg-blue-200 transition-colors">
+                    <button 
+                      onClick={() => setShowSegmentModal(segmento)}
+                      className="bg-blue-100 text-blue-700 px-3 py-1 rounded-lg text-sm hover:bg-blue-200 transition-colors"
+                    >
                       📧 Campaña
                     </button>
                   </td>
@@ -163,41 +357,112 @@ export const CentroIAMarketing = () => {
         </div>
       </div>
 
-      {/* Push Automáticos y Campañas A/B */}
+      {/* Push Automáticos Editables y Campañas A/B */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-          <h3 className="text-xl font-bold text-gray-800 mb-4">📱 Push Automáticos</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-xl font-bold text-gray-800">📱 Push Automáticos</h3>
+            <button 
+              onClick={() => setShowEditPush(true)}
+              className="bg-green-100 text-green-700 px-3 py-1 rounded-lg text-sm hover:bg-green-200 transition-colors"
+            >
+              + Agregar Push
+            </button>
+          </div>
           <div className="space-y-3">
-            <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-              <div>
-                <h4 className="font-medium text-blue-800">Recordatorio de Reserva</h4>
-                <p className="text-sm text-blue-600">2 horas antes • WhatsApp</p>
+            {pushNotifications.map((push) => (
+              <div key={push.id} className={`flex items-center justify-between p-3 rounded-lg ${
+                push.active ? 'bg-blue-50' : 'bg-gray-50'
+              }`}>
+                <div className="flex-1">
+                  <h4 className={`font-medium ${push.active ? 'text-blue-800' : 'text-gray-600'}`}>
+                    {push.title}
+                  </h4>
+                  <p className={`text-sm ${push.active ? 'text-blue-600' : 'text-gray-500'}`}>
+                    {push.description}
+                  </p>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <span className="text-sm text-green-600 font-medium">{push.deliveryRate} entregados</span>
+                  <button 
+                    onClick={() => setShowEditPush(push)}
+                    className="text-gray-400 hover:text-gray-600 p-1"
+                  >
+                    ✏️
+                  </button>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      className="sr-only peer" 
+                      checked={push.active}
+                      onChange={(e) => {
+                        setPushNotifications(prev => prev.map(p => 
+                          p.id === push.id ? { ...p, active: e.target.checked } : p
+                        ));
+                      }}
+                    />
+                    <div className={`w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all ${
+                      push.active ? 'peer-checked:bg-blue-600' : 'peer-checked:bg-green-600'
+                    }`}></div>
+                  </label>
+                </div>
               </div>
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-green-600 font-medium">89% entregados</span>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" className="sr-only peer" defaultChecked />
-                  <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
-                </label>
+            ))}
+          </div>
+        </div>
+
+        {/* Campañas A/B */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <h3 className="text-xl font-bold text-gray-800 mb-4">🧪 Campañas A/B Testing</h3>
+          <div className="space-y-4">
+            <div className="border border-green-200 bg-green-50 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="font-medium text-green-800">WhatsApp vs Push</h4>
+                <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">ACTIVA</span>
+              </div>
+              <div className="text-sm text-green-700 space-y-1">
+                <div className="flex justify-between">
+                  <span>Aperturas:</span>
+                  <span className="font-medium">78% vs 45%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Conversiones:</span>
+                  <span className="font-medium">12% vs 8%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Ganador:</span>
+                  <span className="font-bold text-green-600">🏆 WhatsApp</span>
+                </div>
               </div>
             </div>
             
-            <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-              <div>
-                <h4 className="font-medium text-green-800">Feedback Post-Visita</h4>
-                <p className="text-sm text-green-600">24 horas después • Push + Email</p>
+            <div className="border border-gray-200 bg-gray-50 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="font-medium text-gray-800">Descuento vs Producto Gratis</h4>
+                <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-medium">FINALIZADA</span>
               </div>
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-green-600 font-medium">76% entregados</span>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" className="sr-only peer" defaultChecked />
-                  <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
-                </label>
+              <div className="text-sm text-gray-700 space-y-1">
+                <div className="flex justify-between">
+                  <span>Aperturas:</span>
+                  <span className="font-medium">65% vs 70%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Conversiones:</span>
+                  <span className="font-medium">15% vs 18%</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Ganador:</span>
+                  <span className="font-bold text-blue-600">🏆 Producto Gratis</span>
+                </div>
               </div>
             </div>
-
-            <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
-              <div>
+          </div>
+          
+          <button className="w-full mt-4 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors">
+            🧪 Nueva Prueba A/B
+          </button>
+        </div>
+      </div>
                 <h4 className="font-medium text-purple-800">Recompensa Disponible</h4>
                 <p className="text-sm text-purple-600">Al alcanzar nivel • Push</p>
               </div>
