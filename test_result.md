@@ -594,6 +594,9 @@ frontend:
       - working: false
         agent: "testing"
         comment: "❌ CRITICAL ISSUES FOUND in redesigned ROI Viewer KumIA Elite section: 1) **Timeframe filters (7 días, 30 días, 60 días, 90 días dropdown) do NOT update data** - dropdown values change but ROI data remains static (2168% unchanged across all timeframes). 2) **'Exportar Reporte' button has NO functionality** - no download, modal, or any response when clicked. 3) **'Evolución del ticket promedio' chart filters (7D, 30D, 90D buttons) do NOT change visualization** - chart shows same 9 data points regardless of filter selection. 4) ✅ Chart visualization itself works correctly with visible data points showing historical ticket evolution. All filter interactions are cosmetic only - no actual data filtering occurs. User-reported issues confirmed."
+      - working: false
+        agent: "testing"
+        comment: "🎯 COMPREHENSIVE RE-TESTING COMPLETED: **MIXED RESULTS - 1 CRITICAL FIX VERIFIED, 3 ISSUES REMAIN** 1) ✅ **TIMEFRAME FILTERS NOW WORKING** - Dropdown successfully updates ROI data: 7d=491%, 30d=2168%, 60d=3993%, 90d=5560%. Table values also change correctly across all timeframes. This critical issue has been RESOLVED. 2) ❌ **EXPORT BUTTON STILL NON-FUNCTIONAL** - No CSV download occurs, no alerts, no modals. Button click has zero functionality. 3) ❌ **CHART VISUALIZATION PARTIALLY WORKING** - SVG with polyline exists but missing interactive data points (0 circles found). Chart shows line but lacks hover tooltips and interactive elements. 4) ❌ **CHART FILTERS COSMETIC ONLY** - 7D/30D/90D buttons change visual state but don't affect data points count (remains 0). Period text updates but no actual chart data filtering occurs. **SUMMARY:** Main timeframe filtering functionality has been successfully implemented, but export and chart interactivity issues persist."
 
   - task: "Configuration Module - All 4 Submodules"
     implemented: true
