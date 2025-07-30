@@ -561,7 +561,7 @@ export const CentroIAMarketing = () => {
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-800">🎬 Content Factory - Video Generator</h2>
+                  <h2 className="text-2xl font-bold text-gray-800">🎬 Fábrica de Contenido - Generador de Videos</h2>
                   <p className="text-gray-600">Genera videos profesionales con IA (Google Veo 3, RunwayML, Pika Labs)</p>
                 </div>
                 <button 
@@ -653,17 +653,29 @@ export const CentroIAMarketing = () => {
                     </div>
                   </div>
 
-                  {/* Costo Estimado */}
+                  {/* Costo Estimado y Balance */}
                   <div className="bg-blue-50 p-4 rounded-lg">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between mb-2">
                       <span className="font-medium text-blue-800">Costo Estimado:</span>
                       <span className="text-xl font-bold text-blue-600">
                         {calculateVideoCost(videoGeneration.duration, videoGeneration.model)} créditos
                       </span>
                     </div>
-                    <p className="text-sm text-blue-600 mt-1">
-                      ~${(calculateVideoCost(videoGeneration.duration, videoGeneration.model) * 0.1).toFixed(2)} USD
-                    </p>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm text-blue-600">En USD:</span>
+                      <span className="text-sm font-medium text-blue-600">
+                        ~${(calculateVideoCost(videoGeneration.duration, videoGeneration.model) * 0.1).toFixed(2)}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-blue-600">Tu balance:</span>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm font-bold text-green-600">1,250 créditos</span>
+                        <button className="text-xs bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600">
+                          + Comprar más
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -681,7 +693,7 @@ export const CentroIAMarketing = () => {
                         <video 
                           controls 
                           className="w-full h-full object-cover rounded-lg"
-                          src={generatedContent.url}
+                          src={`${process.env.REACT_APP_BACKEND_URL}${generatedContent.url}`}
                         />
                       </div>
                     ) : (
@@ -707,13 +719,27 @@ export const CentroIAMarketing = () => {
                     </button>
 
                     {generatedContent && generatedContent.type === 'video' && (
-                      <div className="grid grid-cols-2 gap-2">
-                        <button className="bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition-colors">
-                          💾 Descargar
+                      <div className="space-y-2">
+                        <button 
+                          onClick={() => alert('Función de edición próximamente disponible')}
+                          className="w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition-colors"
+                        >
+                          ✏️ Editar Video (Subtítulos, Marca, Transiciones)
                         </button>
-                        <button className="bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors">
-                          📱 Publicar
-                        </button>
+                        <div className="grid grid-cols-2 gap-2">
+                          <button 
+                            onClick={handleDownloadVideo}
+                            className="bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition-colors"
+                          >
+                            💾 Descargar
+                          </button>
+                          <button 
+                            onClick={() => setShowPublishModal(true)}
+                            className="bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors"
+                          >
+                            📱 Publicar
+                          </button>
+                        </div>
                       </div>
                     )}
                   </div>
