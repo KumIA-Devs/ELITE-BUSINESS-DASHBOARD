@@ -12671,21 +12671,48 @@ export const JuegosMultijugador = () => {
             <div className="space-y-3">
               {sesionesActivas.map((sesion, index) => (
                 <div key={index} className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
-                  <div>
+                  <div className="flex-1">
                     <h4 className="font-medium text-green-800">{sesion.juego}</h4>
-                    <p className="text-sm text-green-700">Mesa {sesion.mesaId} • {sesion.jugadores} jugadores</p>
+                    <p className="text-sm text-green-700">Mesa {sesion.mesaId} • {sesion.jugadores} jugadores activos</p>
+                    <div className="flex items-center space-x-4 mt-1 text-xs text-green-600">
+                      <span>⏱️ Tiempo jugando: {Math.floor(Math.random() * 15) + 5} min</span>
+                      <span>🎯 {sesion.starsEnJuego} stars en juego</span>
+                    </div>
                   </div>
                   <div className="text-right">
                     <div className="text-lg font-bold text-green-600">{sesion.tiempoRestante}</div>
-                    <div className="text-xs text-green-700">{sesion.starsEnJuego} stars en juego</div>
+                    <div className="text-xs text-green-700 mb-2">restante</div>
+                    <div className="flex space-x-1">
+                      <button className="bg-red-100 text-red-700 px-2 py-1 rounded text-xs hover:bg-red-200 transition-colors">
+                        🔒 Bloquear
+                      </button>
+                      <button className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs hover:bg-blue-200 transition-colors">
+                        ✅ Habilitar
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
+              
+              {/* Botón para gestionar todas las sesiones */}
+              <div className="mt-4 pt-3 border-t border-gray-200">
+                <div className="flex space-x-2">
+                  <button className="flex-1 bg-green-100 text-green-700 py-2 rounded-lg text-sm hover:bg-green-200 transition-colors">
+                    📊 Ver Todas las Sesiones
+                  </button>
+                  <button className="flex-1 bg-orange-100 text-orange-700 py-2 rounded-lg text-sm hover:bg-orange-200 transition-colors">
+                    🚨 Gestión de Emergencia
+                  </button>
+                </div>
+              </div>
             </div>
           ) : (
             <div className="text-center py-8 text-gray-500">
               <div className="text-4xl mb-2">🎮</div>
               <p>No hay sesiones activas actualmente</p>
+              <button className="mt-3 bg-blue-100 text-blue-700 px-4 py-2 rounded-lg text-sm hover:bg-blue-200 transition-colors">
+                🔄 Actualizar Estado
+              </button>
             </div>
           )}
         </div>
