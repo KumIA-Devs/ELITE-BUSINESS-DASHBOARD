@@ -10,60 +10,82 @@ export const ROIViewer = () => {
   // Estados principales
   const [selectedTimeframe, setSelectedTimeframe] = useState('30d');
   const [showCalculator, setShowCalculator] = useState(false);
+  const [ticketEvolutionFilter, setTicketEvolutionFilter] = useState('30d');
   const [calculatorData, setCalculatorData] = useState({
     ticketPromedio: 3200,
     costoRecompensa: 8000,
     margenBruto: 65
   });
 
-  // Datos del sistema KumIA Stars por nivel
-  const kumiaLevels = [
-    {
-      nivel: 'Explorador',
-      starsNecesarias: 36,
-      gastoEstimado: 108000, // 36 * 3000 CLP por star
-      costoRecompensa: 8000,
-      margenNeto: 64800,
-      roi: 710,
-      clientesActivos: 32,
-      ticketPromedio: 3840 // 3200 * 1.2
-    },
-    {
-      nivel: 'Destacado', 
-      starsNecesarias: 48,
-      gastoEstimado: 144000,
-      costoRecompensa: 8000,
-      margenNeto: 78400,
-      roi: 880,
-      clientesActivos: 18,
-      ticketPromedio: 4800 // 3200 * 1.5
-    },
-    {
-      nivel: 'Estrella',
-      starsNecesarias: 60,
-      gastoEstimado: 180000,
-      costoRecompensa: 8000,
-      margenNeto: 100000,
-      roi: 1150,
-      clientesActivos: 8,
-      ticketPromedio: 5760 // 3200 * 1.8
-    },
-    {
-      nivel: 'Leyenda',
-      starsNecesarias: 75,
-      gastoEstimado: 225000,
-      costoRecompensa: 8000,
-      margenNeto: 127000,
-      roi: 1487,
-      clientesActivos: 3,
-      ticketPromedio: 6400 // 3200 * 2.0
-    }
-  ];
+  // Datos del sistema KumIA Stars por nivel con filtros de tiempo
+  const getKumiaLevelsByTimeframe = (timeframe) => {
+    const baseData = [
+      {
+        nivel: 'Explorador',
+        starsNecesarias: 36,
+        gastoEstimado: 108000,
+        costoRecompensa: 8000,
+        margenNeto: 64800,
+        roi: 710,
+        clientesActivos: 32,
+        ticketPromedio: 3840
+      },
+      {
+        nivel: 'Destacado', 
+        starsNecesarias: 48,
+        gastoEstimado: 144000,
+        costoRecompensa: 8000,
+        margenNeto: 78400,
+        roi: 880,
+        clientesActivos: 18,
+        ticketPromedio: 4800
+      },
+      {
+        nivel: 'Estrella',
+        starsNecesarias: 60,
+        gastoEstimado: 180000,
+        costoRecompensa: 8000,
+        margenNeto: 100000,
+        roi: 1150,
+        clientesActivos: 8,
+        ticketPromedio: 5760
+      },
+      {
+        nivel: 'Leyenda',
+        starsNecesarias: 75,
+        gastoEstimado: 225000,
+        costoRecompensa: 8000,
+        margenNeto: 127000,
+        roi: 1487,
+        clientesActivos: 3,
+        ticketPromedio: 6400
+      }
+    ];
 
-  // Datos de evolución del ticket promedio
-  const [ticketEvolution] = useState({
-    fechaActivacion: '2024-06-15',
-    datosHistoricos: [
+    // Ajustar datos según el timeframe seleccionado
+    const multipliers = {
+      '7d': 0.25,
+      '30d': 1.0,
+      '60d': 1.8,
+      '90d': 2.5
+    };
+
+    const multiplier = multipliers[timeframe] || 1.0;
+
+    return baseData.map(nivel => ({
+      ...nivel,
+      gastoEstimado: Math.round(nivel.gastoEstimado * multiplier),
+      margenNeto: Math.round(nivel.margenNeto * multiplier),
+      roi: Math.round(nivel.roi * (0.8 + multiplier * 0.4)), // ROI varía con el tiempo
+      clientesActivos: Math.round(nivel.clientesActivos * (0.7 + multiplier * 0.3))
+    }));
+  };
+
+  const kumiaLevels = getKumiaLevelsByTimeframe(selectedTimeframe);
+
+  // Datos de evolución del ticket promedio con filtros
+  const getTicketEvolutionData = (filter) => {
+    const allData = [
       { fecha: '2024-05-01', ticket: 2500, periodo: 'pre-kumia' },
       { fecha: '2024-05-15', ticket: 2650, periodo: 'pre-kumia' },
       { fecha: '2024-06-01', ticket: 2750, periodo: 'pre-kumia' },
@@ -72,30 +94,91 @@ export const ROIViewer = () => {
       { fecha: '2024-07-15', ticket: 3450, periodo: 'post-kumia' },
       { fecha: '2024-08-01', ticket: 3650, periodo: 'post-kumia' },
       { fecha: '2024-08-15', ticket: 3800, periodo: 'post-kumia' },
-      { fecha: '2024-09-01', ticket: 4050, periodo: 'post-kumia' }
-    ]
+      { fecha: '2024-09-01', ticket: 4050, periodo: 'post-kumia' },
+      { fecha: '2024-09-15', ticket: 4150, periodo: 'post-kumia' },
+      { fecha: '2024-10-01', ticket: 4250, periodo: 'post-kumia' },
+      { fecha: '2024-10-15', ticket: 4350, periodo: 'post-kumia' },
+      { fecha: '2024-11-01', ticket: 4450, periodo: 'post-kumia' },
+      { fecha: '2024-11-15', ticket: 4550, periodo: 'post-kumia' },
+      { fecha: '2024-12-01', ticket: 4650, periodo: 'post-kumia' },
+      { fecha: '2024-12-15', ticket: 4750, periodo: 'post-kumia' }
+    ];
+
+    const today = new Date();
+    let cutoffDate;
+
+    switch(filter) {
+      case '7d':
+        cutoffDate = new Date(today.getTime() - (7 * 24 * 60 * 60 * 1000));
+        return allData.slice(-3); // Últimos 3 puntos para 7 días
+      case '30d':
+        cutoffDate = new Date(today.getTime() - (30 * 24 * 60 * 60 * 1000));
+        return allData.slice(-6); // Últimos 6 puntos para 30 días
+      case '90d':
+        cutoffDate = new Date(today.getTime() - (90 * 24 * 60 * 60 * 1000));
+        return allData; // Todos los datos para 90 días
+      default:
+        return allData.slice(-6);
+    }
+  };
+
+  const [ticketEvolution, setTicketEvolution] = useState({
+    fechaActivacion: '2024-06-15',
+    datosHistoricos: getTicketEvolutionData(ticketEvolutionFilter)
   });
 
-  // Datos de actividad en tiempo real
-  const [actividadTiempoReal] = useState({
-    starsGeneradasSemana: 847,
-    starsCanjeadasSemana: 234,
-    ratioConversion: 27.6,
-    rankingAcciones: [
-      { accion: 'Feedback con imagen', stars: 2, frecuencia: 45 },
-      { accion: 'Reserva completada', stars: 3, frecuencia: 38 },
-      { accion: 'Referido exitoso', stars: 5, frecuencia: 12 },
-      { accion: 'Feedback con texto', stars: 1, frecuencia: 89 }
-    ],
-    nftMasDesbloqueado: 'NFT Explorador',
-    clientesTopNivel: [
-      { nombre: 'Alexander Zúñiga', nivel: 'Leyenda', stars: 127 },
-      { nombre: 'Valentina Chen', nivel: 'Leyenda', stars: 98 },
-      { nombre: 'Elena Vargas', nivel: 'Estrella', stars: 89 },
-      { nombre: 'Roberto Kim', nivel: 'Estrella', stars: 76 },
-      { nombre: 'Sofia Moreno', nivel: 'Destacado', stars: 65 }
-    ]
-  });
+  // Actualizar datos cuando cambie el filtro de evolución del ticket
+  useEffect(() => {
+    setTicketEvolution(prev => ({
+      ...prev,
+      datosHistoricos: getTicketEvolutionData(ticketEvolutionFilter)
+    }));
+  }, [ticketEvolutionFilter]);
+
+  // Datos de actividad en tiempo real que varían según timeframe
+  const getActividadByTimeframe = (timeframe) => {
+    const baseData = {
+      starsGeneradasSemana: 847,
+      starsCanjeadasSemana: 234,
+      ratioConversion: 27.6,
+      rankingAcciones: [
+        { accion: 'Feedback con imagen', stars: 2, frecuencia: 45 },
+        { accion: 'Reserva completada', stars: 3, frecuencia: 38 },
+        { accion: 'Referido exitoso', stars: 5, frecuencia: 12 },
+        { accion: 'Feedback con texto', stars: 1, frecuencia: 89 }
+      ],
+      nftMasDesbloqueado: 'NFT Explorador',
+      clientesTopNivel: [
+        { nombre: 'Alexander Zúñiga', nivel: 'Leyenda', stars: 127 },
+        { nombre: 'Valentina Chen', nivel: 'Leyenda', stars: 98 },
+        { nombre: 'Elena Vargas', nivel: 'Estrella', stars: 89 },
+        { nombre: 'Roberto Kim', nivel: 'Estrella', stars: 76 },
+        { nombre: 'Sofia Moreno', nivel: 'Destacado', stars: 65 }
+      ]
+    };
+
+    const multipliers = {
+      '7d': 0.25,
+      '30d': 1.0,
+      '60d': 2.1,
+      '90d': 3.2
+    };
+
+    const multiplier = multipliers[timeframe] || 1.0;
+
+    return {
+      ...baseData,
+      starsGeneradasSemana: Math.round(baseData.starsGeneradasSemana * multiplier),
+      starsCanjeadasSemana: Math.round(baseData.starsCanjeadasSemana * multiplier),
+      ratioConversion: Math.round((baseData.ratioConversion * (0.8 + multiplier * 0.2)) * 10) / 10,
+      rankingAcciones: baseData.rankingAcciones.map(accion => ({
+        ...accion,
+        frecuencia: Math.round(accion.frecuencia * multiplier)
+      }))
+    };
+  };
+
+  const actividadTiempoReal = getActividadByTimeframe(selectedTimeframe);
 
   // Datos benchmark del rubro
   const [benchmarkRubro] = useState({
@@ -105,9 +188,9 @@ export const ROIViewer = () => {
     nivelPromedioNacional: 'Explorador',
     ratioCanjePromedio: 23.4,
     posicionamiento: {
-      ticketPromedio: 'Sobresaliente', // +15% sobre promedio
-      starsGeneradas: 'Excelente', // +35% sobre promedio
-      ratioConversion: 'Sobresaliente' // +18% sobre promedio
+      ticketPromedio: 'Sobresaliente',
+      starsGeneradas: 'Excelente',
+      ratioConversion: 'Sobresaliente'
     }
   });
 
@@ -116,7 +199,7 @@ export const ROIViewer = () => {
     const capitalizacionTotal = kumiaLevels.reduce((total, nivel) => 
       total + (nivel.gastoEstimado * nivel.clientesActivos), 0);
     const recompensasEntregadas = kumiaLevels.reduce((total, nivel) => 
-      total + (nivel.costoRecompensa * Math.floor(nivel.clientesActivos * 0.75)), 0); // 75% realmente canjean
+      total + (nivel.costoRecompensa * Math.floor(nivel.clientesActivos * 0.75)), 0);
     const roiTotal = ((capitalizacionTotal - recompensasEntregadas) / recompensasEntregadas * 100);
     
     return {
@@ -132,7 +215,7 @@ export const ROIViewer = () => {
   const calcularROISimulado = (ticket, costoRecompensa, margen) => {
     return kumiaLevels.map(nivel => ({
       ...nivel,
-      gastoEstimadoSim: nivel.starsNecesarias * (ticket * 0.93), // Aproximación del gasto por star
+      gastoEstimadoSim: nivel.starsNecesarias * (ticket * 0.93),
       costoRecompensaSim: costoRecompensa,
       margenNetoSim: (nivel.starsNecesarias * ticket * (margen/100)) - costoRecompensa,
       roiSim: ((nivel.starsNecesarias * ticket * (margen/100)) - costoRecompensa) / costoRecompensa * 100
@@ -140,6 +223,47 @@ export const ROIViewer = () => {
   };
 
   const datosSimulados = calcularROISimulado(calculatorData.ticketPromedio, calculatorData.costoRecompensa, calculatorData.margenBruto);
+
+  // Función para exportar reporte
+  const handleExportReport = () => {
+    const reportData = {
+      fecha: new Date().toLocaleDateString('es-CL'),
+      timeframe: selectedTimeframe,
+      indicadorExito,
+      kumiaLevels,
+      actividadTiempoReal,
+      benchmarkRubro
+    };
+
+    // Crear contenido CSV
+    const csvContent = "data:text/csv;charset=utf-8," + 
+      "ROI VIEWER KUMIA ELITE - REPORTE\n" +
+      `Fecha de generación,${reportData.fecha}\n` +
+      `Período analizado,${selectedTimeframe}\n\n` +
+      "INDICADOR DE ÉXITO PRINCIPAL\n" +
+      `Capitalización total,${reportData.indicadorExito.capitalizacion.toLocaleString()}\n` +
+      `Recompensas entregadas,${reportData.indicadorExito.recompensas.toLocaleString()}\n` +
+      `ROI total,${reportData.indicadorExito.roi.toFixed(0)}%\n\n` +
+      "ROI POR NIVEL\n" +
+      "Nivel,Stars necesarias,Gasto estimado,Costo recompensa,Margen neto,ROI %,Clientes activos\n" +
+      reportData.kumiaLevels.map(nivel => 
+        `${nivel.nivel},${nivel.starsNecesarias},${nivel.gastoEstimado},${nivel.costoRecompensa},${nivel.margenNeto},${nivel.roi}%,${nivel.clientesActivos}`
+      ).join("\n") + "\n\n" +
+      "ACTIVIDAD EN TIEMPO REAL\n" +
+      `Stars generadas,${reportData.actividadTiempoReal.starsGeneradasSemana}\n` +
+      `Stars canjeadas,${reportData.actividadTiempoReal.starsCanjeadasSemana}\n` +
+      `Ratio de conversión,${reportData.actividadTiempoReal.ratioConversion}%\n`;
+    
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `roi_report_kumia_${selectedTimeframe}_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    alert(`✅ REPORTE EXPORTADO EXITOSAMENTE\n\n📊 Detalles del reporte:\n• Período: ${selectedTimeframe}\n• ROI Total: ${indicadorExito.roi.toFixed(0)}%\n• Capitalización: $${indicadorExito.capitalizacion.toLocaleString()}\n• Archivo: roi_report_kumia_${selectedTimeframe}_${new Date().toISOString().split('T')[0]}.csv\n\n💡 El archivo se ha descargado en formato CSV con todos los datos del análisis ROI.`);
+  };
 
   return (
     <div className="space-y-6">
@@ -166,7 +290,10 @@ export const ROIViewer = () => {
           >
             🧮 Calculadora ROI
           </button>
-          <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+          <button 
+            onClick={handleExportReport}
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+          >
             📤 Exportar Reporte
           </button>
         </div>
