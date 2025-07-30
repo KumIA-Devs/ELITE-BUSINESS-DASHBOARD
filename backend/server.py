@@ -1397,7 +1397,7 @@ async def generate_image(request: ImageGenerationRequest, current_user: User = D
     try:
         # Calculate cost
         base_cost = 2  # credits per image
-        style_multiplier = 1.5 if request.style == "premium" else 1.0
+        style_multiplier = 1.5 if request.style in ["premium", "fotografico_premium"] else 1.0
         estimated_cost = request.count * base_cost * style_multiplier
         
         # Try to generate image using emergentintegrations
