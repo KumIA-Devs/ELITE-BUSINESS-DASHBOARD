@@ -833,6 +833,176 @@ class BackendTester:
         
         return False
 
+    def test_content_factory_video_generation(self):
+        """Test Content Factory video generation endpoint"""
+        print("🎬 Testing Content Factory Video Generation...")
+        
+        if not self.auth_token:
+            self.log_test("Content Factory Video Generation", False, "No auth token available")
+            return False
+        
+        try:
+            video_request = {
+                "prompt": "Create a cinematic video showcasing IL MANDORLA's premium smoked brisket with dramatic lighting and close-up shots of the meat texture",
+                "model": "runwayml",
+                "duration": 10,
+                "style": "cinematica",
+                "platform": "instagram",
+                "branding_level": "alto"
+            }
+            
+            response = self.session.post(f"{self.base_url}/content-factory/video/generate", json=video_request, timeout=30)
+            
+            if response.status_code == 200:
+                data = response.json()
+                required_fields = ["job_id", "status", "estimated_cost", "estimated_time", "message"]
+                if all(field in data for field in required_fields):
+                    self.log_test("Content Factory Video Generation", True, f"Video generation job created: {data['job_id']}, Cost: {data['estimated_cost']} credits")
+                    return True
+                else:
+                    missing = [f for f in required_fields if f not in data]
+                    self.log_test("Content Factory Video Generation", False, f"Missing fields: {missing}", data)
+            else:
+                self.log_test("Content Factory Video Generation", False, f"HTTP {response.status_code}", response.text)
+                
+        except Exception as e:
+            self.log_test("Content Factory Video Generation", False, f"Exception: {str(e)}")
+        
+        return False
+
+    def test_content_factory_image_generation(self):
+        """Test Content Factory image generation endpoint"""
+        print("🖼️ Testing Content Factory Image Generation...")
+        
+        if not self.auth_token:
+            self.log_test("Content Factory Image Generation", False, "No auth token available")
+            return False
+        
+        try:
+            image_request = {
+                "prompt": "Professional food photography of IL MANDORLA's signature smoked brisket platter with garnishes, warm lighting, restaurant setting",
+                "style": "fotografico",
+                "format": "post",
+                "platform": "instagram",
+                "count": 2
+            }
+            
+            response = self.session.post(f"{self.base_url}/content-factory/image/generate", json=image_request, timeout=30)
+            
+            if response.status_code == 200:
+                data = response.json()
+                required_fields = ["status", "images", "count", "cost", "metadata"]
+                if all(field in data for field in required_fields):
+                    if data["status"] == "completed" and len(data["images"]) == image_request["count"]:
+                        self.log_test("Content Factory Image Generation", True, f"Generated {data['count']} images, Cost: {data['cost']} credits")
+                        return True
+                    else:
+                        self.log_test("Content Factory Image Generation", False, f"Unexpected status or image count: {data['status']}, {len(data['images'])}")
+                else:
+                    missing = [f for f in required_fields if f not in data]
+                    self.log_test("Content Factory Image Generation", False, f"Missing fields: {missing}", data)
+            else:
+                self.log_test("Content Factory Image Generation", False, f"HTTP {response.status_code}", response.text)
+                
+        except Exception as e:
+            self.log_test("Content Factory Image Generation", False, f"Exception: {str(e)}")
+        
+        return False
+
+    def test_content_factory_cost_estimate(self):
+        """Test Content Factory cost estimation endpoint"""
+        print("💰 Testing Content Factory Cost Estimation...")
+        
+        if not self.auth_token:
+            self.log_test("Content Factory Cost Estimation", False, "No auth token available")
+            return False
+        
+        try:
+            # Test video cost estimation
+            video_cost_request = {
+                "content_type": "video",
+                "duration": 15,
+                "model": "veo",
+                "style": "premium"
+            }
+            
+            response = self.session.post(f"{self.base_url}/content-factory/cost-estimate", json=video_cost_request)
+            
+            if response.status_code == 200:
+                data = response.json()
+                required_fields = ["credits", "usd_cost", "content_type", "parameters"]
+                if all(field in data for field in required_fields):
+                    self.log_test("Content Factory Cost Estimation (Video)", True, f"Video cost: {data['credits']} credits (${data['usd_cost']})")
+                    
+                    # Test image cost estimation
+                    image_cost_request = {
+                        "content_type": "image",
+                        "count": 3,
+                        "style": "premium"
+                    }
+                    
+                    image_response = self.session.post(f"{self.base_url}/content-factory/cost-estimate", json=image_cost_request)
+                    
+                    if image_response.status_code == 200:
+                        image_data = image_response.json()
+                        if all(field in image_data for field in required_fields):
+                            self.log_test("Content Factory Cost Estimation (Image)", True, f"Image cost: {image_data['credits']} credits (${image_data['usd_cost']})")
+                            return True
+                        else:
+                            self.log_test("Content Factory Cost Estimation (Image)", False, "Missing fields in image cost response", image_data)
+                    else:
+                        self.log_test("Content Factory Cost Estimation (Image)", False, f"HTTP {image_response.status_code}", image_response.text)
+                else:
+                    missing = [f for f in required_fields if f not in data]
+                    self.log_test("Content Factory Cost Estimation (Video)", False, f"Missing fields: {missing}", data)
+            else:
+                self.log_test("Content Factory Cost Estimation", False, f"HTTP {response.status_code}", response.text)
+                
+        except Exception as e:
+            self.log_test("Content Factory Cost Estimation", False, f"Exception: {str(e)}")
+        
+        return False
+
+    def test_marketing_campaigns(self):
+        """Test marketing campaign creation endpoint"""
+        print("📢 Testing Marketing Campaign Creation...")
+        
+        if not self.auth_token:
+            self.log_test("Marketing Campaign Creation", False, "No auth token available")
+            return False
+        
+        try:
+            campaign_request = {
+                "title": "Campaña Navideña IL MANDORLA",
+                "description": "Campaña especial de Navidad con descuentos en menú completo y promociones NFT",
+                "target_level": "oro",
+                "channels": ["whatsapp", "instagram", "facebook"],
+                "start_date": "2024-12-20T00:00:00",
+                "end_date": "2024-12-31T23:59:59"
+            }
+            
+            response = self.session.post(f"{self.base_url}/marketing/campaigns", json=campaign_request)
+            
+            if response.status_code == 200:
+                data = response.json()
+                required_fields = ["campaign_id", "status", "message"]
+                if all(field in data for field in required_fields):
+                    if data["status"] == "created":
+                        self.log_test("Marketing Campaign Creation", True, f"Campaign created: {data['campaign_id']}")
+                        return True
+                    else:
+                        self.log_test("Marketing Campaign Creation", False, f"Unexpected status: {data['status']}")
+                else:
+                    missing = [f for f in required_fields if f not in data]
+                    self.log_test("Marketing Campaign Creation", False, f"Missing fields: {missing}", data)
+            else:
+                self.log_test("Marketing Campaign Creation", False, f"HTTP {response.status_code}", response.text)
+                
+        except Exception as e:
+            self.log_test("Marketing Campaign Creation", False, f"Exception: {str(e)}")
+        
+        return False
+
     def run_focused_tests(self):
         """Run the specific tests requested by the user"""
         print("🎯 Starting Focused Backend API Tests")
