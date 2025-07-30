@@ -1347,8 +1347,308 @@ export const CentroIAMarketing = () => {
                   >
                     Cancelar
                   </button>
-                  <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                  <button 
+                    onClick={() => {
+                      // Aquí iría la lógica para guardar el push
+                      alert('✅ Push automático guardado exitosamente!');
+                      setShowEditPush(false);
+                    }}
+                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                  >
                     💾 Guardar Push
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Publicar Contenido */}
+      {showPublishModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-gray-800">📱 Publicar Contenido</h2>
+                <button 
+                  onClick={() => setShowPublishModal(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <h3 className="font-medium text-gray-800 mb-3">Selecciona dónde publicar:</h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button className="p-4 border border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 transition-colors">
+                      <div className="text-2xl mb-2">📘</div>
+                      <div className="font-medium">Facebook</div>
+                      <div className="text-sm text-gray-500">Página empresarial</div>
+                    </button>
+                    
+                    <button className="p-4 border border-gray-200 rounded-lg hover:bg-pink-50 hover:border-pink-300 transition-colors">
+                      <div className="text-2xl mb-2">📸</div>
+                      <div className="font-medium">Instagram</div>
+                      <div className="text-sm text-gray-500">Feed y Stories</div>
+                    </button>
+                    
+                    <button className="p-4 border border-gray-200 rounded-lg hover:bg-green-50 hover:border-green-300 transition-colors">
+                      <div className="text-2xl mb-2">💬</div>
+                      <div className="font-medium">WhatsApp</div>
+                      <div className="text-sm text-gray-500">Estados</div>
+                    </button>
+                    
+                    <button className="p-4 border border-gray-200 rounded-lg hover:bg-red-50 hover:border-red-300 transition-colors">
+                      <div className="text-2xl mb-2">🎵</div>
+                      <div className="font-medium">TikTok</div>
+                      <div className="text-sm text-gray-500">Perfil comercial</div>
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Mensaje (opcional)
+                  </label>
+                  <textarea
+                    placeholder="Agrega un mensaje personalizado para acompañar tu publicación..."
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    rows="3"
+                  />
+                </div>
+
+                <div className="flex justify-end space-x-3">
+                  <button 
+                    onClick={() => setShowPublishModal(false)}
+                    className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button 
+                    onClick={() => {
+                      alert('🚀 Contenido programado para publicación!');
+                      setShowPublishModal(false);
+                    }}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    📤 Publicar Ahora
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Comprar Créditos */}
+      {showCreditsModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-gray-800">💳 Comprar Créditos</h2>
+                <button 
+                  onClick={() => setShowCreditsModal(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-blue-600">{userBalance}</div>
+                    <div className="text-sm text-blue-700">Créditos actuales</div>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <h3 className="font-medium text-gray-800">Paquetes disponibles:</h3>
+                  
+                  <button 
+                    onClick={() => handleBuyCredits(500)}
+                    className="w-full p-4 border border-gray-200 rounded-lg hover:border-green-300 hover:bg-green-50 transition-colors text-left"
+                  >
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <div className="font-medium">Paquete Básico</div>
+                        <div className="text-sm text-gray-500">500 créditos</div>
+                      </div>
+                      <div className="text-green-600 font-bold">$50</div>
+                    </div>
+                  </button>
+                  
+                  <button 
+                    onClick={() => handleBuyCredits(1200)}
+                    className="w-full p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors text-left"
+                  >
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <div className="font-medium">Paquete Profesional</div>
+                        <div className="text-sm text-gray-500">1,200 créditos</div>
+                        <div className="text-xs text-blue-600">20% de descuento</div>
+                      </div>
+                      <div className="text-blue-600 font-bold">$96</div>
+                    </div>
+                  </button>
+                  
+                  <button 
+                    onClick={() => handleBuyCredits(2500)}
+                    className="w-full p-4 border border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50 transition-colors text-left"
+                  >
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <div className="font-medium">Paquete Premium</div>
+                        <div className="text-sm text-gray-500">2,500 créditos</div>
+                        <div className="text-xs text-purple-600">25% de descuento</div>
+                      </div>
+                      <div className="text-purple-600 font-bold">$187</div>
+                    </div>
+                  </button>
+                </div>
+
+                <div className="text-xs text-gray-500 text-center">
+                  Pagos seguros con tarjeta de crédito o PayPal
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal A/B Testing */}
+      {showABTestModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-3xl">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-gray-800">🧪 Nueva Prueba A/B</h2>
+                <button 
+                  onClick={() => setShowABTestModal(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Nombre de la prueba
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Ej: Botón vs Texto en WhatsApp"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="border border-gray-200 rounded-lg p-4">
+                    <h3 className="font-medium text-gray-800 mb-3">🅰️ Versión A</h3>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Mensaje</label>
+                        <textarea
+                          placeholder="Mensaje de la versión A..."
+                          className="w-full p-2 border border-gray-300 rounded-lg text-sm"
+                          rows="3"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Canal</label>
+                        <select className="w-full p-2 border border-gray-300 rounded-lg text-sm">
+                          <option>WhatsApp</option>
+                          <option>Push</option>
+                          <option>Email</option>
+                          <option>Instagram</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="border border-gray-200 rounded-lg p-4">
+                    <h3 className="font-medium text-gray-800 mb-3">🅱️ Versión B</h3>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Mensaje</label>
+                        <textarea
+                          placeholder="Mensaje de la versión B..."
+                          className="w-full p-2 border border-gray-300 rounded-lg text-sm"
+                          rows="3"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Canal</label>
+                        <select className="w-full p-2 border border-gray-300 rounded-lg text-sm">
+                          <option>WhatsApp</option>
+                          <option>Push</option>
+                          <option>Email</option>
+                          <option>Instagram</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Duración (días)
+                    </label>
+                    <input
+                      type="number"
+                      defaultValue="7"
+                      min="1"
+                      max="30"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      División del tráfico
+                    </label>
+                    <select className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                      <option>50% / 50%</option>
+                      <option>60% / 40%</option>
+                      <option>70% / 30%</option>
+                      <option>80% / 20%</option>
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Métrica principal
+                    </label>
+                    <select className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                      <option>Tasa de apertura</option>
+                      <option>Tasa de conversión</option>
+                      <option>Clicks</option>
+                      <option>Tiempo de interacción</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="flex justify-end space-x-3">
+                  <button 
+                    onClick={() => setShowABTestModal(false)}
+                    className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button 
+                    onClick={() => {
+                      alert('🧪 Prueba A/B creada exitosamente! Comenzará en 5 minutos.');
+                      setShowABTestModal(false);
+                    }}
+                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    🚀 Iniciar Prueba
                   </button>
                 </div>
               </div>
