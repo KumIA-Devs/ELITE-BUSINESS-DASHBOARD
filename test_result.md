@@ -726,9 +726,11 @@ metadata:
 
 test_plan:
   current_focus:
-    - "ROI Viewer Interface"
+    - "Enhanced Image Generation with New Content Types"
+    - "Segmentation Campaign Functionality"
   stuck_tasks:
-    - "ROI Viewer Interface"
+    - "Enhanced Image Generation with New Content Types"
+    - "Segmentation Campaign Functionality"
   test_all: false
   test_priority: "high_first"
 
