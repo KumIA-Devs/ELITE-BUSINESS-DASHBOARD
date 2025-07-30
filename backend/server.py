@@ -25,6 +25,10 @@ from PIL import Image
 import cv2
 import numpy as np
 
+# Logging setup
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 # Firebase and Sync Service imports
 try:
     from firebase_admin_config import get_firebase_service
