@@ -196,7 +196,7 @@ export const CentroIAMarketing = () => {
     return pricing[model] * duration;
   };
 
-  # Función para cálculo de costos de imagen
+  // Función para cálculo de costos de imagen
   const calculateImageCost = (count, style) => {
     const baseCost = 2; // créditos por imagen
     const styleMultiplier = style === 'fotografico_premium' || style === 'premium' ? 1.5 : 1;
