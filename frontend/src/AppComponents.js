@@ -1037,99 +1037,127 @@ export const CentroIAMarketing = () => {
                 </button>
               </div>
 
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Nombre de la campaña *
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Ej: Promoción San Valentín 2025"
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Segmento objetivo
-                    </label>
-                    <select className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                      <option>Todos los clientes</option>
-                      <option>Solo Exploradores</option>
-                      <option>Solo Destacados</option>
-                      <option>Solo Estrellas</option>
-                      <option>Solo Leyendas</option>
-                      <option>Clientes inactivos</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Mensaje de la campaña *
-                  </label>
-                  <textarea
-                    placeholder="Escribe el mensaje que recibirán tus clientes..."
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    rows="4"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Canales
-                    </label>
-                    <div className="space-y-2">
-                      <label className="flex items-center">
-                        <input type="checkbox" className="mr-2" />
-                        WhatsApp
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const campaignData = {
+                  title: formData.get('title'),
+                  description: formData.get('description'),
+                  target_level: formData.get('target_level'),
+                  channels: Array.from(formData.getAll('channels')),
+                  start_date: formData.get('start_date'),
+                  end_date: formData.get('end_date')
+                };
+                handleCreateCampaign(campaignData);
+              }}>
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Nombre de la campaña *
                       </label>
-                      <label className="flex items-center">
-                        <input type="checkbox" className="mr-2" />
-                        Push Notifications
+                      <input
+                        name="title"
+                        type="text"
+                        placeholder="Ej: Promoción San Valentín 2025"
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        required
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Segmento objetivo
                       </label>
-                      <label className="flex items-center">
-                        <input type="checkbox" className="mr-2" />
-                        Email
-                      </label>
+                      <select name="target_level" className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        <option value="todos">Todos los clientes</option>
+                        <option value="explorador">Solo Exploradores</option>
+                        <option value="destacado">Solo Destacados</option>
+                        <option value="estrella">Solo Estrellas</option>
+                        <option value="leyenda">Solo Leyendas</option>
+                        <option value="inactivos">Clientes inactivos</option>
+                      </select>
                     </div>
                   </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Fecha de inicio
-                    </label>
-                    <input
-                      type="datetime-local"
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Fecha de finalización
-                    </label>
-                    <input
-                      type="datetime-local"
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
 
-                <div className="flex justify-end space-x-3">
-                  <button 
-                    onClick={() => setShowCampaignModal(false)}
-                    className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
-                  >
-                    Cancelar
-                  </button>
-                  <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                    🚀 Crear Campaña
-                  </button>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Mensaje de la campaña *
+                    </label>
+                    <textarea
+                      name="description"
+                      placeholder="Escribe el mensaje que recibirán tus clientes..."
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      rows="4"
+                      required
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Canales
+                      </label>
+                      <div className="space-y-2">
+                        <label className="flex items-center">
+                          <input type="checkbox" name="channels" value="whatsapp" className="mr-2" />
+                          WhatsApp
+                        </label>
+                        <label className="flex items-center">
+                          <input type="checkbox" name="channels" value="push" className="mr-2" />
+                          Push Notifications
+                        </label>
+                        <label className="flex items-center">
+                          <input type="checkbox" name="channels" value="email" className="mr-2" />
+                          Email
+                        </label>
+                        <label className="flex items-center">
+                          <input type="checkbox" name="channels" value="instagram" className="mr-2" />
+                          Instagram
+                        </label>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Fecha de inicio
+                      </label>
+                      <input
+                        name="start_date"
+                        type="datetime-local"
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Fecha de finalización
+                      </label>
+                      <input
+                        name="end_date"
+                        type="datetime-local"
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end space-x-3">
+                    <button 
+                      type="button"
+                      onClick={() => setShowCampaignModal(false)}
+                      className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+                    >
+                      Cancelar
+                    </button>
+                    <button 
+                      type="submit"
+                      className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    >
+                      🚀 Crear Campaña
+                    </button>
+                  </div>
                 </div>
-              </div>
+              </form>
             </div>
           </div>
         </div>
