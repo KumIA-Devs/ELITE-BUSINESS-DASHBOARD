@@ -422,15 +422,18 @@ backend:
 
   - task: "Enhanced Image Generation with New Content Types"
     implemented: true
-    working: false
+    working: true
     file: "/app/backend/server.py"
-    stuck_count: 1
+    stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: false
         agent: "testing"
         comment: "❌ MINOR ISSUE: Enhanced image generation works for content creation but has pricing calculation error. Successfully generates carousel (3 images) and story formats with new parameters (resolution, brand integration, color palette, logo inclusion). Core functionality works but premium cost calculation incorrect: expected 9.0 credits (3 images × 2 base × 1.5 premium), got 6.0 credits. Image generation and new content types work correctly - only pricing logic needs adjustment."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Enhanced image generation with new content types working perfectly! Successfully tested carousel format (3 images) and story format with new parameters including resolution (1080x1080, 1080x1920), brand integration levels, color palette, logo inclusion. Premium cost calculation now correct: 9.0 credits for 3 premium images (3 × 2 base × 1.5 premium multiplier). All enhanced parameters accepted and processed correctly. Core functionality fully operational."
 
   - task: "Campaign Creation with Instagram Channel"
     implemented: true
