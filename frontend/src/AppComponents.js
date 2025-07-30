@@ -1312,10 +1312,10 @@ export const CentroIAMarketing = () => {
       {/* Modal Campaña por Segmento */}
       {showSegmentModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-3xl">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-gray-800">📧 Campaña para {showSegmentModal.nivel}</h2>
+                <h2 className="text-xl font-bold text-gray-800">📧 Campaña Dirigida para {showSegmentModal.nivel}</h2>
                 <button 
                   onClick={() => setShowSegmentModal(null)}
                   className="text-gray-400 hover:text-gray-600 text-2xl"
@@ -1324,9 +1324,9 @@ export const CentroIAMarketing = () => {
                 </button>
               </div>
 
-              <div className="bg-blue-50 p-4 rounded-lg mb-4">
-                <h3 className="font-medium text-blue-800 mb-2">Información del Segmento</h3>
-                <div className="grid grid-cols-3 gap-4 text-sm">
+              <div className="bg-blue-50 p-4 rounded-lg mb-6">
+                <h3 className="font-medium text-blue-800 mb-3">📊 Información del Segmento</h3>
+                <div className="grid grid-cols-3 gap-4 text-sm mb-4">
                   <div>
                     <span className="text-blue-600">Clientes:</span>
                     <div className="font-bold">{showSegmentModal.clientes}</div>
@@ -1340,16 +1340,121 @@ export const CentroIAMarketing = () => {
                     <div className="font-bold">{showSegmentModal.conversionRate}</div>
                   </div>
                 </div>
+                <div className="text-sm text-blue-700 bg-blue-100 p-3 rounded-lg">
+                  <strong>💡 Propósito:</strong> Esta funcionalidad te permite crear campañas personalizadas 
+                  específicamente para clientes del nivel {showSegmentModal.nivel}. Puedes aprovechar sus 
+                  características únicas (comportamiento de compra, frecuencia de visita, preferencias) para 
+                  crear mensajes más efectivos y aumentar la conversión.
+                </div>
               </div>
 
               <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de campaña</label>
+                    <select className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                      <option value="promocion">Promoción especial</option>
+                      <option value="fidelizacion">Fidelización</option>
+                      <option value="reactivacion">Reactivación</option>
+                      <option value="upselling">Upselling</option>
+                      <option value="evento">Invitación a evento</option>
+                      <option value="feedback">Solicitud de feedback</option>
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Objetivo principal</label>
+                    <select className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                      <option value="conversion">Aumentar conversión</option>
+                      <option value="retention">Mejorar retención</option>
+                      <option value="frequency">Aumentar frecuencia</option>
+                      <option value="ticket">Incrementar ticket promedio</option>
+                      <option value="referral">Generar referidos</option>
+                    </select>
+                  </div>
+                </div>
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Mensaje personalizado</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Mensaje personalizado para {showSegmentModal.nivel}
+                  </label>
                   <textarea
-                    placeholder={`Mensaje especial para clientes ${showSegmentModal.nivel}...`}
+                    placeholder={`Mensaje especial para clientes ${showSegmentModal.nivel}... 
+                    
+Ejemplo: "¡Hola! Como cliente ${showSegmentModal.nivel}, tienes acceso exclusivo a..."`}
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    rows="4"
+                    rows="5"
                   />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Canales de envío</label>
+                    <div className="space-y-2">
+                      <label className="flex items-center">
+                        <input type="checkbox" className="mr-2" defaultChecked />
+                        WhatsApp
+                      </label>
+                      <label className="flex items-center">
+                        <input type="checkbox" className="mr-2" />
+                        Push Notification
+                      </label>
+                      <label className="flex items-center">
+                        <input type="checkbox" className="mr-2" />
+                        Email personalizado
+                      </label>
+                      <label className="flex items-center">
+                        <input type="checkbox" className="mr-2" />
+                        Instagram DM
+                      </label>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Programación</label>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-xs text-gray-600 mb-1">Fecha de envío</label>
+                        <input
+                          type="date"
+                          className="w-full p-2 border border-gray-300 rounded-lg text-sm"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-gray-600 mb-1">Hora óptima</label>
+                        <select className="w-full p-2 border border-gray-300 rounded-lg text-sm">
+                          <option>Automática (basada en datos)</option>
+                          <option>9:00 AM</option>
+                          <option>12:00 PM</option>
+                          <option>3:00 PM</option>
+                          <option>6:00 PM</option>
+                          <option>8:00 PM</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-green-50 p-4 rounded-lg">
+                  <h4 className="font-medium text-green-800 mb-2">📈 Predicción de Resultados</h4>
+                  <div className="grid grid-cols-3 gap-4 text-sm">
+                    <div>
+                      <span className="text-green-600">Alcance estimado:</span>
+                      <div className="font-bold">{showSegmentModal.clientes} clientes</div>
+                    </div>
+                    <div>
+                      <span className="text-green-600">Tasa de apertura esperada:</span>
+                      <div className="font-bold">
+                        {showSegmentModal.nivel === 'Leyenda' ? '95%' : 
+                         showSegmentModal.nivel === 'Estrella' ? '89%' :
+                         showSegmentModal.nivel === 'Destacado' ? '78%' : '65%'}
+                      </div>
+                    </div>
+                    <div>
+                      <span className="text-green-600">Conversión estimada:</span>
+                      <div className="font-bold">{showSegmentModal.conversionRate}</div>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="flex justify-end space-x-3">
@@ -1359,7 +1464,13 @@ export const CentroIAMarketing = () => {
                   >
                     Cancelar
                   </button>
-                  <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                  <button 
+                    onClick={() => {
+                      alert(`📧 Campaña para ${showSegmentModal.nivel} programada exitosamente! Se enviará a ${showSegmentModal.clientes} clientes.`);
+                      setShowSegmentModal(null);
+                    }}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  >
                     📧 Enviar Campaña
                   </button>
                 </div>
