@@ -484,16 +484,19 @@ backend:
         comment: "✅ TESTED: A/B testing campaign creation working correctly. Successfully creates A/B test campaigns with variant configurations (Brisket vs Pulled Pork promotion), traffic split parameters, success metrics, confidence levels, and sample size requirements. Campaign created via regular endpoint with A/B parameters accepted and stored. A/B testing framework functional."
 
   - task: "Segmentation Campaign Functionality"
-    implemented: false
-    working: false
+    implemented: true
+    working: true
     file: "/app/backend/server.py"
-    stuck_count: 1
+    stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: false
         agent: "testing"
         comment: "❌ PARTIALLY IMPLEMENTED: Customer segmentation data retrieval works perfectly (ambassador, recurrent, new, inactive segments available via /analytics/customers). However, segmented campaign creation endpoints not implemented (/marketing/campaigns/segmented returns 404). Segmentation logic exists but dedicated segmented campaign endpoints need implementation. Core segmentation functionality available but campaign targeting needs completion."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Segmentation campaign functionality working perfectly! Customer segmentation data retrieval works correctly with all 4 segments available (ambassador, recurrent, new, inactive). Segmented campaign creation endpoint (/marketing/campaigns/segmented) now functional - successfully created campaigns for 'ambassador' and 'recurrent' segments. Fixed endpoint parameter issue (uses target_level field). Both segmentation logic and campaign targeting fully operational."
 
 frontend:
   - task: "Authentication UI and Context"
