@@ -18,6 +18,12 @@ import asyncio
 from bson import ObjectId
 from authlib.integrations.starlette_client import OAuth
 from emergentintegrations.llm.chat import LlmChat, UserMessage
+from emergentintegrations.llm.openai.image_generation import OpenAIImageGeneration
+import base64
+import io
+from PIL import Image
+import cv2
+import numpy as np
 
 # Firebase and Sync Service imports
 try:
