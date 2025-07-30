@@ -33,6 +33,28 @@ export const CentroIAMarketing = () => {
   const [showABTestModal, setShowABTestModal] = useState(false);
   const [userBalance, setUserBalance] = useState(1250); // Créditos del usuario
   const [estimatedCost, setEstimatedCost] = useState(0);
+  
+  // Estados para los nuevos modales de juegos
+  const [showConfigModal, setShowConfigModal] = useState(false);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [showGameConfigModal, setShowGameConfigModal] = useState(null);
+  const [showGamePreviewModal, setShowGamePreviewModal] = useState(null);
+  const [showSecurityModal, setShowSecurityModal] = useState(false);
+  const [seguridadConfig, setSeguridadConfig] = useState({
+    radiusGeofencing: 50,
+    tiempoMaximoSesion: 30,
+    sesionesMaximasPorCliente: 3,
+    tiempoEsperaMinimo: 15,
+    validacionGeolocation: true,
+    validacionQR: true,
+    antifraudeAvanzado: false
+  });
+
+  // Función para manejar actualización de configuración de juego
+  const handleUpdateGameConfig = (gameId, config) => {
+    alert(`✅ Configuración del juego actualizada exitosamente!\n\nJuego ID: ${gameId}\nStars Reales: ${config.starsReales}\nMáx por sesión: ${config.maxStarsPorSesion}\nActivo: ${config.activo ? 'Sí' : 'No'}`);
+    setShowGameConfigModal(null);
+  };
 
   // Función para descargar video
   const handleDownloadVideo = async () => {
