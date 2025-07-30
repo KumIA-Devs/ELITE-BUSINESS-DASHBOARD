@@ -10505,6 +10505,415 @@ export const JuegosMultijugador = () => {
   );
 };
 
+// 📱 MÓDULO 4: GESTIÓN DE USER WEB APP
+export const GestionUserWebApp = () => {
+  const [previewMode, setPreviewMode] = useState('mobile');
+  const [activeEditor, setActiveEditor] = useState('visual');
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [webAppConfig, setWebAppConfig] = useState({
+    nombre: 'IL MANDORLA',
+    logo: '',
+    colorPrimario: '#F97316',
+    colorSecundario: '#DC2626',
+    mensajeBienvenida: '¡Bienvenido a IL MANDORLA! Disfruta de la mejor experiencia gastronómica con KumIA Stars.',
+    temaVisual: 'gourmet',
+    mostrarNiveles: true,
+    mostrarProgreso: true,
+    notificacionesPush: true
+  });
+
+  const [walletPreview] = useState({
+    cliente: {
+      nombre: 'Elena Vargas',
+      nivel: 'Estrella',
+      stars: 89,
+      starsProximoNivel: 11,
+      nftsDesbloqueados: 3,
+      proximaRecompensa: 'Experiencia VIP'
+    }
+  });
+
+  // Configuración de recompensas visibles
+  const [recompensasConfig, setRecompensasConfig] = useState([
+    { id: 1, nivel: 'Explorador', nombre: 'Descuento 15%', visible: true, stock: 25 },
+    { id: 2, nivel: 'Destacado', nombre: 'Plato Gratis', visible: true, stock: 12 },
+    { id: 3, nivel: 'Estrella', nombre: 'Experiencia VIP', visible: true, stock: 5 },
+    { id: 4, nivel: 'Leyenda', nombre: 'Cena Privada', visible: false, stock: 2 }
+  ]);
+
+  // IA de experiencias
+  const experienciasIA = [
+    { tipo: 'Saludo personalizado', texto: '¡Hola Elena! Tu mesa favorita te está esperando 😊', mood: 'acogedor' },
+    { tipo: 'Recomendación menu', texto: 'Basado en tus gustos, te recomendamos el Cordero Patagónico con nuestra nueva salsa', mood: 'gourmet' },
+    { tipo: 'Notificación nivel', texto: '¡Solo 11 stars más para ser Leyenda! 🌟', mood: 'motivacional' },
+    { tipo: 'Invitación evento', texto: 'Este viernes tenemos cata de vinos premium. ¿Te apuntas?', mood: 'exclusivo' }
+  ];
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-3xl font-bold text-gray-800">📱 Gestión de User Web App</h2>
+          <p className="text-gray-600 mt-1">Controla cómo se presenta tu restaurante al cliente final</p>
+        </div>
+        <div className="flex space-x-3">
+          <button 
+            onClick={() => setShowPreviewModal(true)}
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+          >
+            👀 Vista Previa Completa
+          </button>
+          <button className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors">
+            🚀 Publicar Cambios
+          </button>
+        </div>
+      </div>
+
+      {/* Editor Visual */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-bold text-gray-800">🎨 Editor Visual</h3>
+            <div className="flex space-x-2">
+              <button
+                onClick={() => setActiveEditor('visual')}
+                className={`px-3 py-1 rounded-lg text-sm transition-colors ${
+                  activeEditor === 'visual' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'
+                }`}
+              >
+                🎨 Visual
+              </button>
+              <button
+                onClick={() => setActiveEditor('contenido')}
+                className={`px-3 py-1 rounded-lg text-sm transition-colors ${
+                  activeEditor === 'contenido' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'
+                }`}
+              >
+                📝 Contenido
+              </button>
+            </div>
+          </div>
+
+          {activeEditor === 'visual' && (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Logo del Restaurante</label>
+                <div className="flex items-center space-x-4">
+                  <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-red-400 rounded-xl flex items-center justify-center">
+                    {webAppConfig.logo ? (
+                      <img src={webAppConfig.logo} alt="Logo" className="w-full h-full object-cover rounded-xl" />
+                    ) : (
+                      <span className="text-white text-xl">🍽️</span>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <button className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors">
+                      📁 Subir Logo
+                    </button>
+                    <p className="text-xs text-gray-500 mt-1">Recomendado: 512x512px, PNG o JPG</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Color Primario</label>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="color"
+                      value={webAppConfig.colorPrimario}
+                      onChange={(e) => setWebAppConfig(prev => ({...prev, colorPrimario: e.target.value}))}
+                      className="w-12 h-8 rounded border border-gray-300"
+                    />
+                    <input
+                      type="text"
+                      value={webAppConfig.colorPrimario}
+                      onChange={(e) => setWebAppConfig(prev => ({...prev, colorPrimario: e.target.value}))}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Color Secundario</label>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="color"
+                      value={webAppConfig.colorSecundario}
+                      onChange={(e) => setWebAppConfig(prev => ({...prev, colorSecundario: e.target.value}))}
+                      className="w-12 h-8 rounded border border-gray-300"
+                    />
+                    <input
+                      type="text"
+                      value={webAppConfig.colorSecundario}
+                      onChange={(e) => setWebAppConfig(prev => ({...prev, colorSecundario: e.target.value}))}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Tema Visual</label>
+                <select 
+                  value={webAppConfig.temaVisual}
+                  onChange={(e) => setWebAppConfig(prev => ({...prev, temaVisual: e.target.value}))}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="gourmet">🍽️ Gourmet - Elegante y sofisticado</option>
+                  <option value="casual">😊 Casual - Amigable y relajado</option>
+                  <option value="premium">✨ Premium - Lujo y exclusividad</option>
+                  <option value="familiar">👨‍👩‍👧‍👦 Familiar - Cálido y acogedor</option>
+                </select>
+              </div>
+            </div>
+          )}
+
+          {activeEditor === 'contenido' && (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Nombre del Restaurante</label>
+                <input
+                  type="text"
+                  value={webAppConfig.nombre}
+                  onChange={(e) => setWebAppConfig(prev => ({...prev, nombre: e.target.value}))}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Mensaje de Bienvenida</label>
+                <textarea
+                  value={webAppConfig.mensajeBienvenida}
+                  onChange={(e) => setWebAppConfig(prev => ({...prev, mensajeBienvenida: e.target.value}))}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-24"
+                  placeholder="Mensaje que verán los clientes al ingresar a la app..."
+                />
+              </div>
+
+              <div className="space-y-3">
+                <h4 className="font-medium text-gray-700">Configuración de Visualización</h4>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">Mostrar niveles KumIA</span>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input 
+                        type="checkbox" 
+                        className="sr-only peer" 
+                        checked={webAppConfig.mostrarNiveles}
+                        onChange={(e) => setWebAppConfig(prev => ({...prev, mostrarNiveles: e.target.checked}))}
+                      />
+                      <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                    </label>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">Mostrar progreso de Stars</span>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input 
+                        type="checkbox" 
+                        className="sr-only peer" 
+                        checked={webAppConfig.mostrarProgreso}
+                        onChange={(e) => setWebAppConfig(prev => ({...prev, mostrarProgreso: e.target.checked}))}
+                      />
+                      <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                    </label>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">Notificaciones Push</span>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input 
+                        type="checkbox" 
+                        className="sr-only peer" 
+                        checked={webAppConfig.notificacionesPush}
+                        onChange={(e) => setWebAppConfig(prev => ({...prev, notificacionesPush: e.target.checked}))}
+                      />
+                      <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Vista Previa en Tiempo Real */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-bold text-gray-800">👀 Vista Previa en Tiempo Real</h3>
+            <div className="flex space-x-2">
+              <button
+                onClick={() => setPreviewMode('mobile')}
+                className={`px-3 py-1 rounded-lg text-sm transition-colors ${
+                  previewMode === 'mobile' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'
+                }`}
+              >
+                📱 Móvil
+              </button>
+              <button
+                onClick={() => setPreviewMode('desktop')}
+                className={`px-3 py-1 rounded-lg text-sm transition-colors ${
+                  previewMode === 'desktop' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'
+                }`}
+              >
+                💻 Desktop
+              </button>
+            </div>
+          </div>
+
+          <div className={`mx-auto bg-gray-100 rounded-xl p-4 ${previewMode === 'mobile' ? 'max-w-xs' : 'w-full'}`}>
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+              {/* Header */}
+              <div 
+                className="px-4 py-6 text-white text-center"
+                style={{ backgroundColor: webAppConfig.colorPrimario }}
+              >
+                <div className="w-16 h-16 mx-auto mb-3 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                  <span className="text-2xl">🍽️</span>
+                </div>
+                <h2 className="text-xl font-bold">{webAppConfig.nombre}</h2>
+                <p className="text-sm opacity-90 mt-1">KumIA Experience</p>
+              </div>
+
+              {/* Content */}
+              <div className="p-4">
+                <div className="text-center mb-4">
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    {webAppConfig.mensajeBienvenida}
+                  </p>
+                </div>
+
+                {webAppConfig.mostrarNiveles && (
+                  <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium">Mi Nivel</span>
+                      <span className="text-sm font-bold text-yellow-600">⭐ Estrella</span>
+                    </div>
+                    {webAppConfig.mostrarProgreso && (
+                      <div>
+                        <div className="flex justify-between text-xs text-gray-500 mb-1">
+                          <span>89 Stars</span>
+                          <span>100 Stars para Leyenda</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div 
+                            className="h-2 rounded-full transition-all duration-300"
+                            style={{ width: '89%', backgroundColor: webAppConfig.colorSecundario }}
+                          ></div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div className="grid grid-cols-2 gap-2 text-center">
+                  <div className="p-2 bg-blue-50 rounded-lg">
+                    <div className="text-lg font-bold text-blue-600">89</div>
+                    <div className="text-xs text-blue-700">Mis Stars</div>
+                  </div>
+                  <div className="p-2 bg-green-50 rounded-lg">
+                    <div className="text-lg font-bold text-green-600">3</div>
+                    <div className="text-xs text-green-700">NFTs</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Gestor de Recompensas Visibles */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-xl font-bold text-gray-800 mb-4">🎁 Gestor de Recompensas Visibles</h3>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="bg-gray-50 border-b">
+                <th className="text-left py-3 px-4 font-medium text-gray-700">Nivel</th>
+                <th className="text-left py-3 px-4 font-medium text-gray-700">Recompensa</th>
+                <th className="text-center py-3 px-4 font-medium text-gray-700">Stock</th>
+                <th className="text-center py-3 px-4 font-medium text-gray-700">Visible</th>
+                <th className="text-center py-3 px-4 font-medium text-gray-700">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {recompensasConfig.map((recompensa) => (
+                <tr key={recompensa.id} className="border-b hover:bg-gray-50 transition-colors">
+                  <td className="py-4 px-4">
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      recompensa.nivel === 'Explorador' ? 'bg-blue-100 text-blue-800' :
+                      recompensa.nivel === 'Destacado' ? 'bg-purple-100 text-purple-800' :
+                      recompensa.nivel === 'Estrella' ? 'bg-yellow-100 text-yellow-800' :
+                      'bg-red-100 text-red-800'
+                    }`}>
+                      {recompensa.nivel}
+                    </span>
+                  </td>
+                  <td className="py-4 px-4 font-medium">{recompensa.nombre}</td>
+                  <td className="py-4 px-4 text-center">
+                    <span className={`font-medium ${recompensa.stock > 10 ? 'text-green-600' : recompensa.stock > 5 ? 'text-orange-600' : 'text-red-600'}`}>
+                      {recompensa.stock}
+                    </span>
+                  </td>
+                  <td className="py-4 px-4 text-center">
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input 
+                        type="checkbox" 
+                        className="sr-only peer" 
+                        checked={recompensa.visible}
+                        onChange={(e) => {
+                          setRecompensasConfig(prev => 
+                            prev.map(r => r.id === recompensa.id ? {...r, visible: e.target.checked} : r)
+                          );
+                        }}
+                      />
+                      <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
+                    </label>
+                  </td>
+                  <td className="py-4 px-4 text-center">
+                    <button className="bg-gray-100 text-gray-700 px-3 py-1 rounded-lg text-sm hover:bg-gray-200 transition-colors">
+                      ⚙️ Editar
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* IA de Experiencias */}
+      <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl p-6 border border-purple-200">
+        <h3 className="text-xl font-bold text-purple-800 mb-4">🧠 IA de Experiencias Personalizadas</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {experienciasIA.map((experiencia, index) => (
+            <div key={index} className="bg-white rounded-lg p-4 border border-purple-100">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="font-medium text-gray-800">{experiencia.tipo}</h4>
+                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                  experiencia.mood === 'acogedor' ? 'bg-blue-100 text-blue-800' :
+                  experiencia.mood === 'gourmet' ? 'bg-green-100 text-green-800' :
+                  experiencia.mood === 'motivacional' ? 'bg-yellow-100 text-yellow-800' :
+                  'bg-purple-100 text-purple-800'
+                }`}>
+                  {experiencia.mood}
+                </span>
+              </div>
+              <p className="text-sm text-gray-600 italic">"{experiencia.texto}"</p>
+              <div className="mt-2 flex space-x-2">
+                <button className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded hover:bg-purple-200 transition-colors">
+                  ✏️ Editar
+                </button>
+                <button className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded hover:bg-green-200 transition-colors">
+                  ✅ Activar
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default {
   ROIViewer,
   RewardsNFTsSection,
@@ -10514,5 +10923,6 @@ export default {
   ReservationsSection,
   AIAgentsSection,
   InteligenciaCompetitiva,
-  JuegosMultijugador
+  JuegosMultijugador,
+  GestionUserWebApp
 };
