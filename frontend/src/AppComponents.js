@@ -463,21 +463,8 @@ export const CentroIAMarketing = () => {
           </button>
         </div>
       </div>
-                <h4 className="font-medium text-purple-800">Recompensa Disponible</h4>
-                <p className="text-sm text-purple-600">Al alcanzar nivel • Push</p>
-              </div>
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-green-600 font-medium">94% entregados</span>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" className="sr-only peer" defaultChecked />
-                  <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-600"></div>
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      {/* Modal Video Factory */}
           <h3 className="text-xl font-bold text-gray-800 mb-4">📊 Campañas A/B Trackeadas</h3>
           <div className="space-y-4">
             {campaignAB.map((campaign) => (
