@@ -579,9 +579,9 @@ frontend:
 
   - task: "ROI Viewer Interface"
     implemented: true
-    working: true
-    file: "/app/frontend/src/App.js"
-    stuck_count: 0
+    working: false
+    file: "/app/frontend/src/AppComponents.js"
+    stuck_count: 1
     priority: "high"
     needs_retesting: false
     status_history:
@@ -591,6 +591,9 @@ frontend:
       - working: true
         agent: "testing"
         comment: "✅ TESTED: ROI Viewer interface working perfectly. Main metrics (+4.3x ROI, $145,000 ingresos atribuidos, $3,200 ticket promedio, +21.8% crecimiento). Historical comparison ($145,000 vs $119,000, +21.8% growth). Channel breakdown (WhatsApp: $45,000 +35%, Instagram: $32,000 +28%, TikTok: $28,000 +42%, Web: $40,000 +18%). Projection data for 30/60/90 days. Customer value analysis included."
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL ISSUES FOUND in redesigned ROI Viewer KumIA Elite section: 1) **Timeframe filters (7 días, 30 días, 60 días, 90 días dropdown) do NOT update data** - dropdown values change but ROI data remains static (2168% unchanged across all timeframes). 2) **'Exportar Reporte' button has NO functionality** - no download, modal, or any response when clicked. 3) **'Evolución del ticket promedio' chart filters (7D, 30D, 90D buttons) do NOT change visualization** - chart shows same 9 data points regardless of filter selection. 4) ✅ Chart visualization itself works correctly with visible data points showing historical ticket evolution. All filter interactions are cosmetic only - no actual data filtering occurs. User-reported issues confirmed."
 
   - task: "Configuration Module - All 4 Submodules"
     implemented: true
