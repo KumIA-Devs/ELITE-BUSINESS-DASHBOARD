@@ -9773,6 +9773,354 @@ Optimiza los prompts de tus agentes con mejor performance y replica esas técnic
   );
 };
 
+// 🧠 MÓDULO 2: INTELIGENCIA COMPETITIVA
+export const InteligenciaCompetitiva = () => {
+  const [selectedCompetitor, setSelectedCompetitor] = useState(null);
+  const [benchmarkFilter, setBenchmarkFilter] = useState('todos');
+  const [showTrendsModal, setShowTrendsModal] = useState(false);
+
+  // Benchmark por rubro
+  const benchmarkData = {
+    categoria: "Steakhouse Premium",
+    tuRestaurante: {
+      ticketPromedio: 3830,
+      feedbackScore: 4.7,
+      starsGeneradas: 16.8,
+      rankingLocal: 2
+    },
+    promedioRubro: {
+      ticketPromedio: 3200,
+      feedbackScore: 4.2,
+      starsGeneradas: 12.3,
+      totalRestaurantes: 47
+    }
+  };
+
+  // Competidores cercanos
+  const competidores = [
+    {
+      id: 1,
+      nombre: "Asado del Norte",
+      distancia: "0.8 km",
+      ticketPromedio: 2900,
+      rating: 4.3,
+      reviews: 234,
+      tendencia: "estable",
+      fortalezas: ["Precio", "Ubicación"],
+      debilidades: ["Servicio", "Variedad"]
+    },
+    {
+      id: 2,
+      nombre: "Premium Grill",
+      distancia: "1.2 km",
+      ticketPromedio: 4200,
+      rating: 4.6,
+      reviews: 156,
+      tendencia: "creciente",
+      fortalezas: ["Calidad", "Ambiente"],
+      debilidades: ["Precio", "Espera"]
+    },
+    {
+      id: 3,
+      nombre: "La Parrilla de Juan",
+      distancia: "2.1 km",
+      ticketPromedio: 2400,
+      rating: 4.1,
+      reviews: 89,
+      tendencia: "decreciente",
+      fortalezas: ["Tradición", "Porciones"],
+      debilidades: ["Modernización", "Marketing"]
+    }
+  ];
+
+  // Tendencias regionales
+  const tendenciasRegionales = [
+    { tendencia: "Experiencias Gastronómicas", crecimiento: "+45%", adoptado: true },
+    { tendencia: "Menús Personalizados IA", crecimiento: "+32%", adoptado: true },
+    { tendencia: "Sistemas de Fidelización", crecimiento: "+28%", adoptado: true },
+    { tendencia: "Delivery Premium", crecimiento: "+25%", adoptado: false },
+    { tendencia: "Eventos Temáticos", crecimiento: "+18%", adoptado: false }
+  ];
+
+  // Reviews scanner
+  const reviewsAnalysis = {
+    totalAnalyzadas: 1247,
+    sentimiento: {
+      positivo: 78,
+      neutral: 15,
+      negativo: 7
+    },
+    temasMasComentados: [
+      { tema: "Calidad de la carne", mencion: 89, sentiment: "positivo" },
+      { tema: "Tiempo de espera", mencion: 67, sentiment: "neutral" },
+      { tema: "Precios", mencion: 54, sentiment: "positivo" },
+      { tema: "Servicio al cliente", mencion: 43, sentiment: "positivo" },
+      { tema: "Ambiente", mencion: 38, sentiment: "positivo" }
+    ]
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-3xl font-bold text-gray-800">🧠 Inteligencia Competitiva</h2>
+          <p className="text-gray-600 mt-1">Información estratégica sobre la industria y performance relativa</p>
+        </div>
+        <div className="flex space-x-3">
+          <button 
+            onClick={() => setShowTrendsModal(true)}
+            className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors"
+          >
+            📈 Tendencias IA
+          </button>
+          <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+            🔄 Actualizar Datos
+          </button>
+        </div>
+      </div>
+
+      {/* Benchmark por Rubro */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-xl font-bold text-gray-800 mb-4">📊 Benchmark por Rubro - {benchmarkData.categoria}</h3>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div className="text-center p-4 bg-green-50 rounded-lg border border-green-200">
+            <div className="text-3xl font-bold text-green-600">${benchmarkData.tuRestaurante.ticketPromedio.toLocaleString()}</div>
+            <div className="text-sm text-green-700 mb-1">Tu Ticket Promedio</div>
+            <div className="text-xs text-green-600">vs ${benchmarkData.promedioRubro.ticketPromedio.toLocaleString()} promedio</div>
+            <div className="text-xs font-bold text-green-800 mt-1">
+              +{(((benchmarkData.tuRestaurante.ticketPromedio - benchmarkData.promedioRubro.ticketPromedio) / benchmarkData.promedioRubro.ticketPromedio) * 100).toFixed(0)}% por encima
+            </div>
+          </div>
+
+          <div className="text-center p-4 bg-blue-50 rounded-lg border border-blue-200">
+            <div className="text-3xl font-bold text-blue-600">{benchmarkData.tuRestaurante.feedbackScore}</div>
+            <div className="text-sm text-blue-700 mb-1">Tu Rating Promedio</div>
+            <div className="text-xs text-blue-600">vs {benchmarkData.promedioRubro.feedbackScore} promedio</div>
+            <div className="text-xs font-bold text-blue-800 mt-1">
+              +{(benchmarkData.tuRestaurante.feedbackScore - benchmarkData.promedioRubro.feedbackScore).toFixed(1)} puntos
+            </div>
+          </div>
+
+          <div className="text-center p-4 bg-purple-50 rounded-lg border border-purple-200">
+            <div className="text-3xl font-bold text-purple-600">{benchmarkData.tuRestaurante.starsGeneradas}</div>
+            <div className="text-sm text-purple-700 mb-1">Stars por Cliente</div>
+            <div className="text-xs text-purple-600">vs {benchmarkData.promedioRubro.starsGeneradas} promedio</div>
+            <div className="text-xs font-bold text-purple-800 mt-1">
+              +{(((benchmarkData.tuRestaurante.starsGeneradas - benchmarkData.promedioRubro.starsGeneradas) / benchmarkData.promedioRubro.starsGeneradas) * 100).toFixed(0)}% superior
+            </div>
+          </div>
+
+          <div className="text-center p-4 bg-orange-50 rounded-lg border border-orange-200">
+            <div className="text-3xl font-bold text-orange-600">#{benchmarkData.tuRestaurante.rankingLocal}</div>
+            <div className="text-sm text-orange-700 mb-1">Ranking Local KumIA</div>
+            <div className="text-xs text-orange-600">de {benchmarkData.promedioRubro.totalRestaurantes} restaurantes</div>
+            <div className="text-xs font-bold text-orange-800 mt-1">🏆 Top 5%</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Análisis de Competidores */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-xl font-bold text-gray-800 mb-4">🎯 Análisis de Competidores Cercanos</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          {competidores.map((competidor) => (
+            <div key={competidor.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all cursor-pointer">
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="font-bold text-gray-800">{competidor.nombre}</h4>
+                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                  competidor.tendencia === 'creciente' ? 'bg-green-100 text-green-800' :
+                  competidor.tendencia === 'decreciente' ? 'bg-red-100 text-red-800' :
+                  'bg-gray-100 text-gray-800'
+                }`}>
+                  {competidor.tendencia === 'creciente' ? '📈' : competidor.tendencia === 'decreciente' ? '📉' : '➡️'} 
+                  {competidor.tendencia}
+                </span>
+              </div>
+
+              <div className="space-y-2 text-sm mb-4">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Distancia:</span>
+                  <span className="font-medium">{competidor.distancia}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Ticket promedio:</span>
+                  <span className={`font-medium ${competidor.ticketPromedio > benchmarkData.tuRestaurante.ticketPromedio ? 'text-red-600' : 'text-green-600'}`}>
+                    ${competidor.ticketPromedio.toLocaleString()}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Rating:</span>
+                  <span className={`font-medium ${competidor.rating > benchmarkData.tuRestaurante.feedbackScore ? 'text-red-600' : 'text-green-600'}`}>
+                    {competidor.rating} ⭐ ({competidor.reviews} reviews)
+                  </span>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div>
+                  <span className="text-xs text-green-700 font-medium">Fortalezas:</span>
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {competidor.fortalezas.map((fortaleza, idx) => (
+                      <span key={idx} className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">
+                        {fortaleza}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <span className="text-xs text-red-700 font-medium">Debilidades:</span>
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {competidor.debilidades.map((debilidad, idx) => (
+                      <span key={idx} className="px-2 py-1 bg-red-100 text-red-700 text-xs rounded-full">
+                        {debilidad}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <button 
+                onClick={() => setSelectedCompetitor(competidor)}
+                className="w-full mt-3 bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-gray-200 transition-colors text-sm"
+              >
+                🔍 Análisis Detallado
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Tendencias Regionales y Reviews Scanner */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <h3 className="text-xl font-bold text-gray-800 mb-4">📈 Tendencias Regionales</h3>
+          <div className="space-y-3">
+            {tendenciasRegionales.map((tendencia, index) => (
+              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center space-x-3">
+                  <span className={`text-2xl ${tendencia.adoptado ? '✅' : '⏳'}`}></span>
+                  <div>
+                    <h4 className="font-medium text-gray-800">{tendencia.tendencia}</h4>
+                    <p className="text-sm text-green-600 font-medium">{tendencia.crecimiento} crecimiento</p>
+                  </div>
+                </div>
+                <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                  tendencia.adoptado ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'
+                }`}>
+                  {tendencia.adoptado ? 'Adoptado' : 'Oportunidad'}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <h3 className="text-xl font-bold text-gray-800 mb-4">🔍 Review Scanner</h3>
+          
+          <div className="mb-4 p-3 bg-blue-50 rounded-lg">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-blue-600">{reviewsAnalysis.totalAnalyzadas}</div>
+              <div className="text-sm text-blue-700">Reviews Analizadas (Google, TripAdvisor)</div>
+            </div>
+          </div>
+
+          <div className="space-y-3 mb-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-600">Sentimiento Positivo:</span>
+              <div className="flex items-center space-x-2">
+                <div className="w-20 h-2 bg-gray-200 rounded-full">
+                  <div className="w-4/5 h-2 bg-green-500 rounded-full"></div>
+                </div>
+                <span className="text-sm font-medium text-green-600">{reviewsAnalysis.sentimiento.positivo}%</span>
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-600">Sentimiento Neutral:</span>
+              <div className="flex items-center space-x-2">
+                <div className="w-20 h-2 bg-gray-200 rounded-full">
+                  <div className="w-1/6 h-2 bg-yellow-500 rounded-full"></div>
+                </div>
+                <span className="text-sm font-medium text-yellow-600">{reviewsAnalysis.sentimiento.neutral}%</span>
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-600">Sentimiento Negativo:</span>
+              <div className="flex items-center space-x-2">
+                <div className="w-20 h-2 bg-gray-200 rounded-full">
+                  <div className="w-1/12 h-2 bg-red-500 rounded-full"></div>
+                </div>
+                <span className="text-sm font-medium text-red-600">{reviewsAnalysis.sentimiento.negativo}%</span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h4 className="font-medium text-gray-700 mb-2">Temas Más Comentados:</h4>
+            <div className="space-y-2">
+              {reviewsAnalysis.temasMasComentados.slice(0, 3).map((tema, index) => (
+                <div key={index} className="flex items-center justify-between text-sm">
+                  <span className="text-gray-700">{tema.tema}</span>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-gray-500">{tema.mencion}%</span>
+                    <span className={`text-xs ${
+                      tema.sentiment === 'positivo' ? 'text-green-600' : 
+                      tema.sentiment === 'neutral' ? 'text-yellow-600' : 'text-red-600'
+                    }`}>
+                      {tema.sentiment === 'positivo' ? '😊' : tema.sentiment === 'neutral' ? '😐' : '😞'}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Recomendaciones Estratégicas */}
+      <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-6 border border-indigo-200">
+        <h3 className="text-xl font-bold text-indigo-800 mb-4">🎯 Recomendaciones Estratégicas IA</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-3">
+            <h4 className="font-medium text-indigo-700">🚀 Oportunidades Inmediatas</h4>
+            <div className="space-y-2 text-sm text-indigo-600">
+              <div className="flex items-start">
+                <span className="text-indigo-500 mr-2">•</span>
+                <p><strong>Delivery Premium:</strong> Competidores no han adoptado. Potencial +25% ingresos.</p>
+              </div>
+              <div className="flex items-start">
+                <span className="text-indigo-500 mr-2">•</span>
+                <p><strong>Eventos Temáticos:</strong> Demanda creciente +18%. Diferenciación clave.</p>
+              </div>
+              <div className="flex items-start">
+                <span className="text-indigo-500 mr-2">•</span>
+                <p><strong>Marketing de Tiempo de Espera:</strong> Debilidad común en competencia.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="space-y-3">
+            <h4 className="font-medium text-indigo-700">🔒 Ventajas Competitivas</h4>
+            <div className="space-y-2 text-sm text-indigo-600">
+              <div className="flex items-start">
+                <span className="text-green-500 mr-2">✓</span>
+                <p><strong>Sistema KumIA:</strong> Único en la zona. ROI 340% superior.</p>
+              </div>
+              <div className="flex items-start">
+                <span className="text-green-500 mr-2">✓</span>
+                <p><strong>Fidelización IA:</strong> 16.8 stars/cliente vs 12.3 promedio.</p>
+              </div>
+              <div className="flex items-start">
+                <span className="text-green-500 mr-2">✓</span>
+                <p><strong>Ticket Superior:</strong> 20% por encima del promedio del rubro.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default {
   ROIViewer,
   RewardsNFTsSection,
