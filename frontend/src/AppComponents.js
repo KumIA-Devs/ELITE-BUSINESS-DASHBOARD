@@ -147,28 +147,98 @@ export const CentroIAMarketing = () => {
     }
 
     setIsGenerating(true);
-    setEstimatedCost(calculateVideoCost(videoGeneration.duration, videoGeneration.model));
+    const cost = calculateVideoCost(videoGeneration.duration, videoGeneration.model);
+    setEstimatedCost(cost);
     
     try {
-      // Simulación de generación de video
-      setTimeout(() => {
-        setGeneratedContent({
-          type: 'video',
-          url: '/api/placeholder-video.mp4',
-          metadata: {
-            duration: videoGeneration.duration,
-            platform: videoGeneration.platform,
-            cost: calculateVideoCost(videoGeneration.duration, videoGeneration.model)
-          }
-        });
-        setIsGenerating(false);
-      }, 3000);
+      const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${BACKEND_URL}/api/content-factory/video/generate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          prompt: videoGeneration.prompt,
+          model: videoGeneration.model,
+          duration: videoGeneration.duration,
+          style: videoGeneration.style,
+          platform: videoGeneration.platform,
+          branding_level: videoGeneration.brandingLevel
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      
+      if (result.job_id) {
+        // Poll for completion
+        pollVideoGeneration(result.job_id);
+      } else {
+        throw new Error('No job ID received');
+      }
       
     } catch (error) {
       console.error('Error generating video:', error);
       setIsGenerating(false);
       alert('❌ Error al generar el video. Intenta nuevamente.');
     }
+  };
+
+  // Función para hacer polling del estado del video
+  const pollVideoGeneration = async (jobId) => {
+    const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+    const maxAttempts = 30; // 5 minutos máximo
+    let attempts = 0;
+
+    const checkStatus = async () => {
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/content-factory/job/${jobId}`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to check job status');
+        }
+
+        const job = await response.json();
+        
+        if (job.status === 'completed') {
+          setGeneratedContent({
+            type: 'video',
+            url: job.result_url || '/api/placeholder-video.mp4',
+            metadata: {
+              duration: videoGeneration.duration,
+              platform: videoGeneration.platform,
+              cost: job.cost
+            }
+          });
+          setIsGenerating(false);
+        } else if (job.status === 'failed') {
+          throw new Error('Video generation failed');
+        } else {
+          // Still processing, check again
+          attempts++;
+          if (attempts < maxAttempts) {
+            setTimeout(checkStatus, 10000); // Check every 10 seconds
+          } else {
+            throw new Error('Video generation timeout');
+          }
+        }
+        
+      } catch (error) {
+        console.error('Error checking video status:', error);
+        setIsGenerating(false);
+        alert('❌ Error al generar el video. Intenta nuevamente.');
+      }
+    };
+
+    checkStatus();
   };
 
   // Función para generar imagen
@@ -179,22 +249,42 @@ export const CentroIAMarketing = () => {
     }
 
     setIsGenerating(true);
-    setEstimatedCost(calculateImageCost(imageGeneration.count, imageGeneration.style));
+    const cost = calculateImageCost(imageGeneration.count, imageGeneration.style);
+    setEstimatedCost(cost);
     
     try {
-      // Simulación de generación de imagen
-      setTimeout(() => {
-        setGeneratedContent({
-          type: 'image',
-          urls: Array.from({length: imageGeneration.count}, (_, i) => `/api/placeholder-image-${i+1}.jpg`),
-          metadata: {
-            format: imageGeneration.format,
-            platform: imageGeneration.platform,
-            cost: calculateImageCost(imageGeneration.count, imageGeneration.style)
-          }
-        });
-        setIsGenerating(false);
-      }, 2000);
+      const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+      const response = await fetch(`${BACKEND_URL}/api/content-factory/image/generate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          prompt: imageGeneration.prompt,
+          style: imageGeneration.style,
+          format: imageGeneration.format,
+          platform: imageGeneration.platform,
+          count: imageGeneration.count
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      
+      setGeneratedContent({
+        type: 'image',
+        urls: result.images,
+        metadata: {
+          format: result.metadata.format,
+          platform: result.metadata.platform,
+          cost: result.cost
+        }
+      });
+      setIsGenerating(false);
       
     } catch (error) {
       console.error('Error generating image:', error);
