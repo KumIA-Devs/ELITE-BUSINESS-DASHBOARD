@@ -1398,28 +1398,69 @@ export const CentroIAMarketing = () => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
-                  <input
-                    type="text"
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Mensaje del Push</label>
+                  <textarea
                     defaultValue={showEditPush !== true ? showEditPush.description : ''}
-                    placeholder="Ej: 2 horas antes • WhatsApp"
+                    placeholder="¡Hola! Te recordamos tu reserva para hoy..."
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                    rows="3"
                   />
                 </div>
 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de activación</label>
+                    <select className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                      <option value="trigger">Activación automática</option>
+                      <option value="schedule">Fecha y hora específica</option>
+                      <option value="manual">Activación manual</option>
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Prioridad</label>
+                    <select className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                      <option value="alta">Alta</option>
+                      <option value="media">Media</option>
+                      <option value="baja">Baja</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Fecha de envío (opcional)</label>
+                    <input
+                      type="date"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Hora de envío (opcional)</label>
+                    <input
+                      type="time"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                    />
+                  </div>
+                </div>
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Trigger</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Trigger automático</label>
                   <select className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
                     <option value="2_hours_before">2 horas antes de reserva</option>
                     <option value="24_hours_after">24 horas después de visita</option>
                     <option value="7_days_before_birthday">7 días antes de cumpleaños</option>
                     <option value="30_days_inactive">30 días sin actividad</option>
+                    <option value="level_up">Al subir de nivel</option>
+                    <option value="new_promotion">Nueva promoción disponible</option>
+                    <option value="custom">Personalizado</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Canales</label>
-                  <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Canales de envío</label>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                     <label className="flex items-center">
                       <input type="checkbox" className="mr-2" />
                       WhatsApp
@@ -1432,7 +1473,24 @@ export const CentroIAMarketing = () => {
                       <input type="checkbox" className="mr-2" />
                       Email
                     </label>
+                    <label className="flex items-center">
+                      <input type="checkbox" className="mr-2" />
+                      SMS
+                    </label>
                   </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Segmento objetivo</label>
+                  <select className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                    <option value="todos">Todos los clientes</option>
+                    <option value="explorador">Solo Exploradores</option>
+                    <option value="destacado">Solo Destacados</option>
+                    <option value="estrella">Solo Estrellas</option>
+                    <option value="leyenda">Solo Leyendas</option>
+                    <option value="inactivos">Clientes inactivos</option>
+                    <option value="cumpleaneros">Cumpleañeros del mes</option>
+                  </select>
                 </div>
 
                 <div className="flex justify-end space-x-3">
