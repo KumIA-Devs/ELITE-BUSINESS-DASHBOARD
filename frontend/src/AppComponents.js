@@ -10914,6 +10914,411 @@ export const GestionUserWebApp = () => {
   );
 };
 
+// 💳 MÓDULO 5: TU FACTURACIÓN KUMIA
+export const TuFacturacionKumia = () => {
+  const [showROISimulator, setShowROISimulator] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [simulatorValues, setSimulatorValues] = useState({
+    ticketPromedio: 3830,
+    usuariosActivos: 62,
+    crecimientoEsperado: 25
+  });
+
+  // Facturación actual
+  const facturacionActual = {
+    planActual: 'KumIA Elite Pro',
+    costoPorModulo: {
+      'Dashboard Base': 45000,
+      'AI Agents': 25000,
+      'Centro IA Marketing': 35000,
+      'Inteligencia Competitiva': 15000,
+      'Juegos Multijugador': 20000,
+      'User Web App': 10000,
+      'Recompensas NFT': 30000
+    },
+    totalMensual: 180000,
+    fechaFacturacion: '15 de cada mes',
+    metodoPago: 'Transferencia Bancaria',
+    proximoVencimiento: '2025-01-15'
+  };
+
+  // Historial de pagos
+  const historialPagos = [
+    { fecha: '2024-12-15', monto: 180000, estado: 'Pagado', folio: 'DTE-2024-001247', metodo: 'Transferencia' },
+    { fecha: '2024-11-15', monto: 165000, estado: 'Pagado', folio: 'DTE-2024-001186', metodo: 'Transferencia' },
+    { fecha: '2024-10-15', monto: 150000, estado: 'Pagado', folio: 'DTE-2024-001098', metodo: 'Transferencia' },
+    { fecha: '2024-09-15', monto: 135000, estado: 'Pagado', folio: 'DTE-2024-000945', metodo: 'Transferencia' }
+  ];
+
+  // Cálculo del simulador ROI
+  const calcularSimulacionROI = () => {
+    const ingresosMensualesActuales = simulatorValues.ticketPromedio * simulatorValues.usuariosActivos * 2.8; // 2.8 visitas promedio
+    const crecimientoDecimal = simulatorValues.crecimientoEsperado / 100;
+    const ingresosMensualesProyectados = ingresosMensualesActuales * (1 + crecimientoDecimal);
+    const ingresoAdicional = ingresosMensualesProyectados - ingresosMensualesActuales;
+    const roiKumia = (ingresoAdicional / facturacionActual.totalMensual) * 100;
+
+    return {
+      actual: ingresosMensualesActuales,
+      proyectado: ingresosMensualesProyectados,
+      adicional: ingresoAdicional,
+      roi: roiKumia,
+      recuperacionInversion: Math.ceil(facturacionActual.totalMensual / (ingresoAdicional / 12))
+    };
+  };
+
+  const simulacion = calcularSimulacionROI();
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-3xl font-bold text-gray-800">💳 Tu Facturación KumIA</h2>
+          <p className="text-gray-600 mt-1">Transparencia financiera y simulación de escalabilidad</p>
+        </div>
+        <div className="flex space-x-3">
+          <button 
+            onClick={() => setShowROISimulator(true)}
+            className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
+          >
+            📊 Simulador ROI
+          </button>
+          <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+            💬 Soporte
+          </button>
+        </div>
+      </div>
+
+      {/* Resumen Mensual */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <h3 className="text-xl font-bold text-gray-800 mb-4">📊 Resumen Mensual - {facturacionActual.planActual}</h3>
+          
+          <div className="space-y-3 mb-6">
+            {Object.entries(facturacionActual.costoPorModulo).map(([modulo, costo]) => (
+              <div key={modulo} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center">
+                  <span className="w-3 h-3 bg-blue-500 rounded-full mr-3"></span>
+                  <span className="font-medium text-gray-800">{modulo}</span>
+                  <span className="ml-2 px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Activo</span>
+                </div>
+                <span className="font-bold text-gray-700">${costo.toLocaleString()}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="border-t border-gray-200 pt-4">
+            <div className="flex items-center justify-between">
+              <span className="text-lg font-bold text-gray-800">Total Mensual:</span>
+              <span className="text-2xl font-bold text-blue-600">${facturacionActual.totalMensual.toLocaleString()}</span>
+            </div>
+            <div className="flex items-center justify-between mt-2 text-sm text-gray-600">
+              <span>Próximo vencimiento:</span>
+              <span className="font-medium">{facturacionActual.proximoVencimiento}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 border border-emerald-200">
+          <h3 className="text-lg font-bold text-emerald-800 mb-4">💰 Estado de Cuenta</h3>
+          
+          <div className="space-y-4">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-emerald-600">Al día</div>
+              <div className="text-sm text-emerald-700">Estado de pagos</div>
+            </div>
+
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-600">Método de pago:</span>
+                <span className="font-medium">{facturacionActual.metodoPago}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Facturación:</span>
+                <span className="font-medium">{facturacionActual.fechaFacturacion}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Próximo cargo:</span>
+                <span className="font-medium text-blue-600">${facturacionActual.totalMensual.toLocaleString()}</span>
+              </div>
+            </div>
+
+            <button 
+              onClick={() => setShowPaymentModal(true)}
+              className="w-full bg-emerald-500 text-white py-2 rounded-lg hover:bg-emerald-600 transition-colors"
+            >
+              🔄 Actualizar Plan
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Facturación Electrónica e Historial */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <h3 className="text-xl font-bold text-gray-800 mb-4">🧾 Facturación Electrónica DTE</h3>
+          
+          <div className="bg-blue-50 p-4 rounded-lg mb-4">
+            <div className="flex items-center mb-2">
+              <span className="text-blue-600 text-2xl mr-3">📄</span>
+              <div>
+                <h4 className="font-bold text-blue-800">Facturación Digital Chile</h4>
+                <p className="text-sm text-blue-700">Documentos tributarios electrónicos válidos</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <div>
+                <div className="font-medium text-gray-800">Última Factura</div>
+                <div className="text-sm text-gray-600">DTE-2024-001247 • Diciembre 2024</div>
+              </div>
+              <div className="flex space-x-2">
+                <button className="bg-blue-100 text-blue-700 px-3 py-1 rounded text-sm hover:bg-blue-200 transition-colors">
+                  👁️ Ver
+                </button>
+                <button className="bg-green-100 text-green-700 px-3 py-1 rounded text-sm hover:bg-green-200 transition-colors">
+                  📥 Descargar
+                </button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <div>
+                <div className="font-medium text-gray-800">Certificados SII</div>
+                <div className="text-sm text-gray-600">Válidos hasta Marzo 2025</div>
+              </div>
+              <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">✅ Vigente</span>
+            </div>
+
+            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <div>
+                <div className="font-medium text-gray-800">RUT Empresa</div>
+                <div className="text-sm text-gray-600">76.XXX.XXX-X</div>
+              </div>
+              <button className="bg-gray-100 text-gray-700 px-3 py-1 rounded text-sm hover:bg-gray-200 transition-colors">
+                ⚙️ Configurar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <h3 className="text-xl font-bold text-gray-800 mb-4">📋 Historial de Pagos</h3>
+          
+          <div className="space-y-3">
+            {historialPagos.map((pago, index) => (
+              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div>
+                  <div className="font-medium text-gray-800">{pago.fecha}</div>
+                  <div className="text-sm text-gray-600">{pago.folio} • {pago.metodo}</div>
+                </div>
+                <div className="text-right">
+                  <div className="font-bold text-gray-800">${pago.monto.toLocaleString()}</div>
+                  <span className={`text-xs px-2 py-1 rounded-full ${
+                    pago.estado === 'Pagado' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                  }`}>
+                    {pago.estado}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <button className="w-full mt-4 bg-blue-100 text-blue-700 py-2 rounded-lg hover:bg-blue-200 transition-colors">
+            📄 Ver Historial Completo
+          </button>
+        </div>
+      </div>
+
+      {/* Modal Simulador ROI */}
+      {showROISimulator && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">📊 Simulador ROI Dinámico</h2>
+                  <p className="text-gray-600">Proyecciones de retorno según diferentes escenarios</p>
+                </div>
+                <button 
+                  onClick={() => setShowROISimulator(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Configuración de Variables */}
+                <div className="space-y-4">
+                  <h3 className="font-bold text-gray-800">⚙️ Variables de Simulación</h3>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Ticket Promedio Actual (CLP)
+                      <span className="text-xs text-gray-500 ml-2">Actual: $3,830</span>
+                    </label>
+                    <input
+                      type="range"
+                      min="2000"
+                      max="8000"
+                      step="100"
+                      value={simulatorValues.ticketPromedio}
+                      onChange={(e) => setSimulatorValues(prev => ({...prev, ticketPromedio: parseInt(e.target.value)}))}
+                      className="w-full"
+                    />
+                    <div className="flex justify-between text-xs text-gray-500">
+                      <span>$2,000</span>
+                      <span className="font-medium">${simulatorValues.ticketPromedio.toLocaleString()}</span>
+                      <span>$8,000</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Usuarios Activos Mensuales
+                      <span className="text-xs text-gray-500 ml-2">Actual: 62</span>
+                    </label>
+                    <input
+                      type="range"
+                      min="20"
+                      max="200"
+                      step="5"
+                      value={simulatorValues.usuariosActivos}
+                      onChange={(e) => setSimulatorValues(prev => ({...prev, usuariosActivos: parseInt(e.target.value)}))}
+                      className="w-full"
+                    />
+                    <div className="flex justify-between text-xs text-gray-500">
+                      <span>20</span>
+                      <span className="font-medium">{simulatorValues.usuariosActivos} usuarios</span>
+                      <span>200</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Crecimiento Esperado (%)
+                      <span className="text-xs text-gray-500 ml-2">Promedio industria: 20%</span>
+                    </label>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      step="5"
+                      value={simulatorValues.crecimientoEsperado}
+                      onChange={(e) => setSimulatorValues(prev => ({...prev, crecimientoEsperado: parseInt(e.target.value)}))}
+                      className="w-full"
+                    />
+                    <div className="flex justify-between text-xs text-gray-500">
+                      <span>0%</span>
+                      <span className="font-medium">{simulatorValues.crecimientoEsperado}%</span>
+                      <span>100%</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Resultados de Simulación */}
+                <div className="space-y-6">
+                  <h3 className="font-bold text-gray-800">📈 Resultados de Simulación</h3>
+                  
+                  <div className="bg-blue-50 p-4 rounded-lg">
+                    <h4 className="font-bold text-blue-800 mb-3">💰 Proyección de Ingresos</h4>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Ingresos actuales:</span>
+                        <span className="font-bold">${simulacion.actual.toLocaleString()}/mes</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Ingresos proyectados:</span>
+                        <span className="font-bold text-blue-600">${simulacion.proyectado.toLocaleString()}/mes</span>
+                      </div>
+                      <div className="flex justify-between border-t pt-2">
+                        <span className="text-gray-800 font-medium">Ingreso adicional:</span>
+                        <span className="font-bold text-green-600">+${simulacion.adicional.toLocaleString()}/mes</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-green-50 p-4 rounded-lg">
+                    <h4 className="font-bold text-green-800 mb-3">📊 ROI de KumIA</h4>
+                    <div className="text-center">
+                      <div className="text-4xl font-bold text-green-600">{simulacion.roi.toFixed(0)}%</div>
+                      <div className="text-sm text-green-700">Retorno sobre inversión mensual</div>
+                    </div>
+                    <div className="mt-3 text-sm text-green-700 text-center">
+                      Recuperación de inversión: <strong>{simulacion.recuperacionInversion} días</strong>
+                    </div>
+                  </div>
+
+                  <div className="bg-purple-50 p-4 rounded-lg">
+                    <h4 className="font-bold text-purple-800 mb-3">🎯 Recomendaciones</h4>
+                    <div className="space-y-2 text-sm text-purple-700">
+                      {simulacion.roi > 300 && <div>• ✅ ROI excelente, considera expandir a más locales</div>}
+                      {simulacion.roi < 200 && <div>• ⚠️ ROI bajo, enfócate en aumentar ticket promedio</div>}
+                      {simulatorValues.usuariosActivos < 50 && <div>• 📈 Oportunidad de crecimiento en base de usuarios</div>}
+                      {simulatorValues.crecimientoEsperado > 50 && <div>• 🚀 Proyección muy optimista, valida con datos históricos</div>}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 flex space-x-4">
+                <button 
+                  onClick={() => setShowROISimulator(false)}
+                  className="flex-1 bg-gray-100 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors"
+                >
+                  Cerrar
+                </button>
+                <button className="flex-1 bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors">
+                  📊 Generar Reporte
+                </button>
+                <button className="flex-1 bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors">
+                  📧 Enviar Proyección
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Acceso Directo a Soporte */}
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
+        <h3 className="text-xl font-bold text-blue-800 mb-4">💬 Soporte y Cobranzas</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-white rounded-lg p-4 text-center">
+            <span className="text-2xl mb-2 block">📞</span>
+            <h4 className="font-bold text-gray-800 mb-1">Soporte Técnico</h4>
+            <p className="text-sm text-gray-600 mb-3">Lun-Vie 9:00-18:00</p>
+            <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+              Contactar
+            </button>
+          </div>
+          
+          <div className="bg-white rounded-lg p-4 text-center">
+            <span className="text-2xl mb-2 block">💳</span>
+            <h4 className="font-bold text-gray-800 mb-1">Cobranzas</h4>
+            <p className="text-sm text-gray-600 mb-3">Consultas de facturación</p>
+            <button className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors">
+              Consultar
+            </button>
+          </div>
+          
+          <div className="bg-white rounded-lg p-4 text-center">
+            <span className="text-2xl mb-2 block">📚</span>
+            <h4 className="font-bold text-gray-800 mb-1">Centro de Ayuda</h4>
+            <p className="text-sm text-gray-600 mb-3">Documentación y FAQ</p>
+            <button className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors">
+              Ver Guías
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default {
   ROIViewer,
   RewardsNFTsSection,
@@ -10924,5 +11329,6 @@ export default {
   AIAgentsSection,
   InteligenciaCompetitiva,
   JuegosMultijugador,
-  GestionUserWebApp
+  GestionUserWebApp,
+  TuFacturacionKumia
 };
