@@ -224,45 +224,81 @@ export const ROIViewer = () => {
 
   const datosSimulados = calcularROISimulado(calculatorData.ticketPromedio, calculatorData.costoRecompensa, calculatorData.margenBruto);
 
-  // Función para exportar reporte
+  // Función para exportar reporte MEJORADA
   const handleExportReport = () => {
-    const reportData = {
-      fecha: new Date().toLocaleDateString('es-CL'),
-      timeframe: selectedTimeframe,
-      indicadorExito,
-      kumiaLevels,
-      actividadTiempoReal,
-      benchmarkRubro
-    };
+    try {
+      const reportData = {
+        fecha: new Date().toLocaleDateString('es-CL'),
+        timeframe: selectedTimeframe,
+        indicadorExito,
+        kumiaLevels,
+        actividadTiempoReal,
+        benchmarkRubro
+      };
 
-    // Crear contenido CSV
-    const csvContent = "data:text/csv;charset=utf-8," + 
-      "ROI VIEWER KUMIA ELITE - REPORTE\n" +
-      `Fecha de generación,${reportData.fecha}\n` +
-      `Período analizado,${selectedTimeframe}\n\n` +
-      "INDICADOR DE ÉXITO PRINCIPAL\n" +
-      `Capitalización total,${reportData.indicadorExito.capitalizacion.toLocaleString()}\n` +
-      `Recompensas entregadas,${reportData.indicadorExito.recompensas.toLocaleString()}\n` +
-      `ROI total,${reportData.indicadorExito.roi.toFixed(0)}%\n\n` +
-      "ROI POR NIVEL\n" +
-      "Nivel,Stars necesarias,Gasto estimado,Costo recompensa,Margen neto,ROI %,Clientes activos\n" +
-      reportData.kumiaLevels.map(nivel => 
-        `${nivel.nivel},${nivel.starsNecesarias},${nivel.gastoEstimado},${nivel.costoRecompensa},${nivel.margenNeto},${nivel.roi}%,${nivel.clientesActivos}`
-      ).join("\n") + "\n\n" +
-      "ACTIVIDAD EN TIEMPO REAL\n" +
-      `Stars generadas,${reportData.actividadTiempoReal.starsGeneradasSemana}\n` +
-      `Stars canjeadas,${reportData.actividadTiempoReal.starsCanjeadasSemana}\n` +
-      `Ratio de conversión,${reportData.actividadTiempoReal.ratioConversion}%\n`;
-    
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `roi_report_kumia_${selectedTimeframe}_${new Date().toISOString().split('T')[0]}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    alert(`✅ REPORTE EXPORTADO EXITOSAMENTE\n\n📊 Detalles del reporte:\n• Período: ${selectedTimeframe}\n• ROI Total: ${indicadorExito.roi.toFixed(0)}%\n• Capitalización: $${indicadorExito.capitalizacion.toLocaleString()}\n• Archivo: roi_report_kumia_${selectedTimeframe}_${new Date().toISOString().split('T')[0]}.csv\n\n💡 El archivo se ha descargado en formato CSV con todos los datos del análisis ROI.`);
+      // Crear contenido CSV más detallado
+      const csvHeader = "ROI VIEWER KUMIA ELITE - REPORTE COMPLETO\n";
+      const csvMetadata = `Fecha de generación,${reportData.fecha}\nPeríodo analizado,${selectedTimeframe}\n\n`;
+      
+      const csvIndicador = "INDICADOR DE ÉXITO PRINCIPAL\n" +
+        `Capitalización total (CLP),${reportData.indicadorExito.capitalizacion.toLocaleString()}\n` +
+        `Recompensas entregadas (CLP),${reportData.indicadorExito.recompensas.toLocaleString()}\n` +
+        `ROI total (%),${reportData.indicadorExito.roi.toFixed(0)}%\n\n`;
+      
+      const csvNiveles = "ROI POR NIVEL KUMIA STARS\n" +
+        "Nivel,Stars necesarias,Gasto estimado (CLP),Costo recompensa (CLP),Margen neto (CLP),ROI (%),Clientes activos\n" +
+        reportData.kumiaLevels.map(nivel => 
+          `${nivel.nivel},${nivel.starsNecesarias},${nivel.gastoEstimado.toLocaleString()},${nivel.costoRecompensa.toLocaleString()},${nivel.margenNeto.toLocaleString()},${nivel.roi}%,${nivel.clientesActivos}`
+        ).join("\n") + "\n\n";
+      
+      const csvActividad = "ACTIVIDAD EN TIEMPO REAL\n" +
+        `Stars generadas (período),${reportData.actividadTiempoReal.starsGeneradasSemana}\n` +
+        `Stars canjeadas (período),${reportData.actividadTiempoReal.starsCanjeadasSemana}\n` +
+        `Ratio de conversión (%),${reportData.actividadTiempoReal.ratioConversion}%\n` +
+        `NFT más desbloqueado,${reportData.actividadTiempoReal.nftMasDesbloqueado}\n\n`;
+
+      const csvRanking = "RANKING DE ACCIONES (GENERAN MÁS STARS)\n" +
+        "Acción,Stars por acción,Frecuencia de uso\n" +
+        reportData.actividadTiempoReal.rankingAcciones.map(accion => 
+          `${accion.accion},${accion.stars},${accion.frecuencia}`
+        ).join("\n") + "\n\n";
+
+      const csvBenchmark = "BENCHMARK CON EL RUBRO\n" +
+        `Categoría restaurante,${reportData.benchmarkRubro.categoria}\n` +
+        `Ticket promedio rubro (CLP),${reportData.benchmarkRubro.ticketPromedioRubro.toLocaleString()}\n` +
+        `Stars promedio nacional,${reportData.benchmarkRubro.starsPromedioNacional}\n` +
+        `Nivel promedio nacional,${reportData.benchmarkRubro.nivelPromedioNacional}\n` +
+        `Ratio canje promedio (%),${reportData.benchmarkRubro.ratioCanjePromedio}%\n\n`;
+
+      const csvContent = "data:text/csv;charset=utf-8,\uFEFF" + // BOM para caracteres especiales
+        csvHeader + csvMetadata + csvIndicador + csvNiveles + csvActividad + csvRanking + csvBenchmark;
+      
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      const filename = `roi_report_kumia_${selectedTimeframe}_${new Date().toISOString().split('T')[0]}.csv`;
+      
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", filename);
+      link.style.display = "none";
+      document.body.appendChild(link);
+      
+      // Ejecutar descarga
+      link.click();
+      
+      // Limpiar
+      setTimeout(() => {
+        document.body.removeChild(link);
+      }, 100);
+      
+      // Mostrar confirmación
+      alert(`✅ REPORTE EXPORTADO EXITOSAMENTE\n\n📊 Detalles del reporte:\n• Período: ${selectedTimeframe}\n• ROI Total: ${indicadorExito.roi.toFixed(0)}%\n• Capitalización: $${indicadorExito.capitalizacion.toLocaleString()} CLP\n• Fecha: ${new Date().toLocaleDateString('es-CL')}\n• Archivo: ${filename}\n\n💡 El archivo CSV se ha descargado con todos los datos del análisis ROI KumIA Stars.\n\n📋 Contenido incluye:\n- Indicador de éxito principal\n- ROI detallado por nivel\n- Actividad en tiempo real\n- Ranking de acciones\n- Benchmark con el rubro`);
+      
+      console.log('✅ Reporte exportado exitosamente:', filename);
+      
+    } catch (error) {
+      console.error('❌ Error al exportar reporte:', error);
+      alert(`❌ ERROR AL EXPORTAR REPORTE\n\nNo se pudo generar el archivo CSV.\nError: ${error.message}\n\nIntenta nuevamente o contacta al soporte técnico.`);
+    }
   };
 
   return (
