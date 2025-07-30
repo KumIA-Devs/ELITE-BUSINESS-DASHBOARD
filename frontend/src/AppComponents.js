@@ -499,29 +499,41 @@ export const ROIViewer = () => {
                 </defs>
               </svg>
 
-              {/* Puntos de datos */}
+              {/* Puntos de datos interactivos */}
               {ticketEvolution.datosHistoricos.map((punto, index) => {
                 const x = (index / (ticketEvolution.datosHistoricos.length - 1)) * 100;
                 const minTicket = Math.min(...ticketEvolution.datosHistoricos.map(p => p.ticket));
                 const maxTicket = Math.max(...ticketEvolution.datosHistoricos.map(p => p.ticket));
-                const y = 100 - ((punto.ticket - minTicket) / (maxTicket - minTicket)) * 80 - 10;
+                // Asegurar que y esté en el rango correcto
+                const normalizedY = ((punto.ticket - minTicket) / (maxTicket - minTicket)) * 80 + 10;
+                const y = 100 - normalizedY;
                 
                 return (
                   <div
                     key={index}
-                    className={`absolute w-3 h-3 rounded-full -translate-x-1.5 -translate-y-1.5 cursor-pointer group ${
-                      punto.periodo === 'pre-kumia' ? 'bg-gray-400' : 
-                      punto.periodo === 'activacion' ? 'bg-orange-500' : 'bg-green-500'
+                    className={`absolute w-4 h-4 rounded-full -translate-x-2 -translate-y-2 cursor-pointer group border-2 border-white shadow-lg transition-all duration-200 hover:scale-125 ${
+                      punto.periodo === 'pre-kumia' ? 'bg-gray-400 hover:bg-gray-500' : 
+                      punto.periodo === 'activacion' ? 'bg-orange-500 hover:bg-orange-600' : 'bg-green-500 hover:bg-green-600'
                     }`}
                     style={{ 
                       left: `${x}%`, 
-                      top: `${y}%` 
+                      top: `${y}%`,
+                      zIndex: 10
                     }}
-                    title={`${punto.fecha}: $${punto.ticket.toLocaleString()}`}
                   >
-                    {/* Tooltip */}
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
-                      {punto.fecha.split('-').reverse().join('/')}: ${punto.ticket.toLocaleString()}
+                    {/* Tooltip mejorado */}
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 shadow-xl">
+                      <div className="font-bold">{punto.fecha.split('-').reverse().join('/')}</div>
+                      <div className="text-gray-300">${punto.ticket.toLocaleString()} CLP</div>
+                      <div className={`text-xs ${
+                        punto.periodo === 'pre-kumia' ? 'text-gray-400' : 
+                        punto.periodo === 'activacion' ? 'text-orange-300' : 'text-green-300'
+                      }`}>
+                        {punto.periodo === 'pre-kumia' ? 'Pre-KumIA' : 
+                         punto.periodo === 'activacion' ? 'Activación' : 'Post-KumIA'}
+                      </div>
+                      {/* Flecha del tooltip */}
+                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
                     </div>
                   </div>
                 );
