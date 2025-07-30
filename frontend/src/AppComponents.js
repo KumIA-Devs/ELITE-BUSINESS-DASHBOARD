@@ -10513,5 +10513,6 @@ export default {
   ClientsSection,
   ReservationsSection,
   AIAgentsSection,
-  InteligenciaCompetitiva
+  InteligenciaCompetitiva,
+  JuegosMultijugador
 };
