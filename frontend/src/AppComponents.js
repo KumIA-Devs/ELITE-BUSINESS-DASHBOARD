@@ -509,6 +509,11 @@ export const RewardsNFTsSection = () => {
     setShowDetailedAnalysis(level);
   };
 
+  // 📞 FUNCIÓN CONTACTAR CLIENTE
+  const handleContactClient = (client) => {
+    alert(`📞 CONTACTAR CLIENTE - ${client.name}\n\n📋 Opciones de contacto disponibles:\n• WhatsApp: ${client.phone || 'No disponible'}\n• Email: ${client.email || 'No disponible'}\n• Llamada directa\n• SMS personalizado\n• Invitación a evento especial\n\n💡 En producción se abrirá un panel completo con historial de contactos, plantillas de mensajes y seguimiento automatizado.`);
+  };
+
   const handleCompleteAnalysis = () => {
     setShowCompleteAnalysis(true);
   };
