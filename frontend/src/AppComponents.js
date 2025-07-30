@@ -465,39 +465,6 @@ export const CentroIAMarketing = () => {
       </div>
 
       {/* Modal Video Factory */}
-          <h3 className="text-xl font-bold text-gray-800 mb-4">📊 Campañas A/B Trackeadas</h3>
-          <div className="space-y-4">
-            {campaignAB.map((campaign) => (
-              <div key={campaign.id} className="border border-gray-200 rounded-lg p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <h4 className="font-medium text-gray-800">{campaign.name}</h4>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    campaign.status === 'Activa' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
-                  }`}>
-                    {campaign.status}
-                  </span>
-                </div>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Aperturas:</span>
-                    <span className="font-medium">{campaign.aperturas}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Conversiones:</span>
-                    <span className="font-medium">{campaign.conversiones}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Ganador:</span>
-                    <span className="font-bold text-green-600">{campaign.ganador}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Modal Content Factory */}
       {showContentFactory && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-screen overflow-y-auto">
