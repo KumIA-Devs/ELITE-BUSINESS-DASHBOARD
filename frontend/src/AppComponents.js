@@ -495,9 +495,18 @@ export const RewardsNFTsSection = () => {
     alert(`✏️ EDITAR CLIENTE - ${client.name}\n\n📝 Opciones de edición disponibles:\n• Modificar información personal\n• Ajustar stars manualmente\n• Cambiar estado (Activo/Inactivo)\n• Agregar notas internas\n• Configurar preferencias\n• Historial de transacciones\n\n💡 En producción se abrirá un formulario completo de edición con validaciones y auditoría de cambios.`);
   };
 
-  // 💬 FUNCIÓN CONTACTAR CLIENTE
-  const handleContactClient = (client) => {
-    alert(`💬 CONTACTAR CLIENTE - ${client.name}\n\n📱 Opciones de contacto:\n• WhatsApp: ${client.phone}\n• Email: ${client.email}\n• Mensaje automático vía KUMIA\n• Llamada directa\n\n🤖 ¿Qué tipo de mensaje quieres enviar?\n• Promoción personalizada\n• Invitación a regresar\n• Encuesta de satisfacción\n• Mensaje de cumpleaños\n\n💡 En producción se integrará directamente con los Agentes IA para mensajes personalizados.`);
+  // 🎁 FUNCIÓN AGREGAR NUEVA RECOMPENSA
+  const [showNewReward, setShowNewReward] = useState(null);
+
+  const handleAddNewReward = (level) => {
+    setShowNewReward(level);
+  };
+
+  // 📊 FUNCIÓN VER ANÁLISIS DETALLADO
+  const [showDetailedAnalysis, setShowDetailedAnalysis] = useState(null);
+
+  const handleDetailedAnalysis = (level) => {
+    setShowDetailedAnalysis(level);
   };
 
   const handleCompleteAnalysis = () => {
