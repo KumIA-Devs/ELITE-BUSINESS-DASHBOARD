@@ -171,10 +171,8 @@ class FocusedBackendTester:
                             recurrent_campaign_request = {
                                 "title": "Campaña Clientes Recurrentes",
                                 "description": "Campaña para fidelizar clientes recurrentes",
-                                "segment": "recurrent",
-                                "channels": ["whatsapp"],
-                                "content_type": "standard",
-                                "personalization_level": "medium"
+                                "target_level": "recurrent",
+                                "channels": ["whatsapp"]
                             }
                             
                             recurrent_response = self.session.post(f"{self.base_url}/marketing/campaigns/segmented", json=recurrent_campaign_request)
