@@ -11688,6 +11688,11 @@ export const JuegosMultijugador = () => {
   const [activeGame, setActiveGame] = useState(null);
   const [gameSessions, setGameSessions] = useState([]);
   const [showGameModal, setShowGameModal] = useState(false);
+  const [showConfigModal, setShowConfigModal] = useState(false);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [showGameConfigModal, setShowGameConfigModal] = useState(null);
+  const [showGamePreviewModal, setShowGamePreviewModal] = useState(null);
+  const [showSecurityModal, setShowSecurityModal] = useState(false);
   const [selectedGameType, setSelectedGameType] = useState('1P');
   const [gameStats, setGameStats] = useState({
     sesionesDiarias: 47,
@@ -11696,8 +11701,8 @@ export const JuegosMultijugador = () => {
     participacionPromedio: '73%'
   });
 
-  // Juegos disponibles por categoría
-  const juegos = {
+  // Juegos disponibles por categoría con configuración editable
+  const [juegos, setJuegos] = useState({
     '1P': [
       {
         id: 'kumiSudoku',
@@ -11708,7 +11713,9 @@ export const JuegosMultijugador = () => {
         starsReales: 2,
         starsSimbolicas: 3,
         dificultad: 'Media',
-        popularidad: 85
+        popularidad: 85,
+        activo: true,
+        maxStarsPorSesion: 2
       },
       {
         id: 'pacKumia',
@@ -11716,10 +11723,12 @@ export const JuegosMultijugador = () => {
         descripcion: 'Versión de Pacman con tokens KumIA y obstáculos personalizados',
         objetivo: 'Nostalgia + Humor',
         duracion: '4-6 min',
-        starsReales: 3,
+        starsReales: 2,
         starsSimbolicas: 2,
         dificultad: 'Fácil',
-        popularidad: 92
+        popularidad: 92,
+        activo: true,
+        maxStarsPorSesion: 2
       }
     ],
     '2P': [
@@ -11732,7 +11741,9 @@ export const JuegosMultijugador = () => {
         starsReales: 2,
         starsSimbolicas: 4,
         dificultad: 'Media',
-        popularidad: 96
+        popularidad: 96,
+        activo: true,
+        maxStarsPorSesion: 2
       },
       {
         id: 'retoExpress',
@@ -11743,7 +11754,9 @@ export const JuegosMultijugador = () => {
         starsReales: 1,
         starsSimbolicas: 5,
         dificultad: 'Fácil',
-        popularidad: 78
+        popularidad: 78,
+        activo: true,
+        maxStarsPorSesion: 1
       },
       {
         id: 'puzzleKumia',
@@ -11751,10 +11764,12 @@ export const JuegosMultijugador = () => {
         descripcion: 'Cada jugador arma la mitad de un puzzle simbólico del restaurante',
         objetivo: 'Cooperación',
         duracion: '6-10 min',
-        starsReales: 3,
+        starsReales: 2,
         starsSimbolicas: 2,
         dificultad: 'Media',
-        popularidad: 71
+        popularidad: 71,
+        activo: true,
+        maxStarsPorSesion: 2
       },
       {
         id: 'versusTap',
@@ -11765,7 +11780,9 @@ export const JuegosMultijugador = () => {
         starsReales: 1,
         starsSimbolicas: 3,
         dificultad: 'Fácil',
-        popularidad: 89
+        popularidad: 89,
+        activo: true,
+        maxStarsPorSesion: 1
       }
     ],
     '3+P': [
@@ -11775,10 +11792,12 @@ export const JuegosMultijugador = () => {
         descripcion: 'Juego clásico de adivinanza (pueden usar personajes de KumIA o ingredientes)',
         objetivo: 'Risa + Juego verbal',
         duracion: '8-12 min',
-        starsReales: 3,
+        starsReales: 2,
         starsSimbolicas: 4,
         dificultad: 'Fácil',
-        popularidad: 94
+        popularidad: 94,
+        activo: true,
+        maxStarsPorSesion: 2
       },
       {
         id: 'desafioKumia',
@@ -11786,10 +11805,12 @@ export const JuegosMultijugador = () => {
         descripcion: 'Serie de mini-retos en mesa (apilar servilletas, cantar jingle, trivia)',
         objetivo: 'Risa + Movimiento',
         duracion: '10-15 min',
-        starsReales: 5,
+        starsReales: 2,
         starsSimbolicas: 3,
         dificultad: 'Media',
-        popularidad: 87
+        popularidad: 87,
+        activo: true,
+        maxStarsPorSesion: 2
       },
       {
         id: 'totemFelicidad',
@@ -11800,7 +11821,9 @@ export const JuegosMultijugador = () => {
         starsReales: 2,
         starsSimbolicas: 5,
         dificultad: 'Fácil',
-        popularidad: 82
+        popularidad: 82,
+        activo: true,
+        maxStarsPorSesion: 2
       },
       {
         id: 'misionOculta',
@@ -11808,13 +11831,15 @@ export const JuegosMultijugador = () => {
         descripcion: 'Uno recibe una misión secreta (hacer reír, decir cierta palabra), los demás deben descubrirlo',
         objetivo: 'Intriga + Risa',
         duracion: '10-15 min',
-        starsReales: 4,
+        starsReales: 2,
         starsSimbolicas: 2,
         dificultad: 'Alta',
-        popularidad: 76
+        popularidad: 76,
+        activo: true,
+        maxStarsPorSesion: 2
       }
     ]
-  };
+  });
 
   // Sesiones activas simuladas
   const sesionesActivas = [
@@ -11823,14 +11848,41 @@ export const JuegosMultijugador = () => {
     { mesaId: 'mesa_3', juego: 'Pac-KumIA', jugadores: 1, tiempoRestante: '2:48', starsEnJuego: 5 }
   ];
 
-  // Panel de configuración de seguridad
-  const seguridadConfig = {
+  // Panel de configuración de seguridad - AHORA EDITABLE
+  const [seguridadConfig, setSeguridadConfig] = useState({
     geofencing: true,
     tiempoMaximoSesion: 45,
     sesionesMaximasPorCliente: 1,
     tiempoEsperaMinimo: 10,
     validacionQR: true,
-    validacionGeolocation: true
+    validacionGeolocation: true,
+    radiusGeofencing: 50, // metros
+    antifraudeAvanzado: true
+  });
+
+  // Función para configurar juego individual
+  const handleConfigureGame = (juego) => {
+    setShowGameConfigModal(juego);
+  };
+
+  // Función para vista previa de juego
+  const handlePreviewGame = (juego) => {
+    setShowGamePreviewModal(juego);
+  };
+
+  // Función para actualizar configuración de juego
+  const handleUpdateGameConfig = (juegoId, updatedConfig) => {
+    setJuegos(prev => {
+      const newJuegos = { ...prev };
+      Object.keys(newJuegos).forEach(tipo => {
+        newJuegos[tipo] = newJuegos[tipo].map(juego => 
+          juego.id === juegoId ? { ...juego, ...updatedConfig } : juego
+        );
+      });
+      return newJuegos;
+    });
+    setShowGameConfigModal(null);
+    alert('✅ Configuración del juego actualizada exitosamente!');
   };
 
   return (
@@ -11842,12 +11894,15 @@ export const JuegosMultijugador = () => {
         </div>
         <div className="flex space-x-3">
           <button 
-            onClick={() => setShowGameModal(true)}
+            onClick={() => setShowConfigModal(true)}
             className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
           >
-            🎯 Configurar Juegos
+            🎯 Configuración de Juegos
           </button>
-          <button className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors">
+          <button 
+            onClick={() => setShowPreviewModal(true)}
+            className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors"
+          >
             📊 UserWebApp Preview
           </button>
         </div>
@@ -11934,6 +11989,10 @@ export const JuegosMultijugador = () => {
                     {juego.dificultad}
                   </span>
                 </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Max Stars/Sesión:</span>
+                  <span className="font-medium text-red-600">{juego.maxStarsPorSesion}</span>
+                </div>
               </div>
 
               <div className="flex items-center justify-between mb-3">
@@ -11948,10 +12007,16 @@ export const JuegosMultijugador = () => {
               </div>
 
               <div className="flex space-x-2">
-                <button className="flex-1 bg-blue-100 text-blue-700 py-2 rounded-lg text-sm hover:bg-blue-200 transition-colors">
+                <button 
+                  onClick={() => handleConfigureGame(juego)}
+                  className="flex-1 bg-blue-100 text-blue-700 py-2 rounded-lg text-sm hover:bg-blue-200 transition-colors"
+                >
                   ⚙️ Configurar
                 </button>
-                <button className="flex-1 bg-green-100 text-green-700 py-2 rounded-lg text-sm hover:bg-green-200 transition-colors">
+                <button 
+                  onClick={() => handlePreviewGame(juego)}
+                  className="flex-1 bg-green-100 text-green-700 py-2 rounded-lg text-sm hover:bg-green-200 transition-colors"
+                >
                   🎮 Vista Previa
                 </button>
               </div>
@@ -11988,15 +12053,28 @@ export const JuegosMultijugador = () => {
         </div>
 
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-          <h3 className="text-xl font-bold text-gray-800 mb-4">🔐 Panel de Seguridad</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-xl font-bold text-gray-800">🔐 Panel de Seguridad</h3>
+            <button 
+              onClick={() => setShowSecurityModal(true)}
+              className="text-blue-500 hover:text-blue-700 text-sm font-medium"
+            >
+              ⚙️ Configurar
+            </button>
+          </div>
           <div className="space-y-4">
             <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
               <div>
                 <h4 className="font-medium text-blue-800">Geofencing Activo</h4>
-                <p className="text-sm text-blue-600">Validación por ubicación</p>
+                <p className="text-sm text-blue-600">Radio: {seguridadConfig.radiusGeofencing}m</p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" className="sr-only peer" checked={seguridadConfig.geofencing} readOnly />
+                <input 
+                  type="checkbox" 
+                  className="sr-only peer" 
+                  checked={seguridadConfig.geofencing} 
+                  onChange={(e) => setSeguridadConfig(prev => ({...prev, geofencing: e.target.checked}))}
+                />
                 <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
               </label>
             </div>
@@ -12007,7 +12085,12 @@ export const JuegosMultijugador = () => {
                 <p className="text-sm text-green-600">Por pedido único</p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" className="sr-only peer" checked={seguridadConfig.validacionQR} readOnly />
+                <input 
+                  type="checkbox" 
+                  className="sr-only peer" 
+                  checked={seguridadConfig.validacionQR}
+                  onChange={(e) => setSeguridadConfig(prev => ({...prev, validacionQR: e.target.checked}))}
+                />
                 <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
               </label>
             </div>
@@ -12023,7 +12106,7 @@ export const JuegosMultijugador = () => {
             <div className="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
               <div>
                 <h4 className="font-medium text-orange-800">Anti-Fraude</h4>
-                <p className="text-sm text-orange-600">1 sesión por cliente</p>
+                <p className="text-sm text-orange-600">{seguridadConfig.sesionesMaximasPorCliente} sesión por cliente</p>
               </div>
               <div className="text-lg font-bold text-orange-600">✓</div>
             </div>
