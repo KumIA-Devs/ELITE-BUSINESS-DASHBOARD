@@ -156,15 +156,8 @@ class FocusedBackendTester:
                     segmented_campaign_request = {
                         "title": "Campaña VIP Embajadores",
                         "description": "Campaña exclusiva para clientes embajadores con ofertas premium",
-                        "segment": "ambassador",
-                        "channels": ["whatsapp", "instagram"],
-                        "content_type": "premium",
-                        "personalization_level": "high",
-                        "targeting_criteria": {
-                            "min_spent": 10000,
-                            "min_visits": 10,
-                            "nft_level": "oro"
-                        }
+                        "target_level": "ambassador",
+                        "channels": ["whatsapp", "instagram"]
                     }
                     
                     segmented_response = self.session.post(f"{self.base_url}/marketing/campaigns/segmented", json=segmented_campaign_request)
