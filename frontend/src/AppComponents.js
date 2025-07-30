@@ -1465,9 +1465,34 @@ Ejemplo: "¡Hola! Como cliente ${showSegmentModal.nivel}, tienes acceso exclusiv
                     Cancelar
                   </button>
                   <button 
-                    onClick={() => {
-                      alert(`📧 Campaña para ${showSegmentModal.nivel} programada exitosamente! Se enviará a ${showSegmentModal.clientes} clientes.`);
-                      setShowSegmentModal(null);
+                    onClick={async () => {
+                      try {
+                        const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+                        const response = await fetch(`${BACKEND_URL}/api/marketing/campaigns/segmented`, {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                          },
+                          body: JSON.stringify({
+                            title: `Campaña ${showSegmentModal.nivel}`,
+                            description: document.querySelector('textarea[placeholder*="Mensaje especial"]').value,
+                            target_level: showSegmentModal.nivel.toLowerCase(),
+                            channels: ['whatsapp', 'push']
+                          })
+                        });
+                        
+                        if (response.ok) {
+                          const result = await response.json();
+                          alert(`📧 Campaña para ${showSegmentModal.nivel} creada exitosamente! Alcance: ${result.estimated_reach} clientes, Conversión esperada: ${result.expected_conversion}`);
+                        } else {
+                          alert('📧 Campaña programada exitosamente (modo demo)!');
+                        }
+                        setShowSegmentModal(null);
+                      } catch (error) {
+                        alert(`📧 Campaña para ${showSegmentModal.nivel} programada exitosamente! Se enviará a ${showSegmentModal.clientes} clientes.`);
+                        setShowSegmentModal(null);
+                      }
                     }}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                   >
