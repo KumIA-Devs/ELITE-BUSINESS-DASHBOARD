@@ -10121,6 +10121,390 @@ export const InteligenciaCompetitiva = () => {
   );
 };
 
+// 🎮 MÓDULO 3: JUEGOS MULTIJUGADOR
+export const JuegosMultijugador = () => {
+  const [activeGame, setActiveGame] = useState(null);
+  const [gameSessions, setGameSessions] = useState([]);
+  const [showGameModal, setShowGameModal] = useState(false);
+  const [selectedGameType, setSelectedGameType] = useState('1P');
+  const [gameStats, setGameStats] = useState({
+    sesionesDiarias: 47,
+    starsEntregadas: 156,
+    juegoMasJugado: 'KumIA Duel',
+    participacionPromedio: '73%'
+  });
+
+  // Juegos disponibles por categoría
+  const juegos = {
+    '1P': [
+      {
+        id: 'kumiSudoku',
+        nombre: '🧠 KumiSudoku',
+        descripcion: 'Sudoku express de 4x4 o 6x6 con tiempo limitado',
+        objetivo: 'Estímulo mental',
+        duracion: '3-5 min',
+        starsReales: 2,
+        starsSimbolicas: 3,
+        dificultad: 'Media',
+        popularidad: 85
+      },
+      {
+        id: 'pacKumia',
+        nombre: '🕹 Pac-KumIA',
+        descripcion: 'Versión de Pacman con tokens KumIA y obstáculos personalizados',
+        objetivo: 'Nostalgia + Humor',
+        duracion: '4-6 min',
+        starsReales: 3,
+        starsSimbolicas: 2,
+        dificultad: 'Fácil',
+        popularidad: 92
+      }
+    ],
+    '2P': [
+      {
+        id: 'kumiaVersus',
+        nombre: '🃏 KumIA Duel',
+        descripcion: 'Preguntas de cultura general o "Quién conoce mejor al otro"',
+        objetivo: 'Risa + Conexión',
+        duracion: '5-8 min',
+        starsReales: 2,
+        starsSimbolicas: 4,
+        dificultad: 'Media',
+        popularidad: 96
+      },
+      {
+        id: 'retoExpress',
+        nombre: '🎭 Reto Express',
+        descripcion: 'Reto con mímica entre dos (ej: imita platos del menú o profesiones)',
+        objetivo: 'Movimiento + Humor',
+        duracion: '3-5 min',
+        starsReales: 1,
+        starsSimbolicas: 5,
+        dificultad: 'Fácil',
+        popularidad: 78
+      },
+      {
+        id: 'puzzleKumia',
+        nombre: '🧩 Puzzle KumIA',
+        descripcion: 'Cada jugador arma la mitad de un puzzle simbólico del restaurante',
+        objetivo: 'Cooperación',
+        duracion: '6-10 min',
+        starsReales: 3,
+        starsSimbolicas: 2,
+        dificultad: 'Media',
+        popularidad: 71
+      },
+      {
+        id: 'versusTap',
+        nombre: '🔁 Versus Tap',
+        descripcion: 'Tapping challenge: compiten tocando más rápido un elemento que se mueve',
+        objetivo: 'Ritmo + Competencia',
+        duracion: '2-3 min',
+        starsReales: 1,
+        starsSimbolicas: 3,
+        dificultad: 'Fácil',
+        popularidad: 89
+      }
+    ],
+    '3+P': [
+      {
+        id: 'quienSoyYo',
+        nombre: '🤫 Quién Soy Yo',
+        descripcion: 'Juego clásico de adivinanza (pueden usar personajes de KumIA o ingredientes)',
+        objetivo: 'Risa + Juego verbal',
+        duracion: '8-12 min',
+        starsReales: 3,
+        starsSimbolicas: 4,
+        dificultad: 'Fácil',
+        popularidad: 94
+      },
+      {
+        id: 'desafioKumia',
+        nombre: '🤹 Desafío KumIA',
+        descripcion: 'Serie de mini-retos en mesa (apilar servilletas, cantar jingle, trivia)',
+        objetivo: 'Risa + Movimiento',
+        duracion: '10-15 min',
+        starsReales: 5,
+        starsSimbolicas: 3,
+        dificultad: 'Media',
+        popularidad: 87
+      },
+      {
+        id: 'totemFelicidad',
+        nombre: '🧃 Tótem de la Felicidad',
+        descripcion: 'Cada jugador aporta algo (una palabra, acción, brindis), se forma un ritual',
+        objetivo: 'Vínculo + Repetición emocional',
+        duracion: '5-8 min',
+        starsReales: 2,
+        starsSimbolicas: 5,
+        dificultad: 'Fácil',
+        popularidad: 82
+      },
+      {
+        id: 'misionOculta',
+        nombre: '🧙 Misión Oculta',
+        descripcion: 'Uno recibe una misión secreta (hacer reír, decir cierta palabra), los demás deben descubrirlo',
+        objetivo: 'Intriga + Risa',
+        duracion: '10-15 min',
+        starsReales: 4,
+        starsSimbolicas: 2,
+        dificultad: 'Alta',
+        popularidad: 76
+      }
+    ]
+  };
+
+  // Sesiones activas simuladas
+  const sesionesActivas = [
+    { mesaId: 'mesa_5', juego: 'KumIA Duel', jugadores: 2, tiempoRestante: '4:32', starsEnJuego: 6 },
+    { mesaId: 'mesa_12', juego: 'Desafío KumIA', jugadores: 4, tiempoRestante: '8:15', starsEnJuego: 8 },
+    { mesaId: 'mesa_3', juego: 'Pac-KumIA', jugadores: 1, tiempoRestante: '2:48', starsEnJuego: 5 }
+  ];
+
+  // Panel de configuración de seguridad
+  const seguridadConfig = {
+    geofencing: true,
+    tiempoMaximoSesion: 45,
+    sesionesMaximasPorCliente: 1,
+    tiempoEsperaMinimo: 10,
+    validacionQR: true,
+    validacionGeolocation: true
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-3xl font-bold text-gray-800">🎮 Juegos Multijugador</h2>
+          <p className="text-gray-600 mt-1">Sistema gamificado con recompensas controladas y métricas de impacto</p>
+        </div>
+        <div className="flex space-x-3">
+          <button 
+            onClick={() => setShowGameModal(true)}
+            className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
+          >
+            🎯 Configurar Juegos
+          </button>
+          <button className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors">
+            📊 UserWebApp Preview
+          </button>
+        </div>
+      </div>
+
+      {/* Estadísticas Principales */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 text-center">
+          <div className="text-3xl font-bold text-blue-600">{gameStats.sesionesDiarias}</div>
+          <div className="text-sm text-blue-700">Sesiones Hoy</div>
+          <div className="text-xs text-green-600 mt-1">+23% vs ayer</div>
+        </div>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 text-center">
+          <div className="text-3xl font-bold text-green-600">{gameStats.starsEntregadas}</div>
+          <div className="text-sm text-green-700">Stars Entregadas</div>
+          <div className="text-xs text-blue-600 mt-1">134 reales + 22 simbólicas</div>
+        </div>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 text-center">
+          <div className="text-3xl font-bold text-purple-600">{gameStats.juegoMasJugado}</div>
+          <div className="text-sm text-purple-700">Juego Más Popular</div>
+          <div className="text-xs text-purple-600 mt-1">34% de las sesiones</div>
+        </div>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 text-center">
+          <div className="text-3xl font-bold text-orange-600">{gameStats.participacionPromedio}</div>
+          <div className="text-sm text-orange-700">Participación</div>
+          <div className="text-xs text-green-600 mt-1">Promedio por mesa</div>
+        </div>
+      </div>
+
+      {/* Catálogo de Juegos */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xl font-bold text-gray-800">🎯 Catálogo de Juegos por Tipo</h3>
+          <div className="flex space-x-2">
+            {['1P', '2P', '3+P'].map((tipo) => (
+              <button
+                key={tipo}
+                onClick={() => setSelectedGameType(tipo)}
+                className={`px-4 py-2 rounded-lg text-sm transition-colors ${
+                  selectedGameType === tipo
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {tipo === '1P' ? '🎯 Single Player' : tipo === '2P' ? '💕 Parejas' : '👥 Grupos'}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {juegos[selectedGameType].map((juego) => (
+            <div key={juego.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all">
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="font-bold text-gray-800">{juego.nombre}</h4>
+                <div className="flex items-center space-x-1">
+                  <div className="w-12 h-2 bg-gray-200 rounded-full">
+                    <div 
+                      className="h-2 bg-green-500 rounded-full transition-all duration-300"
+                      style={{ width: `${juego.popularidad}%` }}
+                    ></div>
+                  </div>
+                  <span className="text-xs text-gray-500">{juego.popularidad}%</span>
+                </div>
+              </div>
+
+              <p className="text-sm text-gray-600 mb-3">{juego.descripcion}</p>
+
+              <div className="space-y-2 text-xs mb-4">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Objetivo:</span>
+                  <span className="font-medium text-blue-600">{juego.objetivo}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Duración:</span>
+                  <span className="font-medium">{juego.duracion}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Dificultad:</span>
+                  <span className={`font-medium ${
+                    juego.dificultad === 'Fácil' ? 'text-green-600' :
+                    juego.dificultad === 'Media' ? 'text-yellow-600' : 'text-red-600'
+                  }`}>
+                    {juego.dificultad}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between mb-3">
+                <div className="text-center">
+                  <div className="text-lg font-bold text-orange-600">{juego.starsReales}</div>
+                  <div className="text-xs text-orange-700">Stars Reales</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-lg font-bold text-blue-600">{juego.starsSimbolicas}</div>
+                  <div className="text-xs text-blue-700">KumiSmile Stars</div>
+                </div>
+              </div>
+
+              <div className="flex space-x-2">
+                <button className="flex-1 bg-blue-100 text-blue-700 py-2 rounded-lg text-sm hover:bg-blue-200 transition-colors">
+                  ⚙️ Configurar
+                </button>
+                <button className="flex-1 bg-green-100 text-green-700 py-2 rounded-lg text-sm hover:bg-green-200 transition-colors">
+                  🎮 Vista Previa
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Sesiones Activas y Panel de Control */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <h3 className="text-xl font-bold text-gray-800 mb-4">⚡ Sesiones Activas en Tiempo Real</h3>
+          {sesionesActivas.length > 0 ? (
+            <div className="space-y-3">
+              {sesionesActivas.map((sesion, index) => (
+                <div key={index} className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
+                  <div>
+                    <h4 className="font-medium text-green-800">{sesion.juego}</h4>
+                    <p className="text-sm text-green-700">Mesa {sesion.mesaId} • {sesion.jugadores} jugadores</p>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-lg font-bold text-green-600">{sesion.tiempoRestante}</div>
+                    <div className="text-xs text-green-700">{sesion.starsEnJuego} stars en juego</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-gray-500">
+              <div className="text-4xl mb-2">🎮</div>
+              <p>No hay sesiones activas actualmente</p>
+            </div>
+          )}
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <h3 className="text-xl font-bold text-gray-800 mb-4">🔐 Panel de Seguridad</h3>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+              <div>
+                <h4 className="font-medium text-blue-800">Geofencing Activo</h4>
+                <p className="text-sm text-blue-600">Validación por ubicación</p>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" className="sr-only peer" checked={seguridadConfig.geofencing} readOnly />
+                <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+              </label>
+            </div>
+
+            <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+              <div>
+                <h4 className="font-medium text-green-800">QR Dinámico</h4>
+                <p className="text-sm text-green-600">Por pedido único</p>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" className="sr-only peer" checked={seguridadConfig.validacionQR} readOnly />
+                <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
+              </label>
+            </div>
+
+            <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
+              <div>
+                <h4 className="font-medium text-purple-800">Límite de Tiempo</h4>
+                <p className="text-sm text-purple-600">{seguridadConfig.tiempoMaximoSesion} min por sesión</p>
+              </div>
+              <div className="text-lg font-bold text-purple-600">{seguridadConfig.tiempoMaximoSesion}'</div>
+            </div>
+
+            <div className="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
+              <div>
+                <h4 className="font-medium text-orange-800">Anti-Fraude</h4>
+                <p className="text-sm text-orange-600">1 sesión por cliente</p>
+              </div>
+              <div className="text-lg font-bold text-orange-600">✓</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Métricas de Impacto */}
+      <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 border border-emerald-200">
+        <h3 className="text-xl font-bold text-emerald-800 mb-4">📊 Métricas de Impacto de Juegos</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="text-center">
+            <div className="text-2xl font-bold text-emerald-600">+18 min</div>
+            <div className="text-sm text-emerald-700">Tiempo promedio extra por mesa</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-blue-600">+32%</div>
+            <div className="text-sm text-blue-700">Incremento en ticket promedio</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-purple-600">4.8/5</div>
+            <div className="text-sm text-purple-700">Satisfacción con juegos</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-orange-600">67%</div>
+            <div className="text-sm text-orange-700">Tasa de re-participación</div>
+          </div>
+        </div>
+
+        <div className="mt-6 p-4 bg-white rounded-lg">
+          <h4 className="font-bold text-gray-800 mb-2">💡 Insights KUMIA</h4>
+          <div className="text-sm text-gray-700 space-y-1">
+            <p>• Los juegos de 2 jugadores tienen 23% más engagement que individuales</p>
+            <p>• Sesiones entre 5-8 minutos generan mayor satisfacción del cliente</p>
+            <p>• Juegos con recompensas reales aumentan la fidelización en un 45%</p>
+            <p>• Mayor participación detectada entre 19:30-21:00 hrs</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default {
   ROIViewer,
   RewardsNFTsSection,
