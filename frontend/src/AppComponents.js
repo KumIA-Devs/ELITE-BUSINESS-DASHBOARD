@@ -14324,376 +14324,595 @@ export const GestionUserWebApp = () => {
   );
 };
 
-// 💳 MÓDULO 5: TU FACTURACIÓN KUMIA
+// 💳 MÓDULO 5: TU FACTURACIÓN KUMIA - PORTAL ADMINISTRATIVO
 export const TuFacturacionKumia = () => {
   const [showROISimulator, setShowROISimulator] = useState(false);
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [simulatorValues, setSimulatorValues] = useState({
-    ticketPromedio: 3830,
-    usuariosActivos: 62,
-    crecimientoEsperado: 25
+  const [showContactForm, setShowContactForm] = useState(false);
+  const [ticketPromedio, setTicketPromedio] = useState(15000);
+  const [clientesDiarios, setClientesDiarios] = useState(80);
+  const [incrementoKumiA, setIncrementoKumiA] = useState(28);
+  
+  // Estado del formulario de contacto
+  const [contactForm, setContactForm] = useState({
+    restaurante: 'IL MANDORLA Smokehouse',
+    email: 'admin@ilmandorla.com',
+    motivo: '',
+    mensaje: ''
   });
 
-  // Facturación actual
-  const facturacionActual = {
-    planActual: 'KumIA Elite Pro',
-    costoPorModulo: {
-      'Dashboard Base': 45000,
-      'AI Agents': 25000,
-      'Centro IA Marketing': 35000,
-      'Inteligencia Competitiva': 15000,
-      'Juegos Multijugador': 20000,
-      'User Web App': 10000,
-      'Recompensas NFT': 30000
-    },
-    totalMensual: 180000,
-    fechaFacturacion: '15 de cada mes',
-    metodoPago: 'Transferencia Bancaria',
-    proximoVencimiento: '2025-01-15'
-  };
-
-  // Historial de pagos
-  const historialPagos = [
-    { fecha: '2024-12-15', monto: 180000, estado: 'Pagado', folio: 'DTE-2024-001247', metodo: 'Transferencia' },
-    { fecha: '2024-11-15', monto: 165000, estado: 'Pagado', folio: 'DTE-2024-001186', metodo: 'Transferencia' },
-    { fecha: '2024-10-15', monto: 150000, estado: 'Pagado', folio: 'DTE-2024-001098', metodo: 'Transferencia' },
-    { fecha: '2024-09-15', monto: 135000, estado: 'Pagado', folio: 'DTE-2024-000945', metodo: 'Transferencia' }
-  ];
-
-  // Cálculo del simulador ROI
-  const calcularSimulacionROI = () => {
-    const ingresosMensualesActuales = simulatorValues.ticketPromedio * simulatorValues.usuariosActivos * 2.8; // 2.8 visitas promedio
-    const crecimientoDecimal = simulatorValues.crecimientoEsperado / 100;
-    const ingresosMensualesProyectados = ingresosMensualesActuales * (1 + crecimientoDecimal);
-    const ingresoAdicional = ingresosMensualesProyectados - ingresosMensualesActuales;
-    const roiKumia = (ingresoAdicional / facturacionActual.totalMensual) * 100;
-
+  const calcularROI = () => {
+    const ingresosSinKumiA = ticketPromedio * clientesDiarios * 30;
+    const ingresosConKumiA = ingresosSinKumiA * (1 + incrementoKumiA / 100);
+    const incrementoMensual = ingresosConKumiA - ingresosSinKumiA;
+    const costoAnualKumiA = 2400000; // Plan anual
+    const beneficioAnual = incrementoMensual * 12 - costoAnualKumiA;
+    const roi = ((beneficioAnual / costoAnualKumiA) * 100).toFixed(1);
+    
     return {
-      actual: ingresosMensualesActuales,
-      proyectado: ingresosMensualesProyectados,
-      adicional: ingresoAdicional,
-      roi: roiKumia,
-      recuperacionInversion: Math.ceil(facturacionActual.totalMensual / (ingresoAdicional / 12))
+      ingresosSinKumiA,
+      ingresosConKumiA,
+      incrementoMensual,
+      beneficioAnual,
+      roi
     };
   };
 
-  const simulacion = calcularSimulacionROI();
+  const handleContactSubmit = (e) => {
+    e.preventDefault();
+    // Simular envío a soporte@kumia.net
+    alert('✅ Solicitud enviada exitosamente a soporte@kumia.net\n\nTe contactaremos a la brevedad. Gracias por confiar en KumIA.');
+    setShowContactForm(false);
+    setContactForm({
+      restaurante: 'IL MANDORLA Smokehouse',
+      email: 'admin@ilmandorla.com',
+      motivo: '',
+      mensaje: ''
+    });
+  };
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('es-CL', {
+      style: 'currency',
+      currency: 'CLP',
+      minimumFractionDigits: 0
+    }).format(amount);
+  };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-3xl font-bold text-gray-800">💳 Tu Facturación KumIA</h2>
-          <p className="text-gray-600 mt-1">Transparencia financiera y simulación de escalabilidad</p>
-        </div>
-        <div className="flex space-x-3">
-          <button 
-            onClick={() => setShowROISimulator(true)}
-            className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
-          >
-            📊 Simulador ROI
-          </button>
-          <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
-            💬 Soporte
-          </button>
+      {/* Header del Portal */}
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl p-6 text-white">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold mb-2">💳 Tu Facturación KumIA</h2>
+            <p className="text-blue-100">Portal Administrativo - Plan Anual KumIA Elite</p>
+          </div>
+          <div className="text-right">
+            <div className="text-sm text-blue-200">Estado de Cuenta</div>
+            <div className="text-2xl font-bold">$1,800,000</div>
+            <div className="text-sm text-blue-200">Pagado de $2,400,000 anuales</div>
+          </div>
         </div>
       </div>
 
-      {/* Resumen Mensual */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-          <h3 className="text-xl font-bold text-gray-800 mb-4">📊 Resumen Mensual - {facturacionActual.planActual}</h3>
-          
-          <div className="space-y-3 mb-6">
-            {Object.entries(facturacionActual.costoPorModulo).map(([modulo, costo]) => (
-              <div key={modulo} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div className="flex items-center">
-                  <span className="w-3 h-3 bg-blue-500 rounded-full mr-3"></span>
-                  <span className="font-medium text-gray-800">{modulo}</span>
-                  <span className="ml-2 px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Activo</span>
-                </div>
-                <span className="font-bold text-gray-700">${costo.toLocaleString()}</span>
-              </div>
-            ))}
+      {/* Grid Principal de Elementos Administrativos */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        {/* 📄 Facturación Electrónica */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="flex items-center mb-4">
+            <span className="text-2xl mr-3">📄</span>
+            <h3 className="text-xl font-bold text-gray-800">Facturación Electrónica</h3>
           </div>
-
-          <div className="border-t border-gray-200 pt-4">
-            <div className="flex items-center justify-between">
-              <span className="text-lg font-bold text-gray-800">Total Mensual:</span>
-              <span className="text-2xl font-bold text-blue-600">${facturacionActual.totalMensual.toLocaleString()}</span>
-            </div>
-            <div className="flex items-center justify-between mt-2 text-sm text-gray-600">
-              <span>Próximo vencimiento:</span>
-              <span className="font-medium">{facturacionActual.proximoVencimiento}</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 border border-emerald-200">
-          <h3 className="text-lg font-bold text-emerald-800 mb-4">💰 Estado de Cuenta</h3>
           
-          <div className="space-y-4">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-emerald-600">Al día</div>
-              <div className="text-sm text-emerald-700">Estado de pagos</div>
+          <div className="space-y-3">
+            <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+              <div className="flex justify-between items-center mb-2">
+                <span className="font-medium text-green-800">Última Factura DTE</span>
+                <span className="text-sm text-green-600 bg-green-100 px-2 py-1 rounded">Pagada</span>
+              </div>
+              <div className="text-sm text-green-700">
+                <p>Folio: 001-2024-000847</p>
+                <p>Fecha: 15 de Noviembre 2024</p>
+                <p>Monto: $200,000 CLP</p>
+              </div>
+              <button className="mt-3 bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 transition-colors">
+                📥 Descargar PDF
+              </button>
             </div>
 
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Método de pago:</span>
-                <span className="font-medium">{facturacionActual.metodoPago}</span>
+            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+              <div className="flex justify-between items-center mb-2">
+                <span className="font-medium text-blue-800">Próxima Factura</span>
+                <span className="text-sm text-blue-600 bg-blue-100 px-2 py-1 rounded">15 Dic 2024</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Facturación:</span>
-                <span className="font-medium">{facturacionActual.fechaFacturacion}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Próximo cargo:</span>
-                <span className="font-medium text-blue-600">${facturacionActual.totalMensual.toLocaleString()}</span>
+              <div className="text-sm text-blue-700">
+                <p>Monto estimado: $200,000 CLP</p>
+                <p>Concepto: Cuota mensual Plan Anual</p>
               </div>
             </div>
 
-            <button 
-              onClick={() => setShowPaymentModal(true)}
-              className="w-full bg-emerald-500 text-white py-2 rounded-lg hover:bg-emerald-600 transition-colors"
-            >
-              🔄 Actualizar Plan
+            <button className="w-full bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-gray-200 transition-colors">
+              📋 Ver Historial Completo DTE
             </button>
           </div>
         </div>
-      </div>
 
-      {/* Facturación Electrónica e Historial */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* 📅 Fechas de Pago */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-          <h3 className="text-xl font-bold text-gray-800 mb-4">🧾 Facturación Electrónica DTE</h3>
+          <div className="flex items-center mb-4">
+            <span className="text-2xl mr-3">📅</span>
+            <h3 className="text-xl font-bold text-gray-800">Fechas de Pago</h3>
+          </div>
           
-          <div className="bg-blue-50 p-4 rounded-lg mb-4">
-            <div className="flex items-center mb-2">
-              <span className="text-blue-600 text-2xl mr-3">📄</span>
-              <div>
-                <h4 className="font-bold text-blue-800">Facturación Digital Chile</h4>
-                <p className="text-sm text-blue-700">Documentos tributarios electrónicos válidos</p>
+          <div className="space-y-4">
+            <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
+              <h4 className="font-bold text-orange-800 mb-2">Próximo Vencimiento</h4>
+              <div className="text-2xl font-bold text-orange-700">15 Diciembre 2024</div>
+              <div className="text-sm text-orange-600 mt-1">En 18 días</div>
+            </div>
+
+            <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+              <h4 className="font-bold text-purple-800 mb-3">Ciclo de Facturación Actual</h4>
+              <div className="space-y-2 text-sm text-purple-700">
+                <div className="flex justify-between">
+                  <span>Inicio del ciclo:</span>
+                  <span className="font-medium">15 Nov 2024</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Fin del ciclo:</span>
+                  <span className="font-medium">15 Dic 2024</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Modalidad:</span>
+                  <span className="font-medium">Pago Mensual</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-indigo-50 p-4 rounded-lg border border-indigo-200">
+              <h4 className="font-bold text-indigo-800 mb-2">Plan Vigente</h4>
+              <div className="text-indigo-700">
+                <p className="font-medium">KumIA Elite - Plan Anual</p>
+                <p className="text-sm">Vigencia hasta: 15 Noviembre 2025</p>
               </div>
             </div>
           </div>
+        </div>
 
+        {/* 📜 Contratos Firmados */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="flex items-center mb-4">
+            <span className="text-2xl mr-3">📜</span>
+            <h3 className="text-xl font-bold text-gray-800">Contratos Firmados</h3>
+          </div>
+          
           <div className="space-y-3">
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div>
-                <div className="font-medium text-gray-800">Última Factura</div>
-                <div className="text-sm text-gray-600">DTE-2024-001247 • Diciembre 2024</div>
+            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-medium text-gray-800">Contrato KumIA Elite</span>
+                <span className="text-sm text-green-600 bg-green-100 px-2 py-1 rounded">Activo</span>
               </div>
-              <div className="flex space-x-2">
-                <button className="bg-blue-100 text-blue-700 px-3 py-1 rounded text-sm hover:bg-blue-200 transition-colors">
-                  👁️ Ver
+              <div className="text-sm text-gray-600 space-y-1">
+                <p>Fecha de firma: 15 de Noviembre 2023</p>
+                <p>Vigencia: 12 meses (renovable)</p>
+                <p>Cliente: IL MANDORLA Smokehouse SpA</p>
+                <p>RUT: 76.543.210-8</p>
+              </div>
+              <div className="flex space-x-2 mt-3">
+                <button className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors">
+                  📥 Descargar Contrato
                 </button>
-                <button className="bg-green-100 text-green-700 px-3 py-1 rounded text-sm hover:bg-green-200 transition-colors">
-                  📥 Descargar
+                <button className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm hover:bg-gray-300 transition-colors">
+                  📋 Ver Detalles
                 </button>
               </div>
             </div>
 
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div>
-                <div className="font-medium text-gray-800">Certificados SII</div>
-                <div className="text-sm text-gray-600">Válidos hasta Marzo 2025</div>
+            <div className="bg-yellow-50 p-3 rounded-lg border border-yellow-200">
+              <div className="flex items-center">
+                <span className="text-yellow-600 mr-2">ℹ️</span>
+                <span className="text-sm text-yellow-800">Renovación automática activada para Noviembre 2025</span>
               </div>
-              <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">✅ Vigente</span>
+            </div>
+          </div>
+        </div>
+
+        {/* 💳 Métodos de Pago Asociados */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="flex items-center mb-4">
+            <span className="text-2xl mr-3">💳</span>
+            <h3 className="text-xl font-bold text-gray-800">Métodos de Pago</h3>
+          </div>
+          
+          <div className="space-y-3">
+            <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center">
+                  <span className="text-green-600 mr-2">💳</span>
+                  <span className="font-medium text-green-800">Tarjeta Principal</span>
+                </div>
+                <span className="text-sm text-green-600 bg-green-100 px-2 py-1 rounded">Activa</span>
+              </div>
+              <div className="text-sm text-green-700">
+                <p>Visa •••• •••• •••• 4289</p>
+                <p>Vencimiento: 08/2027</p>
+                <p>Titular: RESTAURANT IL MANDORLA SPA</p>
+              </div>
             </div>
 
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div>
-                <div className="font-medium text-gray-800">RUT Empresa</div>
-                <div className="text-sm text-gray-600">76.XXX.XXX-X</div>
+            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center">
+                  <span className="text-blue-600 mr-2">🏦</span>
+                  <span className="font-medium text-blue-800">Cuenta Corriente</span>
+                </div>
+                <span className="text-sm text-blue-600 bg-blue-100 px-2 py-1 rounded">Respaldo</span>
               </div>
-              <button className="bg-gray-100 text-gray-700 px-3 py-1 rounded text-sm hover:bg-gray-200 transition-colors">
-                ⚙️ Configurar
+              <div className="text-sm text-blue-700">
+                <p>Banco de Chile - Cta. Cte.</p>
+                <p>•••• •••• •••• 7842</p>
+              </div>
+            </div>
+
+            <div className="flex space-x-2">
+              <button className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                ➕ Agregar Método
+              </button>
+              <button className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors">
+                ✏️ Actualizar Datos
               </button>
             </div>
           </div>
         </div>
+      </div>
 
+      {/* 📊 Estado de Cuenta y 📚 Historial */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        {/* 📊 Estado de Cuenta */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-          <h3 className="text-xl font-bold text-gray-800 mb-4">📋 Historial de Pagos</h3>
+          <div className="flex items-center mb-4">
+            <span className="text-2xl mr-3">📊</span>
+            <h3 className="text-xl font-bold text-gray-800">Estado de Cuenta</h3>
+          </div>
           
-          <div className="space-y-3">
-            {historialPagos.map((pago, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div>
-                  <div className="font-medium text-gray-800">{pago.fecha}</div>
-                  <div className="text-sm text-gray-600">{pago.folio} • {pago.metodo}</div>
+          <div className="space-y-4">
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-lg border border-green-200">
+              <h4 className="font-bold text-green-800 mb-4">Resumen Financiero</h4>
+              
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-green-700">{formatCurrency(1800000)}</div>
+                  <div className="text-sm text-green-600">Pagado a la fecha</div>
                 </div>
-                <div className="text-right">
-                  <div className="font-bold text-gray-800">${pago.monto.toLocaleString()}</div>
-                  <span className={`text-xs px-2 py-1 rounded-full ${
-                    pago.estado === 'Pagado' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                  }`}>
-                    {pago.estado}
-                  </span>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-blue-700">{formatCurrency(600000)}</div>
+                  <div className="text-sm text-blue-600">Restante del ciclo</div>
+                </div>
+              </div>
+
+              <div className="bg-white p-4 rounded-lg">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-sm text-gray-600">Progreso del Plan Anual</span>
+                  <span className="text-sm font-medium text-gray-800">75%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div className="bg-green-500 h-2 rounded-full" style={{ width: '75%' }}></div>
+                </div>
+                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                  <span>Nov 2023</span>
+                  <span>Nov 2025</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+              <h4 className="font-medium text-blue-800 mb-2">Detalles de Facturación</h4>
+              <div className="space-y-1 text-sm text-blue-700">
+                <div className="flex justify-between">
+                  <span>Plan Anual KumIA Elite:</span>
+                  <span className="font-medium">{formatCurrency(2400000)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Modalidad de pago:</span>
+                  <span className="font-medium">12 cuotas mensuales</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Cuota mensual:</span>
+                  <span className="font-medium">{formatCurrency(200000)}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 📚 Historial de Pagos */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="flex items-center mb-4">
+            <span className="text-2xl mr-3">📚</span>
+            <h3 className="text-xl font-bold text-gray-800">Historial de Pagos</h3>
+          </div>
+          
+          <div className="space-y-3 max-h-80 overflow-y-auto">
+            {[
+              { fecha: '15 Nov 2024', folio: '847', monto: 200000, metodo: 'Visa ••4289', estado: 'Pagado' },
+              { fecha: '15 Oct 2024', folio: '798', monto: 200000, metodo: 'Visa ••4289', estado: 'Pagado' },
+              { fecha: '15 Sep 2024', folio: '743', monto: 200000, metodo: 'Visa ••4289', estado: 'Pagado' },
+              { fecha: '15 Ago 2024', folio: '689', monto: 200000, metodo: 'Visa ••4289', estado: 'Pagado' },
+              { fecha: '15 Jul 2024', folio: '634', monto: 200000, metodo: 'Cta. Cte. ••7842', estado: 'Pagado' },
+              { fecha: '15 Jun 2024', folio: '578', monto: 200000, metodo: 'Visa ••4289', estado: 'Pagado' },
+              { fecha: '15 May 2024', folio: '523', monto: 200000, metodo: 'Visa ••4289', estado: 'Pagado' },
+              { fecha: '15 Abr 2024', folio: '467', monto: 200000, metodo: 'Visa ••4289', estado: 'Pagado' },
+              { fecha: '15 Mar 2024', folio: '412', monto: 200000, metodo: 'Visa ••4289', estado: 'Pagado' }
+            ].map((pago, index) => (
+              <div key={index} className="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="font-medium text-gray-800">{pago.fecha}</span>
+                  <span className="text-sm text-green-600 bg-green-100 px-2 py-1 rounded">{pago.estado}</span>
+                </div>
+                <div className="text-sm text-gray-600">
+                  <div className="flex justify-between">
+                    <span>Folio: {pago.folio}</span>
+                    <span className="font-medium">{formatCurrency(pago.monto)}</span>
+                  </div>
+                  <div className="text-xs text-gray-500 mt-1">
+                    Método: {pago.metodo}
+                  </div>
                 </div>
               </div>
             ))}
           </div>
 
-          <button className="w-full mt-4 bg-blue-100 text-blue-700 py-2 rounded-lg hover:bg-blue-200 transition-colors">
-            📄 Ver Historial Completo
+          <button className="w-full mt-4 bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-gray-200 transition-colors">
+            📄 Exportar Historial Completo
           </button>
         </div>
       </div>
 
-      {/* Modal Simulador ROI */}
-      {showROISimulator && (
+      {/* 🔁 Simulador ROI */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center">
+            <span className="text-2xl mr-3">🔁</span>
+            <h3 className="text-xl font-bold text-gray-800">Simulador ROI KumIA</h3>
+          </div>
+          <button 
+            onClick={() => setShowROISimulator(!showROISimulator)}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            {showROISimulator ? 'Ocultar' : 'Mostrar'} Simulador
+          </button>
+        </div>
+
+        {showROISimulator && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <h4 className="font-bold text-gray-800">Parámetros de Simulación</h4>
+              
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Ticket Promedio Actual (CLP)
+                </label>
+                <input
+                  type="number"
+                  value={ticketPromedio}
+                  onChange={(e) => setTicketPromedio(parseInt(e.target.value))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="bg-green-50 p-4 rounded-lg">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Clientes Promedio por Día
+                </label>
+                <input
+                  type="number"
+                  value={clientesDiarios}
+                  onChange={(e) => setClientesDiarios(parseInt(e.target.value))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                />
+              </div>
+
+              <div className="bg-orange-50 p-4 rounded-lg">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Incremento Esperado con KumIA (%)
+                </label>
+                <input
+                  type="range"
+                  min="10"
+                  max="50"
+                  value={incrementoKumiA}
+                  onChange={(e) => setIncrementoKumiA(parseInt(e.target.value))}
+                  className="w-full"
+                />
+                <div className="text-center text-lg font-bold text-orange-600">
+                  {incrementoKumiA}%
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h4 className="font-bold text-gray-800">Proyección de Resultados</h4>
+              
+              {(() => {
+                const resultados = calcularROI();
+                return (
+                  <div className="space-y-3">
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <div className="text-sm text-gray-600">Ingresos Mensuales Sin KumIA</div>
+                      <div className="text-xl font-bold text-gray-800">{formatCurrency(resultados.ingresosSinKumiA)}</div>
+                    </div>
+
+                    <div className="bg-green-50 p-4 rounded-lg">
+                      <div className="text-sm text-green-600">Ingresos Mensuales Con KumIA</div>
+                      <div className="text-xl font-bold text-green-700">{formatCurrency(resultados.ingresosConKumiA)}</div>
+                    </div>
+
+                    <div className="bg-blue-50 p-4 rounded-lg">
+                      <div className="text-sm text-blue-600">Incremento Mensual</div>
+                      <div className="text-xl font-bold text-blue-700">{formatCurrency(resultados.incrementoMensual)}</div>
+                    </div>
+
+                    <div className="bg-purple-50 p-4 rounded-lg">
+                      <div className="text-sm text-purple-600">Beneficio Anual Neto</div>
+                      <div className="text-xl font-bold text-purple-700">{formatCurrency(resultados.beneficioAnual)}</div>
+                    </div>
+
+                    <div className="bg-gradient-to-r from-orange-50 to-yellow-50 p-4 rounded-lg border border-orange-200">
+                      <div className="text-sm text-orange-600">ROI Proyectado</div>
+                      <div className="text-3xl font-bold text-orange-700">{resultados.roi}%</div>
+                      <div className="text-xs text-orange-600 mt-1">
+                        {parseFloat(resultados.roi) > 0 ? '✅ Inversión rentable' : '⚠️ Revisar parámetros'}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Botón de Contacto Contable */}
+      <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 border border-emerald-200">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-xl font-bold text-emerald-800 mb-2">¿Necesitas ayuda contable?</h3>
+            <p className="text-emerald-700">Nuestro equipo especializado está aquí para resolver tus consultas administrativas y tributarias.</p>
+          </div>
+          <button 
+            onClick={() => setShowContactForm(true)}
+            className="bg-emerald-600 text-white px-6 py-3 rounded-lg hover:bg-emerald-700 transition-colors font-medium"
+          >
+            💬 Contáctar Equipo Contable
+          </button>
+        </div>
+      </div>
+
+      {/* MODAL: Formulario de Contacto Contable */}
+      {showContactForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-screen overflow-y-auto">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-800">📊 Simulador ROI Dinámico</h2>
-                  <p className="text-gray-600">Proyecciones de retorno según diferentes escenarios</p>
+                  <h2 className="text-2xl font-bold text-gray-800">💬 Contacto Contable</h2>
+                  <p className="text-gray-600">Consultas administrativas y tributarias</p>
                 </div>
                 <button 
-                  onClick={() => setShowROISimulator(false)}
+                  onClick={() => setShowContactForm(false)}
                   className="text-gray-400 hover:text-gray-600 text-2xl"
                 >
                   ✕
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Configuración de Variables */}
-                <div className="space-y-4">
-                  <h3 className="font-bold text-gray-800">⚙️ Variables de Simulación</h3>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Ticket Promedio Actual (CLP)
-                      <span className="text-xs text-gray-500 ml-2">Actual: $3,830</span>
-                    </label>
-                    <input
-                      type="range"
-                      min="2000"
-                      max="8000"
-                      step="100"
-                      value={simulatorValues.ticketPromedio}
-                      onChange={(e) => setSimulatorValues(prev => ({...prev, ticketPromedio: parseInt(e.target.value)}))}
-                      className="w-full"
-                    />
-                    <div className="flex justify-between text-xs text-gray-500">
-                      <span>$2,000</span>
-                      <span className="font-medium">${simulatorValues.ticketPromedio.toLocaleString()}</span>
-                      <span>$8,000</span>
-                    </div>
-                  </div>
+              <form onSubmit={handleContactSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Nombre del Restaurante
+                  </label>
+                  <input
+                    type="text"
+                    value={contactForm.restaurante}
+                    onChange={(e) => setContactForm(prev => ({...prev, restaurante: e.target.value}))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
+                    required
+                  />
+                </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Usuarios Activos Mensuales
-                      <span className="text-xs text-gray-500 ml-2">Actual: 62</span>
-                    </label>
-                    <input
-                      type="range"
-                      min="20"
-                      max="200"
-                      step="5"
-                      value={simulatorValues.usuariosActivos}
-                      onChange={(e) => setSimulatorValues(prev => ({...prev, usuariosActivos: parseInt(e.target.value)}))}
-                      className="w-full"
-                    />
-                    <div className="flex justify-between text-xs text-gray-500">
-                      <span>20</span>
-                      <span className="font-medium">{simulatorValues.usuariosActivos} usuarios</span>
-                      <span>200</span>
-                    </div>
-                  </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Correo Electrónico Asociado
+                  </label>
+                  <input
+                    type="email"
+                    value={contactForm.email}
+                    onChange={(e) => setContactForm(prev => ({...prev, email: e.target.value}))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
+                    required
+                  />
+                </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Crecimiento Esperado (%)
-                      <span className="text-xs text-gray-500 ml-2">Promedio industria: 20%</span>
-                    </label>
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      step="5"
-                      value={simulatorValues.crecimientoEsperado}
-                      onChange={(e) => setSimulatorValues(prev => ({...prev, crecimientoEsperado: parseInt(e.target.value)}))}
-                      className="w-full"
-                    />
-                    <div className="flex justify-between text-xs text-gray-500">
-                      <span>0%</span>
-                      <span className="font-medium">{simulatorValues.crecimientoEsperado}%</span>
-                      <span>100%</span>
-                    </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Motivo del Contacto
+                  </label>
+                  <select
+                    value={contactForm.motivo}
+                    onChange={(e) => setContactForm(prev => ({...prev, motivo: e.target.value}))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
+                    required
+                  >
+                    <option value="">Seleccionar motivo</option>
+                    <option value="consulta-facturacion">Consulta sobre facturación</option>
+                    <option value="actualizacion-datos">Actualización de datos tributarios</option>
+                    <option value="problema-pago">Problema con método de pago</option>
+                    <option value="solicitud-certificado">Solicitud de certificados</option>
+                    <option value="revision-contrato">Revisión de contrato</option>
+                    <option value="consulta-dte">Consulta sobre documentos DTE</option>
+                    <option value="otro">Otro</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Mensaje
+                  </label>
+                  <textarea
+                    value={contactForm.mensaje}
+                    onChange={(e) => setContactForm(prev => ({...prev, mensaje: e.target.value}))}
+                    rows={4}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
+                    placeholder="Describe tu consulta en detalle..."
+                    required
+                  />
+                </div>
+
+                <div className="bg-emerald-50 p-3 rounded-lg border border-emerald-200">
+                  <div className="flex items-center text-sm text-emerald-700">
+                    <span className="mr-2">📧</span>
+                    <span>Se enviará a: <strong>soporte@kumia.net</strong></span>
                   </div>
                 </div>
 
-                {/* Resultados de Simulación */}
-                <div className="space-y-6">
-                  <h3 className="font-bold text-gray-800">📈 Resultados de Simulación</h3>
-                  
-                  <div className="bg-blue-50 p-4 rounded-lg">
-                    <h4 className="font-bold text-blue-800 mb-3">💰 Proyección de Ingresos</h4>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Ingresos actuales:</span>
-                        <span className="font-bold">${simulacion.actual.toLocaleString()}/mes</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Ingresos proyectados:</span>
-                        <span className="font-bold text-blue-600">${simulacion.proyectado.toLocaleString()}/mes</span>
-                      </div>
-                      <div className="flex justify-between border-t pt-2">
-                        <span className="text-gray-800 font-medium">Ingreso adicional:</span>
-                        <span className="font-bold text-green-600">+${simulacion.adicional.toLocaleString()}/mes</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-green-50 p-4 rounded-lg">
-                    <h4 className="font-bold text-green-800 mb-3">📊 ROI de KumIA</h4>
-                    <div className="text-center">
-                      <div className="text-4xl font-bold text-green-600">{simulacion.roi.toFixed(0)}%</div>
-                      <div className="text-sm text-green-700">Retorno sobre inversión mensual</div>
-                    </div>
-                    <div className="mt-3 text-sm text-green-700 text-center">
-                      Recuperación de inversión: <strong>{simulacion.recuperacionInversion} días</strong>
-                    </div>
-                  </div>
-
-                  <div className="bg-purple-50 p-4 rounded-lg">
-                    <h4 className="font-bold text-purple-800 mb-3">🎯 Recomendaciones</h4>
-                    <div className="space-y-2 text-sm text-purple-700">
-                      {simulacion.roi > 300 && <div>• ✅ ROI excelente, considera expandir a más locales</div>}
-                      {simulacion.roi < 200 && <div>• ⚠️ ROI bajo, enfócate en aumentar ticket promedio</div>}
-                      {simulatorValues.usuariosActivos < 50 && <div>• 📈 Oportunidad de crecimiento en base de usuarios</div>}
-                      {simulatorValues.crecimientoEsperado > 50 && <div>• 🚀 Proyección muy optimista, valida con datos históricos</div>}
-                    </div>
-                  </div>
+                <div className="flex space-x-4 pt-4">
+                  <button 
+                    type="button"
+                    onClick={() => setShowContactForm(false)}
+                    className="flex-1 bg-gray-100 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button 
+                    type="submit"
+                    className="flex-1 bg-emerald-600 text-white px-6 py-3 rounded-lg hover:bg-emerald-700 transition-colors"
+                  >
+                    📤 Enviar Consulta
+                  </button>
                 </div>
-              </div>
-
-              <div className="mt-6 flex space-x-4">
-                <button 
-                  onClick={() => setShowROISimulator(false)}
-                  className="flex-1 bg-gray-100 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors"
-                >
-                  Cerrar
-                </button>
-                <button className="flex-1 bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors">
-                  📊 Generar Reporte
-                </button>
-                <button className="flex-1 bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors">
-                  📧 Enviar Proyección
-                </button>
-              </div>
+              </form>
             </div>
           </div>
         </div>
       )}
 
-
+      {/* Footer Informativo */}
+      <div className="bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl p-6 border border-gray-200">
+        <div className="text-center">
+          <h4 className="font-bold text-gray-800 mb-2">KumIA Elite - Plan Anual</h4>
+          <p className="text-sm text-gray-600 mb-3">
+            Sistema integral de gestión restaurante con IA, juegos interactivos y programa de fidelización NFT
+          </p>
+          <div className="flex justify-center items-center space-x-6 text-xs text-gray-500">
+            <span>✅ Facturación automática</span>
+            <span>✅ Soporte 24/7</span>
+            <span>✅ Actualizaciones incluidas</span>
+            <span>✅ Cumplimiento tributario</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
