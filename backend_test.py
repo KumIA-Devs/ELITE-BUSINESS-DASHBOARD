@@ -1178,12 +1178,14 @@ def main():
     """Main test execution"""
     tester = BackendTester()
     
-    # Check if we should run focused tests (based on command line args or default)
-    if len(sys.argv) > 1 and sys.argv[1] == "--focused":
+    # Check if we should run Content Factory tests (based on command line args or default)
+    if len(sys.argv) > 1 and sys.argv[1] == "--content-factory":
+        success = tester.run_content_factory_tests()
+    elif len(sys.argv) > 1 and sys.argv[1] == "--focused":
         success = tester.run_focused_tests()
     else:
-        # Run focused tests by default for this specific request
-        success = tester.run_focused_tests()
+        # Run Content Factory tests by default for this specific request
+        success = tester.run_content_factory_tests()
     
     sys.exit(0 if success else 1)
 
