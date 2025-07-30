@@ -1166,7 +1166,7 @@ export const CentroIAMarketing = () => {
       {/* Modal Editar Campaña */}
       {showEditCampaign && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-screen overflow-y-auto">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-gray-800">✏️ Editar Campaña: {showEditCampaign.title}</h2>
@@ -1178,14 +1178,28 @@ export const CentroIAMarketing = () => {
                 </button>
               </div>
 
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Título</label>
-                  <input
-                    type="text"
-                    defaultValue={showEditCampaign.title}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  />
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Título</label>
+                    <input
+                      type="text"
+                      defaultValue={showEditCampaign.title}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Nivel de urgencia</label>
+                    <select 
+                      defaultValue={showEditCampaign.urgency}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="alta">Alta</option>
+                      <option value="media">Media</option>
+                      <option value="baja">Baja</option>
+                    </select>
+                  </div>
                 </div>
                 
                 <div>
@@ -1197,6 +1211,78 @@ export const CentroIAMarketing = () => {
                   />
                 </div>
 
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Nivel objetivo</label>
+                    <select 
+                      defaultValue={showEditCampaign.targetLevel}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="Todos">Todos</option>
+                      <option value="Explorador">Explorador</option>
+                      <option value="Destacado">Destacado</option>
+                      <option value="Estrella">Estrella</option>
+                      <option value="Leyenda">Leyenda</option>
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Alcance estimado</label>
+                    <input
+                      type="number"
+                      defaultValue={showEditCampaign.estimatedReach}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">ROI esperado (%)</label>
+                    <input
+                      type="text"
+                      defaultValue={showEditCampaign.expectedROI}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Canales de distribución</label>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {showEditCampaign.channels.map((channel, index) => (
+                      <label key={index} className="flex items-center">
+                        <input 
+                          type="checkbox" 
+                          defaultChecked={true}
+                          className="mr-2" 
+                        />
+                        {channel}
+                      </label>
+                    ))}
+                    <label className="flex items-center">
+                      <input type="checkbox" className="mr-2" />
+                      Instagram
+                    </label>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Fecha de inicio</label>
+                    <input
+                      type="datetime-local"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Fecha de finalización</label>
+                    <input
+                      type="datetime-local"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+
                 <div className="flex justify-end space-x-3">
                   <button 
                     onClick={() => setShowEditCampaign(null)}
@@ -1204,7 +1290,13 @@ export const CentroIAMarketing = () => {
                   >
                     Cancelar
                   </button>
-                  <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                  <button 
+                    onClick={() => {
+                      alert('✅ Campaña actualizada exitosamente!');
+                      setShowEditCampaign(null);
+                    }}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  >
                     💾 Guardar Cambios
                   </button>
                 </div>
