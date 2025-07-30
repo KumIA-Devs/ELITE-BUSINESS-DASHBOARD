@@ -1,6 +1,392 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+// 🧩 MÓDULO 1: CENTRO DE IA MARKETING
+export const CentroIAMarketing = () => {
+  const [activeCampaign, setActiveCampaign] = useState(null);
+  const [showContentFactory, setShowContentFactory] = useState(false);
+  const [showCampaignModal, setShowCampaignModal] = useState(false);
+  const [videoGeneration, setVideoGeneration] = useState({
+    style: 'cinematica',
+    duration: '10s',
+    platform: 'instagram',
+    brandingLevel: 'alto'
+  });
+
+  // Campañas sugeridas por IA
+  const campaignsAI = [
+    {
+      id: 1,
+      title: "Promo Sorpresa Nivel Destacado",
+      description: "Activa una promo sorpresa para clientes 'Destacado' que visiten antes del jueves",
+      targetLevel: "Destacado",
+      estimatedReach: 18,
+      expectedROI: "320%",
+      urgency: "alta",
+      channels: ["WhatsApp", "Push"]
+    },
+    {
+      id: 2,
+      title: "Reactivación Clientes Inactivos",
+      description: "Campaña personalizada para clientes que no han visitado en 30+ días",
+      targetLevel: "Todos",
+      estimatedReach: 45,
+      expectedROI: "180%",
+      urgency: "media",
+      channels: ["Email", "WhatsApp"]
+    },
+    {
+      id: 3,
+      title: "Upselling Fin de Semana",
+      description: "Promoción de platos premium para clientes Estrella y Leyenda",
+      targetLevel: "Estrella+",
+      estimatedReach: 11,
+      expectedROI: "450%",
+      urgency: "baja",
+      channels: ["Push", "En Local"]
+    }
+  ];
+
+  // Segmentación inteligente
+  const segmentos = [
+    { nivel: "Explorador", clientes: 32, ultimaVisita: "< 7 días", conversionRate: "65%" },
+    { nivel: "Destacado", clientes: 18, ultimaVisita: "< 14 días", conversionRate: "78%" },
+    { nivel: "Estrella", clientes: 8, ultimaVisita: "< 21 días", conversionRate: "85%" },
+    { nivel: "Leyenda", clientes: 3, ultimaVisita: "< 30 días", conversionRate: "95%" }
+  ];
+
+  // Campañas A/B activas
+  const campaignAB = [
+    { id: 1, name: "WhatsApp vs Push", status: "Activa", aperturas: "78% vs 45%", conversiones: "12% vs 8%", ganador: "WhatsApp" },
+    { id: 2, name: "Descuento vs Producto Gratis", status: "Finalizada", aperturas: "65% vs 70%", conversiones: "15% vs 18%", ganador: "Producto Gratis" }
+  ];
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-3xl font-bold text-gray-800">🧩 Centro de IA Marketing</h2>
+          <p className="text-gray-600 mt-1">Núcleo operativo para campañas automatizadas y fidelización inteligente</p>
+        </div>
+        <div className="flex space-x-3">
+          <button 
+            onClick={() => setShowContentFactory(true)}
+            className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors"
+          >
+            🎬 Content Factory
+          </button>
+          <button 
+            onClick={() => setShowCampaignModal(true)}
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+          >
+            📢 Nueva Campaña
+          </button>
+        </div>
+      </div>
+
+      {/* Campañas Sugeridas por IA */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-xl font-bold text-gray-800 mb-4">🤖 Campañas Sugeridas por IA</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          {campaignsAI.map((campaign) => (
+            <div key={campaign.id} className={`border-2 rounded-lg p-4 cursor-pointer transition-all ${
+              campaign.urgency === 'alta' ? 'border-red-200 bg-red-50 hover:border-red-300' :
+              campaign.urgency === 'media' ? 'border-orange-200 bg-orange-50 hover:border-orange-300' :
+              'border-green-200 bg-green-50 hover:border-green-300'
+            }`}>
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="font-bold text-gray-800">{campaign.title}</h4>
+                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                  campaign.urgency === 'alta' ? 'bg-red-100 text-red-800' :
+                  campaign.urgency === 'media' ? 'bg-orange-100 text-orange-800' :
+                  'bg-green-100 text-green-800'
+                }`}>
+                  {campaign.urgency.toUpperCase()}
+                </span>
+              </div>
+              <p className="text-sm text-gray-700 mb-3">{campaign.description}</p>
+              <div className="space-y-2 text-xs">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Alcance estimado:</span>
+                  <span className="font-medium">{campaign.estimatedReach} clientes</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">ROI esperado:</span>
+                  <span className="font-medium text-green-600">{campaign.expectedROI}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Canales:</span>
+                  <span className="font-medium">{campaign.channels.join(", ")}</span>
+                </div>
+              </div>
+              <button 
+                onClick={() => setActiveCampaign(campaign)}
+                className="w-full mt-3 bg-gray-800 text-white py-2 rounded-lg hover:bg-gray-900 transition-colors text-sm"
+              >
+                🚀 Activar Campaña
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Segmentación Inteligente */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-xl font-bold text-gray-800 mb-4">🎯 Segmentación Inteligente</h3>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="bg-gray-50 border-b">
+                <th className="text-left py-3 px-4 font-medium text-gray-700">Nivel KumIA</th>
+                <th className="text-center py-3 px-4 font-medium text-gray-700">Clientes</th>
+                <th className="text-center py-3 px-4 font-medium text-gray-700">Última Visita</th>
+                <th className="text-center py-3 px-4 font-medium text-gray-700">Conversión</th>
+                <th className="text-center py-3 px-4 font-medium text-gray-700">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {segmentos.map((segmento, index) => (
+                <tr key={index} className="border-b hover:bg-gray-50 transition-colors">
+                  <td className="py-4 px-4 font-medium">{segmento.nivel}</td>
+                  <td className="py-4 px-4 text-center">{segmento.clientes}</td>
+                  <td className="py-4 px-4 text-center text-green-600">{segmento.ultimaVisita}</td>
+                  <td className="py-4 px-4 text-center font-bold text-blue-600">{segmento.conversionRate}</td>
+                  <td className="py-4 px-4 text-center">
+                    <button className="bg-blue-100 text-blue-700 px-3 py-1 rounded-lg text-sm hover:bg-blue-200 transition-colors">
+                      📧 Campaña
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Push Automáticos y Campañas A/B */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <h3 className="text-xl font-bold text-gray-800 mb-4">📱 Push Automáticos</h3>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+              <div>
+                <h4 className="font-medium text-blue-800">Recordatorio de Reserva</h4>
+                <p className="text-sm text-blue-600">2 horas antes • WhatsApp</p>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-green-600 font-medium">89% entregados</span>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" className="sr-only peer" defaultChecked />
+                  <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                </label>
+              </div>
+            </div>
+            
+            <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+              <div>
+                <h4 className="font-medium text-green-800">Feedback Post-Visita</h4>
+                <p className="text-sm text-green-600">24 horas después • Push + Email</p>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-green-600 font-medium">76% entregados</span>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" className="sr-only peer" defaultChecked />
+                  <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
+                </label>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
+              <div>
+                <h4 className="font-medium text-purple-800">Recompensa Disponible</h4>
+                <p className="text-sm text-purple-600">Al alcanzar nivel • Push</p>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-green-600 font-medium">94% entregados</span>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" className="sr-only peer" defaultChecked />
+                  <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-600"></div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <h3 className="text-xl font-bold text-gray-800 mb-4">📊 Campañas A/B Trackeadas</h3>
+          <div className="space-y-4">
+            {campaignAB.map((campaign) => (
+              <div key={campaign.id} className="border border-gray-200 rounded-lg p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="font-medium text-gray-800">{campaign.name}</h4>
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    campaign.status === 'Activa' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
+                  }`}>
+                    {campaign.status}
+                  </span>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Aperturas:</span>
+                    <span className="font-medium">{campaign.aperturas}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Conversiones:</span>
+                    <span className="font-medium">{campaign.conversiones}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Ganador:</span>
+                    <span className="font-bold text-green-600">{campaign.ganador}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Modal Content Factory */}
+      {showContentFactory && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">🎬 Content Factory AI - Video Generator</h2>
+                  <p className="text-gray-600">Genera videos cinematográficos para tus campañas con IA</p>
+                </div>
+                <button 
+                  onClick={() => setShowContentFactory(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <h3 className="font-bold text-gray-800">⚙️ Configuración de Video</h3>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Estilo Visual</label>
+                    <select 
+                      value={videoGeneration.style}
+                      onChange={(e) => setVideoGeneration(prev => ({...prev, style: e.target.value}))}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    >
+                      <option value="cinematica">🎬 Cinematográfica (Google Veo)</option>
+                      <option value="comercial">📺 Comercial (RunwayML)</option>
+                      <option value="social">📱 Social Media (Pika Labs)</option>
+                      <option value="premium">✨ Premium Gourmet</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Duración</label>
+                    <select 
+                      value={videoGeneration.duration}
+                      onChange={(e) => setVideoGeneration(prev => ({...prev, duration: e.target.value}))}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    >
+                      <option value="5s">5 segundos - Stories</option>
+                      <option value="10s">10 segundos - Reels/TikTok</option>
+                      <option value="15s">15 segundos - Comercial</option>
+                      <option value="30s">30 segundos - Premium</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Plataforma Objetivo</label>
+                    <select 
+                      value={videoGeneration.platform}
+                      onChange={(e) => setVideoGeneration(prev => ({...prev, platform: e.target.value}))}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    >
+                      <option value="instagram">📸 Instagram Reels</option>
+                      <option value="tiktok">🎵 TikTok</option>
+                      <option value="facebook">👥 Facebook</option>
+                      <option value="pantalla">📺 Pantalla Local</option>
+                      <option value="universal">🌍 Universal</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Nivel de Branding</label>
+                    <select 
+                      value={videoGeneration.brandingLevel}
+                      onChange={(e) => setVideoGeneration(prev => ({...prev, brandingLevel: e.target.value}))}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    >
+                      <option value="alto">🏆 Alto - Logo prominente</option>
+                      <option value="medio">⚖️ Medio - Logo sutil</option>
+                      <option value="minimo">🎨 Mínimo - Solo colores</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <h3 className="font-bold text-gray-800">🎯 Integrations Disponibles</h3>
+                  
+                  <div className="space-y-3">
+                    <div className="p-4 border-2 border-purple-200 rounded-lg bg-purple-50">
+                      <h4 className="font-bold text-purple-800">Google Veo 3</h4>
+                      <p className="text-sm text-purple-700">Calidad cinematográfica, 4K, efectos avanzados</p>
+                      <div className="mt-2 text-xs text-purple-600">✅ Disponible • Costo: $0.15/segundo</div>
+                    </div>
+
+                    <div className="p-4 border-2 border-blue-200 rounded-lg bg-blue-50">
+                      <h4 className="font-bold text-blue-800">RunwayML API</h4>
+                      <p className="text-sm text-blue-700">Edición automática, motion branding, efectos visuales</p>
+                      <div className="mt-2 text-xs text-blue-600">✅ Disponible • Costo: $0.12/segundo</div>
+                    </div>
+
+                    <div className="p-4 border-2 border-green-200 rounded-lg bg-green-50">
+                      <h4 className="font-bold text-green-800">Pika Labs</h4>
+                      <p className="text-sm text-green-700">Loops creativos, experiencias sensoriales</p>
+                      <div className="mt-2 text-xs text-green-600">✅ Disponible • Costo: $0.08/segundo</div>
+                    </div>
+                  </div>
+
+                  <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                    <h4 className="font-bold text-yellow-800 mb-2">💡 Flujo Sugerido</h4>
+                    <div className="text-sm text-yellow-700 space-y-1">
+                      <div>1. Sube fotos/menú/logo del restaurante</div>
+                      <div>2. IA genera video de {videoGeneration.duration} con branding</div>
+                      <div>3. Se exporta listo para {videoGeneration.platform}</div>
+                      <div>4. Publicación automática programada</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 flex space-x-4">
+                <button 
+                  onClick={() => setShowContentFactory(false)}
+                  className="flex-1 bg-gray-100 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button className="flex-1 bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors">
+                  👀 Vista Previa
+                </button>
+                <button 
+                  onClick={() => {
+                    alert(`🎬 GENERANDO VIDEO CON IA\n\n⚙️ Configuración:\n• Estilo: ${videoGeneration.style}\n• Duración: ${videoGeneration.duration}\n• Plataforma: ${videoGeneration.platform}\n• Branding: ${videoGeneration.brandingLevel}\n\n🚀 Proceso iniciado:\n1. Analizando assets del restaurante\n2. Generando video con ${videoGeneration.style === 'cinematica' ? 'Google Veo 3' : videoGeneration.style === 'comercial' ? 'RunwayML' : 'Pika Labs'}\n3. Optimizando para ${videoGeneration.platform}\n\n⏱️ Tiempo estimado: 3-5 minutos\n📧 Te notificaremos cuando esté listo`);
+                    setShowContentFactory(false);
+                  }}
+                  className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-200 font-bold"
+                >
+                  🎬 Generar Video IA
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
