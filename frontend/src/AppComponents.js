@@ -1651,7 +1651,10 @@ export const RewardsNFTsSection = () => {
                         </button>
                       </div>
                     </div>
-                    <button className="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors text-sm">
+                    <button 
+                      onClick={() => handleAddNewReward(showLevelConfig)}
+                      className="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors text-sm"
+                    >
                       + Agregar Nueva Recompensa
                     </button>
                   </div>
