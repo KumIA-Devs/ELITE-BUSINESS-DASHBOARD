@@ -821,8 +821,8 @@ export const CentroIAMarketing = () => {
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-800">🎨 Content Factory - Image Generator</h2>
-                  <p className="text-gray-600">Crea posts, carouseles e imágenes profesionales con IA</p>
+                  <h2 className="text-2xl font-bold text-gray-800">🎨 Fábrica de Contenido - Generador de Imágenes</h2>
+                  <p className="text-gray-600">Crea posts, carruseles e imágenes profesionales con IA</p>
                 </div>
                 <button 
                   onClick={() => setShowImageFactory(false)}
@@ -862,6 +862,8 @@ export const CentroIAMarketing = () => {
                         <option value="carousel">Carrusel (múltiples)</option>
                         <option value="story">Instagram Story</option>
                         <option value="banner">Banner promocional</option>
+                        <option value="menu">Imagen de menú</option>
+                        <option value="evento">Imagen de evento</option>
                       </select>
                     </div>
                     
@@ -880,17 +882,68 @@ export const CentroIAMarketing = () => {
                     </div>
                   </div>
 
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Estilo
+                      </label>
+                      <select
+                        value={imageGeneration.style}
+                        onChange={(e) => setImageGeneration(prev => ({...prev, style: e.target.value}))}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                      >
+                        <option value="fotografico">Fotográfico</option>
+                        <option value="ilustracion">Ilustración</option>
+                        <option value="minimalista">Minimalista</option>
+                        <option value="artistico">Artístico</option>
+                        <option value="profesional">Profesional</option>
+                      </select>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Plataforma
+                      </label>
+                      <select
+                        value={imageGeneration.platform}
+                        onChange={(e) => setImageGeneration(prev => ({...prev, platform: e.target.value}))}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                      >
+                        <option value="instagram">Instagram (1:1)</option>
+                        <option value="facebook">Facebook (16:9)</option>
+                        <option value="tiktok">TikTok (9:16)</option>
+                        <option value="whatsapp">WhatsApp Status</option>
+                        <option value="web">Página Web</option>
+                      </select>
+                    </div>
+                  </div>
+
                   {/* Costo Estimado */}
                   <div className="bg-green-50 p-4 rounded-lg">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between mb-2">
                       <span className="font-medium text-green-800">Costo Estimado:</span>
                       <span className="text-xl font-bold text-green-600">
                         {calculateImageCost(imageGeneration.count, imageGeneration.style)} créditos
                       </span>
                     </div>
-                    <p className="text-sm text-green-600 mt-1">
-                      ~${(calculateImageCost(imageGeneration.count, imageGeneration.style) * 0.1).toFixed(2)} USD
-                    </p>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm text-green-600">En USD:</span>
+                      <span className="text-sm font-medium text-green-600">
+                        ~${(calculateImageCost(imageGeneration.count, imageGeneration.style) * 0.1).toFixed(2)}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-green-600">Tu balance:</span>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm font-bold text-blue-600">{userBalance} créditos</span>
+                        <button 
+                          onClick={() => setShowCreditsModal(true)}
+                          className="text-xs bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
+                        >
+                          + Comprar más
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -907,7 +960,7 @@ export const CentroIAMarketing = () => {
                         {generatedContent.urls.map((url, index) => (
                           <img 
                             key={index}
-                            src={url} 
+                            src={`${process.env.REACT_APP_BACKEND_URL}${url}`}
                             alt={`Generated ${index + 1}`}
                             className="w-full h-24 object-cover rounded-lg"
                           />
@@ -935,13 +988,27 @@ export const CentroIAMarketing = () => {
                     </button>
 
                     {generatedContent && generatedContent.type === 'image' && (
-                      <div className="grid grid-cols-2 gap-2">
-                        <button className="bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition-colors">
-                          💾 Descargar Todo
+                      <div className="space-y-2">
+                        <button 
+                          onClick={() => alert('Editor de imágenes próximamente disponible')}
+                          className="w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition-colors"
+                        >
+                          ✏️ Editar Imágenes (Filtros, Texto, Efectos)
                         </button>
-                        <button className="bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors">
-                          📱 Publicar
-                        </button>
+                        <div className="grid grid-cols-2 gap-2">
+                          <button 
+                            onClick={() => alert('Descarga iniciada')}
+                            className="bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition-colors"
+                          >
+                            💾 Descargar Todo
+                          </button>
+                          <button 
+                            onClick={() => setShowPublishModal(true)}
+                            className="bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors"
+                          >
+                            📱 Publicar
+                          </button>
+                        </div>
                       </div>
                     )}
                   </div>
