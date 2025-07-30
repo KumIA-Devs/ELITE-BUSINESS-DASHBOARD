@@ -648,6 +648,624 @@ export const CentroIAMarketing = () => {
           </div>
         </div>
       )}
+
+      {/* Modal Video Factory */}
+      {showVideoFactory && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">🎬 Content Factory - Video Generator</h2>
+                  <p className="text-gray-600">Genera videos profesionales con IA (Google Veo 3, RunwayML, Pika Labs)</p>
+                </div>
+                <button 
+                  onClick={() => setShowVideoFactory(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Configuración del Video */}
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Descripción del video *
+                    </label>
+                    <textarea
+                      value={videoGeneration.prompt}
+                      onChange={(e) => setVideoGeneration(prev => ({...prev, prompt: e.target.value}))}
+                      placeholder="Ej: Un video promocional mostrando nuestros platos insignia con ambiente acogedor..."
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      rows="4"
+                    />
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Modelo IA
+                      </label>
+                      <select
+                        value={videoGeneration.model}
+                        onChange={(e) => setVideoGeneration(prev => ({...prev, model: e.target.value}))}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                      >
+                        <option value="runwayml">RunwayML Gen-3 (Recomendado)</option>
+                        <option value="veo">Google Veo 3 (Premium)</option>
+                        <option value="pika">Pika Labs (Económico)</option>
+                      </select>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Duración (segundos)
+                      </label>
+                      <input
+                        type="number"
+                        value={videoGeneration.duration}
+                        onChange={(e) => setVideoGeneration(prev => ({...prev, duration: parseInt(e.target.value)}))}
+                        min="5"
+                        max="30"
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Estilo Visual
+                      </label>
+                      <select
+                        value={videoGeneration.style}
+                        onChange={(e) => setVideoGeneration(prev => ({...prev, style: e.target.value}))}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                      >
+                        <option value="cinematica">Cinematográfica</option>
+                        <option value="comercial">Comercial</option>
+                        <option value="documental">Documental</option>
+                        <option value="artistica">Artística</option>
+                      </select>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Plataforma destino
+                      </label>
+                      <select
+                        value={videoGeneration.platform}
+                        onChange={(e) => setVideoGeneration(prev => ({...prev, platform: e.target.value}))}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                      >
+                        <option value="instagram">Instagram (1:1)</option>
+                        <option value="tiktok">TikTok (9:16)</option>
+                        <option value="youtube">YouTube (16:9)</option>
+                        <option value="facebook">Facebook (16:9)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Costo Estimado */}
+                  <div className="bg-blue-50 p-4 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-blue-800">Costo Estimado:</span>
+                      <span className="text-xl font-bold text-blue-600">
+                        {calculateVideoCost(videoGeneration.duration, videoGeneration.model)} créditos
+                      </span>
+                    </div>
+                    <p className="text-sm text-blue-600 mt-1">
+                      ~${(calculateVideoCost(videoGeneration.duration, videoGeneration.model) * 0.1).toFixed(2)} USD
+                    </p>
+                  </div>
+                </div>
+
+                {/* Preview y Generación */}
+                <div className="space-y-4">
+                  <div className="bg-gray-100 rounded-lg p-6 h-64 flex items-center justify-center">
+                    {isGenerating ? (
+                      <div className="text-center">
+                        <div className="animate-spin w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+                        <p className="text-gray-600">Generando video...</p>
+                        <p className="text-sm text-gray-500">Esto puede tomar 2-3 minutos</p>
+                      </div>
+                    ) : generatedContent && generatedContent.type === 'video' ? (
+                      <div className="w-full h-full">
+                        <video 
+                          controls 
+                          className="w-full h-full object-cover rounded-lg"
+                          src={generatedContent.url}
+                        />
+                      </div>
+                    ) : (
+                      <div className="text-center text-gray-500">
+                        <div className="text-4xl mb-2">🎬</div>
+                        <p>La previsualización aparecerá aquí</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Botones de Acción */}
+                  <div className="space-y-3">
+                    <button 
+                      onClick={handleGenerateVideo}
+                      disabled={isGenerating || !videoGeneration.prompt.trim()}
+                      className={`w-full py-3 rounded-lg font-medium transition-colors ${
+                        isGenerating || !videoGeneration.prompt.trim()
+                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                          : 'bg-purple-600 text-white hover:bg-purple-700'
+                      }`}
+                    >
+                      {isGenerating ? 'Generando...' : '🚀 Generar Video'}
+                    </button>
+
+                    {generatedContent && generatedContent.type === 'video' && (
+                      <div className="grid grid-cols-2 gap-2">
+                        <button className="bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition-colors">
+                          💾 Descargar
+                        </button>
+                        <button className="bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                          📱 Publicar
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Image Factory */}
+      {showImageFactory && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">🎨 Content Factory - Image Generator</h2>
+                  <p className="text-gray-600">Crea posts, carouseles e imágenes profesionales con IA</p>
+                </div>
+                <button 
+                  onClick={() => setShowImageFactory(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Configuración de Imagen */}
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Descripción de la imagen *
+                    </label>
+                    <textarea
+                      value={imageGeneration.prompt}
+                      onChange={(e) => setImageGeneration(prev => ({...prev, prompt: e.target.value}))}
+                      placeholder="Ej: Un plato gourmet elegantemente presentado con iluminación profesional..."
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      rows="4"
+                    />
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Tipo de contenido
+                      </label>
+                      <select
+                        value={imageGeneration.format}
+                        onChange={(e) => setImageGeneration(prev => ({...prev, format: e.target.value}))}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                      >
+                        <option value="post">Post Individual</option>
+                        <option value="carousel">Carrusel (múltiples)</option>
+                        <option value="story">Instagram Story</option>
+                        <option value="banner">Banner promocional</option>
+                      </select>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Cantidad
+                      </label>
+                      <input
+                        type="number"
+                        value={imageGeneration.count}
+                        onChange={(e) => setImageGeneration(prev => ({...prev, count: parseInt(e.target.value)}))}
+                        min="1"
+                        max="10"
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Costo Estimado */}
+                  <div className="bg-green-50 p-4 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-green-800">Costo Estimado:</span>
+                      <span className="text-xl font-bold text-green-600">
+                        {calculateImageCost(imageGeneration.count, imageGeneration.style)} créditos
+                      </span>
+                    </div>
+                    <p className="text-sm text-green-600 mt-1">
+                      ~${(calculateImageCost(imageGeneration.count, imageGeneration.style) * 0.1).toFixed(2)} USD
+                    </p>
+                  </div>
+                </div>
+
+                {/* Preview */}
+                <div className="space-y-4">
+                  <div className="bg-gray-100 rounded-lg p-6 h-64 flex items-center justify-center">
+                    {isGenerating ? (
+                      <div className="text-center">
+                        <div className="animate-spin w-12 h-12 border-4 border-green-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+                        <p className="text-gray-600">Generando imágenes...</p>
+                      </div>
+                    ) : generatedContent && generatedContent.type === 'image' ? (
+                      <div className="grid grid-cols-2 gap-2 w-full">
+                        {generatedContent.urls.map((url, index) => (
+                          <img 
+                            key={index}
+                            src={url} 
+                            alt={`Generated ${index + 1}`}
+                            className="w-full h-24 object-cover rounded-lg"
+                          />
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center text-gray-500">
+                        <div className="text-4xl mb-2">🎨</div>
+                        <p>Las imágenes aparecerán aquí</p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-3">
+                    <button 
+                      onClick={handleGenerateImage}
+                      disabled={isGenerating || !imageGeneration.prompt.trim()}
+                      className={`w-full py-3 rounded-lg font-medium transition-colors ${
+                        isGenerating || !imageGeneration.prompt.trim()
+                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                          : 'bg-green-600 text-white hover:bg-green-700'
+                      }`}
+                    >
+                      {isGenerating ? 'Generando...' : '🚀 Generar Imágenes'}
+                    </button>
+
+                    {generatedContent && generatedContent.type === 'image' && (
+                      <div className="grid grid-cols-2 gap-2">
+                        <button className="bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition-colors">
+                          💾 Descargar Todo
+                        </button>
+                        <button className="bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                          📱 Publicar
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Nueva Campaña */}
+      {showCampaignModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">📢 Nueva Campaña Personalizada</h2>
+                  <p className="text-gray-600">Crea una campaña de marketing dirigida</p>
+                </div>
+                <button 
+                  onClick={() => setShowCampaignModal(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Nombre de la campaña *
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ej: Promoción San Valentín 2025"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Segmento objetivo
+                    </label>
+                    <select className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                      <option>Todos los clientes</option>
+                      <option>Solo Exploradores</option>
+                      <option>Solo Destacados</option>
+                      <option>Solo Estrellas</option>
+                      <option>Solo Leyendas</option>
+                      <option>Clientes inactivos</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Mensaje de la campaña *
+                  </label>
+                  <textarea
+                    placeholder="Escribe el mensaje que recibirán tus clientes..."
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    rows="4"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Canales
+                    </label>
+                    <div className="space-y-2">
+                      <label className="flex items-center">
+                        <input type="checkbox" className="mr-2" />
+                        WhatsApp
+                      </label>
+                      <label className="flex items-center">
+                        <input type="checkbox" className="mr-2" />
+                        Push Notifications
+                      </label>
+                      <label className="flex items-center">
+                        <input type="checkbox" className="mr-2" />
+                        Email
+                      </label>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Fecha de inicio
+                    </label>
+                    <input
+                      type="datetime-local"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Fecha de finalización
+                    </label>
+                    <input
+                      type="datetime-local"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end space-x-3">
+                  <button 
+                    onClick={() => setShowCampaignModal(false)}
+                    className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    🚀 Crear Campaña
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Editar Campaña */}
+      {showEditCampaign && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-gray-800">✏️ Editar Campaña: {showEditCampaign.title}</h2>
+                <button 
+                  onClick={() => setShowEditCampaign(null)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Título</label>
+                  <input
+                    type="text"
+                    defaultValue={showEditCampaign.title}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
+                  <textarea
+                    defaultValue={showEditCampaign.description}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    rows="3"
+                  />
+                </div>
+
+                <div className="flex justify-end space-x-3">
+                  <button 
+                    onClick={() => setShowEditCampaign(null)}
+                    className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    💾 Guardar Cambios
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Campaña por Segmento */}
+      {showSegmentModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-gray-800">📧 Campaña para {showSegmentModal.nivel}</h2>
+                <button 
+                  onClick={() => setShowSegmentModal(null)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="bg-blue-50 p-4 rounded-lg mb-4">
+                <h3 className="font-medium text-blue-800 mb-2">Información del Segmento</h3>
+                <div className="grid grid-cols-3 gap-4 text-sm">
+                  <div>
+                    <span className="text-blue-600">Clientes:</span>
+                    <div className="font-bold">{showSegmentModal.clientes}</div>
+                  </div>
+                  <div>
+                    <span className="text-blue-600">Última visita:</span>
+                    <div className="font-bold">{showSegmentModal.ultimaVisita}</div>
+                  </div>
+                  <div>
+                    <span className="text-blue-600">Conversión:</span>
+                    <div className="font-bold">{showSegmentModal.conversionRate}</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Mensaje personalizado</label>
+                  <textarea
+                    placeholder={`Mensaje especial para clientes ${showSegmentModal.nivel}...`}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    rows="4"
+                  />
+                </div>
+
+                <div className="flex justify-end space-x-3">
+                  <button 
+                    onClick={() => setShowSegmentModal(null)}
+                    className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    📧 Enviar Campaña
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Editar Push */}
+      {showEditPush && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold text-gray-800">
+                  {showEditPush === true ? '📱 Nuevo Push Automático' : `✏️ Editar: ${showEditPush.title}`}
+                </h2>
+                <button 
+                  onClick={() => setShowEditPush(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Título del Push</label>
+                  <input
+                    type="text"
+                    defaultValue={showEditPush !== true ? showEditPush.title : ''}
+                    placeholder="Ej: Recordatorio de Reserva"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
+                  <input
+                    type="text"
+                    defaultValue={showEditPush !== true ? showEditPush.description : ''}
+                    placeholder="Ej: 2 horas antes • WhatsApp"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Trigger</label>
+                  <select className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
+                    <option value="2_hours_before">2 horas antes de reserva</option>
+                    <option value="24_hours_after">24 horas después de visita</option>
+                    <option value="7_days_before_birthday">7 días antes de cumpleaños</option>
+                    <option value="30_days_inactive">30 días sin actividad</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Canales</label>
+                  <div className="space-y-2">
+                    <label className="flex items-center">
+                      <input type="checkbox" className="mr-2" />
+                      WhatsApp
+                    </label>
+                    <label className="flex items-center">
+                      <input type="checkbox" className="mr-2" />
+                      Push Notification
+                    </label>
+                    <label className="flex items-center">
+                      <input type="checkbox" className="mr-2" />
+                      Email
+                    </label>
+                  </div>
+                </div>
+
+                <div className="flex justify-end space-x-3">
+                  <button 
+                    onClick={() => setShowEditPush(false)}
+                    className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                    💾 Guardar Push
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
