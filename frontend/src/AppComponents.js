@@ -13251,28 +13251,44 @@ export const JuegosMultijugador = () => {
       {
         id: 'kumiSudoku',
         nombre: '🧠 KumiSudoku',
-        descripcion: 'Sudoku express de 4x4 o 6x6 con tiempo limitado',
+        descripcion: 'Sudoku clásico con 3 niveles de dificultad',
         objetivo: 'Estímulo mental',
         duracion: '3-5 min',
         starsReales: 2,
         starsSimbolicas: 3,
-        dificultad: 'Media',
+        dificultad: 'Variable',
         popularidad: 85,
         activo: true,
-        maxStarsPorSesion: 2
+        maxStarsPorSesion: 2,
+        developed: true
       },
       {
         id: 'pacKumia',
         nombre: '🕹 Pac-KumIA',
-        descripcion: 'Versión de Pacman con tokens KumIA y obstáculos personalizados',
-        objetivo: 'Nostalgia + Humor',
+        descripcion: 'Pacman clásico con 3 niveles de dificultad',
+        objetivo: 'Nostalgia + Diversión',
         duracion: '4-6 min',
         starsReales: 2,
         starsSimbolicas: 2,
-        dificultad: 'Fácil',
+        dificultad: 'Variable',
         popularidad: 92,
         activo: true,
-        maxStarsPorSesion: 2
+        maxStarsPorSesion: 2,
+        developed: true
+      },
+      {
+        id: 'kumiCrucigrama',
+        nombre: '📝 KumIA Crucigrama',
+        descripcion: 'Crucigramas temáticos con 5 niveles de dificultad',
+        objetivo: 'Conocimiento + Vocabulario',
+        duracion: '5-10 min',
+        starsReales: 3,
+        starsSimbolicas: 4,
+        dificultad: 'Variable',
+        popularidad: 78,
+        activo: true,
+        maxStarsPorSesion: 3,
+        developed: true
       }
     ],
     '2P': [
