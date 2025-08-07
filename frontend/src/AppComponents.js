@@ -3229,6 +3229,310 @@ Ejemplo: "¡Hola! Como cliente ${showSegmentModal.nivel}, tienes acceso exclusiv
           </div>
         </div>
       )}
+
+      {/* Waiter Details Modal */}
+      {showWaiterDetailsModal && selectedWaiter && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">📊 Detalles de {selectedWaiter.name}</h2>
+                <button
+                  onClick={() => setShowWaiterDetailsModal(false)}
+                  className="text-gray-500 hover:text-gray-700 text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Personal Information */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-800">👤 Información Personal</h3>
+                  <div className="bg-gray-50 p-4 rounded-lg space-y-3">
+                    <div><span className="font-medium">Email:</span> {selectedWaiter.email}</div>
+                    <div><span className="font-medium">Teléfono:</span> {selectedWaiter.phone}</div>
+                    <div><span className="font-medium">Fecha de inicio:</span> {selectedWaiter.startDate}</div>
+                    <div><span className="font-medium">Turno:</span> {selectedWaiter.shift}</div>
+                    <div><span className="font-medium">Estado:</span> 
+                      <span className={`ml-2 px-2 py-1 rounded text-xs ${selectedWaiter.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                        {selectedWaiter.status === 'active' ? 'Activo' : 'Inactivo'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Performance Metrics */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-800">📈 Métricas de Rendimiento</h3>
+                  <div className="bg-gray-50 p-4 rounded-lg space-y-3">
+                    <div className="flex justify-between">
+                      <span>Rating:</span>
+                      <span className="font-bold text-yellow-600">⭐ {selectedWaiter.rating}/5</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Órdenes totales:</span>
+                      <span className="font-bold text-green-600">{selectedWaiter.totalOrders}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Tiempo promedio:</span>
+                      <span className="font-bold text-blue-600">{selectedWaiter.avgDeliveryTime}min</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Satisfacción:</span>
+                      <span className="font-bold text-purple-600">{selectedWaiter.customerSatisfaction}%</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Performance Breakdown */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-800">⚡ Análisis de Performance</h3>
+                  <div className="bg-gray-50 p-4 rounded-lg space-y-3">
+                    {Object.entries(selectedWaiter.performance).map(([key, value]) => (
+                      <div key={key} className="flex justify-between items-center">
+                        <span className="capitalize">{key === 'speed' ? 'Velocidad' : key === 'quality' ? 'Calidad' : key === 'sales' ? 'Ventas' : 'Trabajo en equipo'}:</span>
+                        <div className="flex items-center">
+                          <div className="w-20 bg-gray-200 rounded-full h-2 mr-2">
+                            <div 
+                              className={`h-2 rounded-full ${value >= 90 ? 'bg-green-500' : value >= 70 ? 'bg-yellow-500' : 'bg-red-500'}`}
+                              style={{ width: `${value}%` }}
+                            ></div>
+                          </div>
+                          <span className="font-bold">{value}%</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Goals and Alerts */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-800">🎯 Objetivos y Alertas</h3>
+                  <div className="bg-gray-50 p-4 rounded-lg space-y-3">
+                    <div>
+                      <div className="flex justify-between mb-1">
+                        <span>Órdenes objetivo:</span>
+                        <span>{selectedWaiter.goals.current}/{selectedWaiter.goals.ordersTarget}</span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div 
+                          className="bg-blue-500 h-2 rounded-full" 
+                          style={{ width: `${(selectedWaiter.goals.current / selectedWaiter.goals.ordersTarget) * 100}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                    <div className="mt-3">
+                      <span className="font-medium">Alertas:</span>
+                      <div className="mt-2 space-y-2">
+                        {selectedWaiter.alerts.map((alert, index) => (
+                          <div key={index} className="text-xs bg-yellow-100 text-yellow-800 p-2 rounded border border-yellow-200">
+                            💡 {alert}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex justify-between items-center pt-6 border-t border-gray-200 mt-6">
+                <button
+                  onClick={() => handleRemoveWaiter(selectedWaiter)}
+                  className="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition-colors"
+                >
+                  🗑️ Eliminar Garzón
+                </button>
+                <div className="space-x-3">
+                  <button
+                    onClick={() => setShowWaiterDetailsModal(false)}
+                    className="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors"
+                  >
+                    Cerrar
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowWaiterDetailsModal(false);
+                      handleManageShift(selectedWaiter);
+                    }}
+                    className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-3 rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all duration-200 font-bold"
+                  >
+                    ⏰ Gestionar Turnos
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Shift Management Modal */}
+      {showShiftModal && selectedWaiter && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-3xl">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">⏰ Gestionar Turnos - {selectedWaiter.name}</h2>
+                <button
+                  onClick={() => setShowShiftModal(false)}
+                  className="text-gray-500 hover:text-gray-700 text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Turno actual</label>
+                    <select 
+                      defaultValue={selectedWaiter.shift}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    >
+                      <option value="morning">Mañana (6:00 - 14:00)</option>
+                      <option value="evening">Tarde (14:00 - 22:00)</option>
+                      <option value="night">Noche (22:00 - 6:00)</option>
+                      <option value="full-time">Tiempo Completo</option>
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Horas semanales</label>
+                    <input
+                      type="number"
+                      defaultValue={selectedWaiter.hoursWorked}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      min="0"
+                      max="48"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-4">📅 Programación Semanal</h3>
+                  <div className="grid grid-cols-7 gap-2">
+                    {['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map((day, index) => (
+                      <div key={day} className="text-center">
+                        <div className="font-medium text-gray-600 mb-2">{day}</div>
+                        <div className="space-y-2">
+                          <label className="flex items-center justify-center">
+                            <input type="checkbox" className="mr-1" defaultChecked={index < 6} />
+                            <span className="text-xs">Activo</span>
+                          </label>
+                          <input
+                            type="time"
+                            defaultValue="08:00"
+                            className="w-full text-xs p-1 border border-gray-300 rounded"
+                          />
+                          <input
+                            type="time"
+                            defaultValue="16:00"
+                            className="w-full text-xs p-1 border border-gray-300 rounded"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="bg-orange-50 p-4 rounded-lg">
+                  <h4 className="font-medium text-orange-800 mb-2">📊 Resumen de Turnos Esta Semana</h4>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div className="text-center">
+                      <div className="font-bold text-orange-600">{selectedWaiter.shiftsThisWeek}</div>
+                      <div className="text-orange-700">Turnos</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="font-bold text-orange-600">{selectedWaiter.hoursWorked}h</div>
+                      <div className="text-orange-700">Horas</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="font-bold text-orange-600">${selectedWaiter.tips.toLocaleString()}</div>
+                      <div className="text-orange-700">Propinas</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="font-bold text-orange-600">{selectedWaiter.bonusPoints}</div>
+                      <div className="text-orange-700">Bonus</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center pt-6 border-t border-gray-200 mt-6">
+                <button
+                  onClick={() => setShowShiftModal(false)}
+                  className="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={() => {
+                    alert('✅ Turnos actualizados exitosamente');
+                    setShowShiftModal(false);
+                  }}
+                  className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-3 rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all duration-200 font-bold"
+                >
+                  💾 Guardar Cambios
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Remove Waiter Confirmation Modal */}
+      {showRemoveWaiterModal && selectedWaiter && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-red-800">🗑️ Eliminar Garzón</h2>
+                <button
+                  onClick={() => setShowRemoveWaiterModal(false)}
+                  className="text-gray-500 hover:text-gray-700 text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="text-center mb-6">
+                <div className="text-6xl mb-4">⚠️</div>
+                <h3 className="text-lg font-bold text-gray-800 mb-2">¿Estás seguro?</h3>
+                <p className="text-gray-600 mb-4">
+                  Vas a eliminar a <span className="font-bold">{selectedWaiter.name}</span> del sistema.
+                  Esta acción no se puede deshacer.
+                </p>
+                
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-left">
+                  <h4 className="font-medium text-red-800 mb-2">⚠️ Datos que se perderán:</h4>
+                  <ul className="text-sm text-red-700 space-y-1">
+                    <li>• Historial de órdenes ({selectedWaiter.totalOrders} órdenes)</li>
+                    <li>• Métricas de rendimiento</li>
+                    <li>• Configuración de turnos</li>
+                    <li>• Datos de propinas (${selectedWaiter.tips.toLocaleString()})</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center">
+                <button
+                  onClick={() => setShowRemoveWaiterModal(false)}
+                  className="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={confirmRemoveWaiter}
+                  className="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition-colors font-bold"
+                >
+                  🗑️ Eliminar Definitivamente
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
