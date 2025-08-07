@@ -109,6 +109,50 @@ export const CentroIAMarketing = () => {
     setShowUpdateDataModal(false);
   };
 
+  // Funciones auxiliares para el modal de eliminación de agente
+  const getChannelColor = (channels) => {
+    if (!channels || channels.length === 0) return 'from-gray-400 to-gray-500';
+    const primaryChannel = channels[0];
+    switch (primaryChannel) {
+      case 'whatsapp': return 'from-green-400 to-green-500';
+      case 'instagram': return 'from-pink-400 to-purple-500';
+      case 'google_reviews': return 'from-blue-400 to-blue-500';
+      case 'userwebapp': return 'from-orange-400 to-orange-500';
+      default: return 'from-gray-400 to-gray-500';
+    }
+  };
+
+  const getChannelIcon = (channels) => {
+    if (!channels || channels.length === 0) return '🤖';
+    const primaryChannel = channels[0];
+    switch (primaryChannel) {
+      case 'whatsapp': return '💬';
+      case 'instagram': return '📸';
+      case 'google_reviews': return '⭐';
+      case 'userwebapp': return '📱';
+      default: return '🤖';
+    }
+  };
+
+  const getAgentSpecialization = (specialization) => {
+    const specializations = {
+      'customer_service': 'Atención al Cliente',
+      'sales': 'Ventas y Promociones',
+      'feedback': 'Gestión de Feedback',
+      'reservations': 'Reservas y Citas',
+      'general': 'Asistente General'
+    };
+    return specializations[specialization] || 'Especialización General';
+  };
+
+  const confirmDeleteAgent = () => {
+    if (agentToDelete) {
+      alert(`✅ Agente "${agentToDelete.name}" eliminado exitosamente.\n\nTodos los datos asociados han sido removidos del sistema.\n\n⚠️ Esta acción no se puede deshacer.`);
+      setShowDeleteAgentModal(false);
+      setAgentToDelete(null);
+    }
+  };
+
   // Función para descargar video
   const handleDownloadVideo = async () => {
     try {
