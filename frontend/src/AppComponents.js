@@ -7492,8 +7492,9 @@ export const ConfigurationSection = ({ restaurantConfig, updateRestaurantConfig,
 
   // Handle restaurant name change
   const handleNameChange = () => {
-    if (!canChangeName) {
-      alert('❌ Solo puedes cambiar el nombre una vez cada 90 días');
+    if (!canChangeName()) {
+      const remainingDays = 90 - Math.floor((Date.now() - new Date(restaurantConfig.lastNameChange)) / (1000 * 60 * 60 * 24));
+      alert(`❌ Ya has usado tus 3 cambios permitidos. Podrás cambiar el nombre nuevamente en ${remainingDays} días.`);
       return;
     }
     
@@ -7505,7 +7506,13 @@ export const ConfigurationSection = ({ restaurantConfig, updateRestaurantConfig,
     updateRestaurantConfig({ name: newRestaurantName.trim() });
     setBusinessInfo(prev => ({ ...prev, name: newRestaurantName.trim() }));
     setShowNameEditModal(false);
-    alert('✅ Nombre del restaurante actualizado exitosamente');
+    
+    const changesLeft = 3 - (restaurantConfig.nameChanges >= 3 ? 0 : restaurantConfig.nameChanges + 1);
+    if (changesLeft > 0) {
+      alert(`✅ Nombre actualizado exitosamente. Te quedan ${changesLeft} cambios disponibles.`);
+    } else {
+      alert('✅ Nombre actualizado exitosamente. Has usado todos tus cambios disponibles por 90 días.');
+    }
   };
 
   // Handle logo upload
@@ -7529,11 +7536,27 @@ export const ConfigurationSection = ({ restaurantConfig, updateRestaurantConfig,
     reader.readAsDataURL(file);
   };
 
-  // Calculate days until next name change
-  const getDaysUntilNameChange = () => {
-    if (!restaurantConfig?.lastNameChange) return 0;
+  // Calculate days until next name change and remaining changes
+  const getNameChangeInfo = () => {
+    const changesUsed = restaurantConfig.nameChanges || 0;
+    const changesLeft = Math.max(0, 3 - changesUsed);
+    
+    if (changesLeft > 0) {
+      return { changesLeft, daysRemaining: 0, canChange: true };
+    }
+    
+    if (!restaurantConfig.lastNameChange) {
+      return { changesLeft: 3, daysRemaining: 0, canChange: true };
+    }
+    
     const daysSince = Math.floor((Date.now() - new Date(restaurantConfig.lastNameChange)) / (1000 * 60 * 60 * 24));
-    return Math.max(0, 90 - daysSince);
+    const daysRemaining = Math.max(0, 90 - daysSince);
+    
+    return { 
+      changesLeft: daysRemaining === 0 ? 3 : 0, 
+      daysRemaining, 
+      canChange: daysRemaining === 0 
+    };
   };
 
   const [roles, setRoles] = useState([
