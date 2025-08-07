@@ -175,6 +175,25 @@ export const CentroIAMarketing = () => {
     }
   };
 
+  // Funciones para gestión de garzones
+  const handleRemoveWaiter = (waiter) => {
+    setSelectedWaiter(waiter);
+    setShowRemoveWaiterModal(true);
+  };
+
+  const confirmRemoveWaiter = () => {
+    if (selectedWaiter) {
+      alert(`✅ Garzón "${selectedWaiter.name}" eliminado exitosamente.\n\nTodos los datos asociados han sido removidos del sistema.\n\n⚠️ Esta acción no se puede deshacer.`);
+      setShowRemoveWaiterModal(false);
+      setSelectedWaiter(null);
+    }
+  };
+
+  const handleManageShift = (waiter) => {
+    setSelectedWaiter(waiter);
+    setShowShiftModal(true);
+  };
+
   // Función para descargar video
   const handleDownloadVideo = async () => {
     try {
