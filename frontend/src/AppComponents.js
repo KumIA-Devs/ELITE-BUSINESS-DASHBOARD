@@ -74,6 +74,35 @@ export const CentroIAMarketing = () => {
     setShowGameConfigModal(null);
   };
 
+  // Función para manejar agregar método de pago
+  const handleAddPaymentMethod = (e) => {
+    e.preventDefault();
+    if (!newPaymentMethod.cardNumber || !newPaymentMethod.expMonth || !newPaymentMethod.expYear || !newPaymentMethod.cvc) {
+      alert('❌ Por favor completa todos los campos obligatorios');
+      return;
+    }
+    
+    alert(`✅ Método de pago agregado exitosamente!\n\nTarjeta: ****${newPaymentMethod.cardNumber.slice(-4)}\nTitular: ${newPaymentMethod.holderName || 'No especificado'}\nPredeterminado: ${newPaymentMethod.isDefault ? 'Sí' : 'No'}`);
+    
+    // Reset form
+    setNewPaymentMethod({
+      cardNumber: '',
+      holderName: '',
+      expMonth: '',
+      expYear: '',
+      cvc: '',
+      isDefault: false
+    });
+    setShowPaymentMethodModal(false);
+  };
+
+  // Función para manejar actualización de datos empresariales
+  const handleUpdateBusinessData = (e) => {
+    e.preventDefault();
+    alert(`✅ Datos empresariales actualizados exitosamente!\n\nRestaurante: ${businessData.restaurantName}\nRUC/NIT: ${businessData.taxId}\nEmail: ${businessData.email}\nTeléfono: ${businessData.phone}`);
+    setShowUpdateDataModal(false);
+  };
+
   // Función para descargar video
   const handleDownloadVideo = async () => {
     try {
