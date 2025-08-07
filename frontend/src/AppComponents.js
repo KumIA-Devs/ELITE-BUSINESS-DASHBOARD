@@ -79,6 +79,12 @@ export const CentroIAMarketing = () => {
   const [currentPlayingGame, setCurrentPlayingGame] = useState(null);
   const [gameLevel, setGameLevel] = useState(1);
 
+  // Estados para los modales de gestión de garzones
+  const [showWaiterDetailsModal, setShowWaiterDetailsModal] = useState(false);
+  const [showShiftModal, setShowShiftModal] = useState(false);
+  const [showRemoveWaiterModal, setShowRemoveWaiterModal] = useState(false);
+  const [selectedWaiter, setSelectedWaiter] = useState(null);
+
   // Función para manejar actualización de configuración de juego
   const handleUpdateGameConfig = (gameId, config) => {
     alert(`✅ Configuración del juego actualizada exitosamente!\n\nJuego ID: ${gameId}\nStars Reales: ${config.starsReales}\nMáx por sesión: ${config.maxStarsPorSesion}\nActivo: ${config.activo ? 'Sí' : 'No'}`);
