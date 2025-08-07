@@ -2865,6 +2865,139 @@ Ejemplo: "¡Hola! Como cliente ${showSegmentModal.nivel}, tienes acceso exclusiv
           </div>
         </div>
       )}
+
+      {/* Detailed Analysis Modal */}
+      {showUpdateDataModal && selectedCompetitor && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">🔍 Análisis Detallado - {selectedCompetitor.nombre}</h2>
+                  <p className="text-gray-600">Inteligencia competitiva completa y recomendaciones estratégicas</p>
+                </div>
+                <button 
+                  onClick={() => {
+                    setShowUpdateDataModal(false);
+                    setSelectedCompetitor(null);
+                  }}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Basic Info */}
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
+                  <h3 className="text-lg font-bold text-blue-800 mb-4">📊 Métricas Principales</h3>
+                  <div className="space-y-3">
+                    <div className="flex justify-between">
+                      <span className="text-blue-700">Distancia:</span>
+                      <span className="font-bold text-blue-900">{selectedCompetitor.distancia}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-blue-700">Rating:</span>
+                      <span className="font-bold text-blue-900">{selectedCompetitor.rating} ⭐</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-blue-700">Ticket Promedio:</span>
+                      <span className="font-bold text-blue-900">{selectedCompetitor.ticketPromedio}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-blue-700">Última actualización:</span>
+                      <span className="text-xs text-blue-600">{lastUpdateTime.toLocaleString()}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Strengths & Weaknesses */}
+                <div className="space-y-4">
+                  <div className="bg-green-50 rounded-xl p-4 border border-green-200">
+                    <h4 className="font-bold text-green-800 mb-2">💪 Fortalezas</h4>
+                    <ul className="text-sm text-green-700 space-y-1">
+                      {selectedCompetitor.fortalezas.map((fortaleza, index) => (
+                        <li key={index}>• {fortaleza}</li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="bg-red-50 rounded-xl p-4 border border-red-200">
+                    <h4 className="font-bold text-red-800 mb-2">⚠️ Debilidades</h4>
+                    <ul className="text-sm text-red-700 space-y-1">
+                      {selectedCompetitor.debilidades.map((debilidad, index) => (
+                        <li key={index}>• {debilidad}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* Strategic Recommendations */}
+              <div className="mt-6 bg-gradient-to-r from-orange-50 to-red-50 rounded-xl p-6 border border-orange-200">
+                <h3 className="text-lg font-bold text-orange-800 mb-4">🎯 Recomendaciones Estratégicas KumIA</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-white p-4 rounded-lg">
+                    <h4 className="font-medium text-orange-700 mb-2">🚀 Oportunidades</h4>
+                    <ul className="text-sm text-gray-700 space-y-1">
+                      <li>• Mejorar tiempo de entrega vs competencia</li>
+                      <li>• Aprovechar sus debilidades en atención</li>
+                      <li>• Diferenciarse con programa de lealtad</li>
+                    </ul>
+                  </div>
+                  <div className="bg-white p-4 rounded-lg">
+                    <h4 className="font-medium text-orange-700 mb-2">⚡ Acciones Inmediatas</h4>
+                    <ul className="text-sm text-gray-700 space-y-1">
+                      <li>• Ajustar precios competitivos</li>
+                      <li>• Mejorar presencia en redes sociales</li>
+                      <li>• Implementar promociones similares</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tools Integration Info */}
+              <div className="mt-6 bg-gray-50 rounded-xl p-6">
+                <h3 className="text-lg font-bold text-gray-800 mb-4">🛠️ Fuentes de Información</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="text-center p-3 bg-white rounded-lg">
+                    <div className="text-2xl mb-2">🌟</div>
+                    <div className="text-sm font-medium">Google Reviews</div>
+                    <div className="text-xs text-green-600">✅ Activo</div>
+                  </div>
+                  <div className="text-center p-3 bg-white rounded-lg">
+                    <div className="text-2xl mb-2">📱</div>
+                    <div className="text-sm font-medium">Delivery Apps</div>
+                    <div className="text-xs text-green-600">✅ Activo</div>
+                  </div>
+                  <div className="text-center p-3 bg-white rounded-lg">
+                    <div className="text-2xl mb-2">📍</div>
+                    <div className="text-sm font-medium">Google Maps</div>
+                    <div className="text-xs text-green-600">✅ Activo</div>
+                  </div>
+                  <div className="text-center p-3 bg-white rounded-lg">
+                    <div className="text-2xl mb-2">📊</div>
+                    <div className="text-sm font-medium">Social Media</div>
+                    <div className="text-xs text-orange-600">🔄 En desarrollo</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-center pt-6 border-t border-gray-200 mt-6">
+                <button
+                  onClick={() => {
+                    setShowUpdateDataModal(false);
+                    setSelectedCompetitor(null);
+                  }}
+                  className="bg-gray-500 text-white px-8 py-3 rounded-lg hover:bg-gray-600 transition-colors font-bold"
+                >
+                  Cerrar Análisis
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
