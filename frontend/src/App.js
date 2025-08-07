@@ -3024,13 +3024,15 @@ const Dashboard = () => {
     return savedConfig ? JSON.parse(savedConfig) : {
       name: 'IL MANDORLA',
       logo: null,
+      nameChanges: 0,
       lastNameChange: null,
       canChangeName: true
     };
   });
 
-  // Check if name can be changed (90-day restriction)
+  // Check if name can be changed (3 changes every 90 days)
   const canChangeName = () => {
+    if (restaurantConfig.nameChanges < 3) return true;
     if (!restaurantConfig.lastNameChange) return true;
     const daysSinceLastChange = Math.floor((Date.now() - new Date(restaurantConfig.lastNameChange)) / (1000 * 60 * 60 * 24));
     return daysSinceLastChange >= 90;
@@ -3041,6 +3043,9 @@ const Dashboard = () => {
     const updatedConfig = { 
       ...restaurantConfig, 
       ...newConfig,
+      nameChanges: newConfig.name !== restaurantConfig.name ? 
+        (canChangeName() ? (restaurantConfig.nameChanges >= 3 ? 1 : restaurantConfig.nameChanges + 1) : restaurantConfig.nameChanges) 
+        : restaurantConfig.nameChanges,
       lastNameChange: newConfig.name !== restaurantConfig.name ? new Date().toISOString() : restaurantConfig.lastNameChange
     };
     setRestaurantConfig(updatedConfig);
