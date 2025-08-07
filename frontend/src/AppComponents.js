@@ -7643,9 +7643,9 @@ export const ConfigurationSection = ({ restaurantConfig, updateRestaurantConfig,
                 </div>
                 <button
                   onClick={() => setShowNameEditModal(true)}
-                  disabled={!canChangeName}
+                  disabled={!getNameChangeInfo().canChange}
                   className={`px-4 py-3 rounded-lg font-medium transition-all duration-200 ${
-                    canChangeName 
+                    getNameChangeInfo().canChange 
                       ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-lg hover:shadow-xl transform hover:scale-105' 
                       : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                   }`}
