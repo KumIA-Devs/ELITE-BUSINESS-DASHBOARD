@@ -2583,6 +2583,241 @@ Ejemplo: "¡Hola! Como cliente ${showSegmentModal.nivel}, tienes acceso exclusiv
           </div>
         </div>
       )}
+
+      {/* Payment Method Modal */}
+      {showPaymentMethodModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">💳 Agregar Método de Pago</h2>
+                <button
+                  onClick={() => setShowPaymentMethodModal(false)}
+                  className="text-gray-500 hover:text-gray-700 text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+
+              <form onSubmit={handleAddPaymentMethod} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Número de Tarjeta *</label>
+                  <input
+                    type="text"
+                    value={newPaymentMethod.cardNumber}
+                    onChange={(e) => setNewPaymentMethod(prev => ({ ...prev, cardNumber: e.target.value.replace(/\D/g, '').slice(0, 16) }))}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="1234 5678 9012 3456"
+                    maxLength="16"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Titular de la Tarjeta</label>
+                  <input
+                    type="text"
+                    value={newPaymentMethod.holderName}
+                    onChange={(e) => setNewPaymentMethod(prev => ({ ...prev, holderName: e.target.value }))}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Nombre completo"
+                  />
+                </div>
+
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Mes *</label>
+                    <select
+                      value={newPaymentMethod.expMonth}
+                      onChange={(e) => setNewPaymentMethod(prev => ({ ...prev, expMonth: e.target.value }))}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    >
+                      <option value="">MM</option>
+                      {Array.from({ length: 12 }, (_, i) => (
+                        <option key={i + 1} value={String(i + 1).padStart(2, '0')}>
+                          {String(i + 1).padStart(2, '0')}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Año *</label>
+                    <select
+                      value={newPaymentMethod.expYear}
+                      onChange={(e) => setNewPaymentMethod(prev => ({ ...prev, expYear: e.target.value }))}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    >
+                      <option value="">AAAA</option>
+                      {Array.from({ length: 10 }, (_, i) => (
+                        <option key={i} value={String(2024 + i)}>
+                          {2024 + i}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">CVC *</label>
+                    <input
+                      type="text"
+                      value={newPaymentMethod.cvc}
+                      onChange={(e) => setNewPaymentMethod(prev => ({ ...prev, cvc: e.target.value.replace(/\D/g, '').slice(0, 4) }))}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="123"
+                      maxLength="4"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="isDefault"
+                    checked={newPaymentMethod.isDefault}
+                    onChange={(e) => setNewPaymentMethod(prev => ({ ...prev, isDefault: e.target.checked }))}
+                    className="mr-2"
+                  />
+                  <label htmlFor="isDefault" className="text-sm text-gray-700">Usar como método predeterminado</label>
+                </div>
+
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <p className="text-xs text-blue-800">
+                    🔒 <strong>Seguro:</strong> Tus datos están protegidos con encriptación SSL de grado bancario. 
+                    No almacenamos información sensible de tu tarjeta.
+                  </p>
+                </div>
+
+                <div className="flex justify-between items-center pt-4 border-t border-gray-200">
+                  <button
+                    type="button"
+                    onClick={() => setShowPaymentMethodModal(false)}
+                    className="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-bold"
+                  >
+                    💳 Agregar Método
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Update Business Data Modal */}
+      {showUpdateDataModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-lg">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">✏️ Actualizar Datos Empresariales</h2>
+                <button
+                  onClick={() => setShowUpdateDataModal(false)}
+                  className="text-gray-500 hover:text-gray-700 text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+
+              <form onSubmit={handleUpdateBusinessData} className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Nombre del Restaurante</label>
+                    <input
+                      type="text"
+                      value={businessData.restaurantName}
+                      onChange={(e) => setBusinessData(prev => ({ ...prev, restaurantName: e.target.value }))}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">RUC/NIT</label>
+                    <input
+                      type="text"
+                      value={businessData.taxId}
+                      onChange={(e) => setBusinessData(prev => ({ ...prev, taxId: e.target.value }))}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Email de Facturación</label>
+                  <input
+                    type="email"
+                    value={businessData.email}
+                    onChange={(e) => setBusinessData(prev => ({ ...prev, email: e.target.value }))}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
+                  <input
+                    type="tel"
+                    value={businessData.phone}
+                    onChange={(e) => setBusinessData(prev => ({ ...prev, phone: e.target.value }))}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Dirección de Facturación</label>
+                  <textarea
+                    value={businessData.address}
+                    onChange={(e) => setBusinessData(prev => ({ ...prev, address: e.target.value }))}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows="3"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Persona de Contacto</label>
+                  <input
+                    type="text"
+                    value={businessData.contactPerson}
+                    onChange={(e) => setBusinessData(prev => ({ ...prev, contactPerson: e.target.value }))}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div className="bg-yellow-50 p-4 rounded-lg">
+                  <p className="text-xs text-yellow-800">
+                    ⚠️ <strong>Importante:</strong> Los cambios en datos de facturación pueden tomar hasta 24 horas 
+                    en reflejarse en tu próxima factura. Para cambios urgentes, contacta a soporte.
+                  </p>
+                </div>
+
+                <div className="flex justify-between items-center pt-4 border-t border-gray-200">
+                  <button
+                    type="button"
+                    onClick={() => setShowUpdateDataModal(false)}
+                    className="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-bold"
+                  >
+                    ✏️ Actualizar Datos
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
