@@ -1843,7 +1843,7 @@ const MenuSection = () => {
       )}
 
       {/* Filtros de Categoría */}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2 items-center">
         <button
           onClick={() => setSelectedCategory('all')}
           className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
@@ -1854,19 +1854,50 @@ const MenuSection = () => {
         >
           Todos
         </button>
-        {categories.map(category => (
-          <button
-            key={category}
-            onClick={() => setSelectedCategory(category)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-              selectedCategory === category
-                ? 'bg-orange-500 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            {category}
-          </button>
+        {categories.map((category, index) => (
+          <div key={category} className="relative group">
+            <button
+              onClick={() => setSelectedCategory(category)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                selectedCategory === category
+                  ? 'bg-orange-500 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {category}
+            </button>
+            
+            {/* Category Management Menu */}
+            <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10 min-w-max">
+              <button
+                onClick={() => handleEditCategory(category, index)}
+                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-t-lg"
+              >
+                ✏️ Editar
+              </button>
+              <button
+                onClick={() => handleDuplicateCategory(category)}
+                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              >
+                📋 Duplicar
+              </button>
+              <button
+                onClick={() => handleDeleteCategory(category, index)}
+                className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-b-lg"
+              >
+                🗑️ Eliminar
+              </button>
+            </div>
+          </div>
         ))}
+        
+        {/* Add New Category Button */}
+        <button
+          onClick={handleAddCategory}
+          className="px-4 py-2 rounded-lg text-sm font-medium bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:from-green-600 hover:to-emerald-600 transition-all duration-200 transform hover:scale-105 shadow-lg"
+        >
+          ➕ Nueva Categoría
+        </button>
       </div>
 
       {/* Grid de Items */}
