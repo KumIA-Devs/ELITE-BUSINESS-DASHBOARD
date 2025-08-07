@@ -3153,8 +3153,26 @@ const Dashboard = () => {
             </div>
             <div className="flex items-center space-x-4">
               <div className="flex items-center bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
-                <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                ROI +4.3x
+                <div className="flex items-center justify-center space-x-2">
+                  <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                  <span className="text-green-600 font-bold roi-value">ROI +4.3%</span>
+                  <button 
+                    onClick={() => {
+                      // Simulate ROI update
+                      const newROI = (4.3 + (Math.random() * 0.5 - 0.25)).toFixed(1);
+                      document.querySelector('.roi-value').textContent = `ROI +${newROI}%`;
+                      document.querySelector('.last-update').textContent = 'Actualizado ahora';
+                      setTimeout(() => {
+                        document.querySelector('.last-update').textContent = 'Hace 24 horas';
+                      }, 3000);
+                    }}
+                    className="ml-2 text-gray-400 hover:text-green-600 transition-colors p-1 rounded-full hover:bg-green-50"
+                    title="Actualizar ROI"
+                  >
+                    🔄
+                  </button>
+                </div>
+                <div className="text-xs text-gray-500 last-update">Hace 24 horas</div>
               </div>
               <div className="flex items-center space-x-2">
                 {user?.picture && (
