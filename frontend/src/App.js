@@ -719,7 +719,7 @@ const DashboardSummary = ({ metrics }) => {
             </button>
             <button 
               onClick={() => setShowExpandKumia(true)}
-              className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-lg hover:from-orange-600 hover:to-red-600 transition-all duration-200 transform hover:scale-105 shadow-lg"
+              className="bg-white text-gray-700 border border-gray-300 px-6 py-3 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-all duration-200 shadow-sm"
             >
               🚀 Expandir KUMIA
             </button>
