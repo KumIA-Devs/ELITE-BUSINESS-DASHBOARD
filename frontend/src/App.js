@@ -2877,8 +2877,8 @@ const Dashboard = () => {
         return <InteligenciaCompetitiva />;
       case 'juegos-multijugador':
         return <JuegosMultijugador />;
-      case 'gestion-user-webapp':
-        return <GestionUserWebApp />;
+      case 'gestion-garzon-webapp':
+        return <GestionGarzonWebApp />;
       case 'rewards':
         return <RewardsNFTsSection />;
       case 'roi-viewer':
