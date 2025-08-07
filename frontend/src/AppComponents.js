@@ -3000,6 +3000,90 @@ Ejemplo: "¡Hola! Como cliente ${showSegmentModal.nivel}, tienes acceso exclusiv
           </div>
         </div>
       )}
+
+      {/* Delete Agent Confirmation Modal */}
+      {showDeleteAgentModal && agentToDelete && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-red-800">🗑️ Eliminar Agente IA</h2>
+                <button 
+                  onClick={() => {
+                    setShowDeleteAgentModal(false);
+                    setAgentToDelete(null);
+                  }}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                  <p className="text-sm text-red-800">
+                    ⚠️ <strong>¿Estás seguro?</strong> Esta acción no se puede deshacer.
+                  </p>
+                </div>
+
+                <div className="text-center">
+                  <div className={`w-16 h-16 bg-gradient-to-br ${getChannelColor(agentToDelete.channels)} rounded-xl flex items-center justify-center mx-auto mb-4`}>
+                    <span className="text-white text-2xl">{getChannelIcon(agentToDelete.channels)}</span>
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-800">{agentToDelete.name}</h3>
+                  <p className="text-sm text-gray-600">{getAgentSpecialization(agentToDelete.specialization)}</p>
+                  <div className="mt-2 flex flex-wrap gap-1 justify-center">
+                    {agentToDelete.channels?.map(channel => (
+                      <span key={channel} className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">
+                        {channel === 'google_reviews' ? 'Google Reviews' :
+                         channel === 'userwebapp' ? 'User App' :
+                         channel.charAt(0).toUpperCase() + channel.slice(1)}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h4 className="font-medium text-gray-800 mb-2">Datos que se perderán:</h4>
+                  <ul className="text-sm text-gray-600 space-y-1">
+                    <li>• {agentToDelete.performance?.responses || 0} conversaciones históricas</li>
+                    <li>• Configuración personalizada y prompts</li>
+                    <li>• Métricas de rendimiento acumuladas</li>
+                    <li>• Entrenamiento específico del negocio</li>
+                  </ul>
+                </div>
+
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <h4 className="font-medium text-blue-800 mb-2">💡 ¿Sabías que puedes?</h4>
+                  <ul className="text-sm text-blue-700 space-y-1">
+                    <li>• <strong>Desactivar</strong> temporalmente en lugar de eliminar</li>
+                    <li>• <strong>Clonar</strong> antes de eliminar para guardar backup</li>
+                    <li>• <strong>Modificar</strong> su configuración si no está funcionando bien</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center pt-6 border-t border-gray-200 mt-6">
+                <button
+                  onClick={() => {
+                    setShowDeleteAgentModal(false);
+                    setAgentToDelete(null);
+                  }}
+                  className="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={confirmDeleteAgent}
+                  className="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition-colors font-bold"
+                >
+                  🗑️ Eliminar Definitivamente
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
