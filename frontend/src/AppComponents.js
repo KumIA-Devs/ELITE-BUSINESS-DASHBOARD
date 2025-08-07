@@ -14424,37 +14424,55 @@ export const GestionGarzonWebApp = () => {
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-6">
-        {/* Sidebar Navigation */}
-        <div className="lg:w-1/4">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-            <h3 className="text-lg font-bold text-gray-800 mb-4">Módulos</h3>
-            <div className="space-y-2">
-              {sections.map(section => (
-                <button
-                  key={section.id}
-                  onClick={() => setActiveSection(section.id)}
-                  className={`w-full flex items-center p-3 rounded-lg text-left transition-all duration-200 ${
-                    activeSection === section.id
-                      ? 'bg-orange-500 text-white shadow-lg transform scale-105'
-                      : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  <span className="text-xl mr-3">{section.icon}</span>
-                  <div>
-                    <div className="font-medium">{section.label}</div>
-                    <div className="text-xs opacity-75">{section.desc}</div>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
+      {/* Horizontal Navigation Menu */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-2">
+        <div className="flex space-x-1">
+          <button
+            onClick={() => setActiveSection('team-management')}
+            className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+              activeSection === 'team-management'
+                ? 'bg-orange-500 text-white shadow-md'
+                : 'text-gray-600 hover:bg-gray-100'
+            }`}
+          >
+            Gestión de Equipo
+          </button>
+          <button
+            onClick={() => setActiveSection('global-metrics')}
+            className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+              activeSection === 'global-metrics'
+                ? 'bg-orange-500 text-white shadow-md'
+                : 'text-gray-600 hover:bg-gray-100'
+            }`}
+          >
+            Métricas Globales
+          </button>
+          <button
+            onClick={() => setActiveSection('performance-analysis')}
+            className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+              activeSection === 'performance-analysis'
+                ? 'bg-orange-500 text-white shadow-md'
+                : 'text-gray-600 hover:bg-gray-100'
+            }`}
+          >
+            Análisis de Rendimiento
+          </button>
+          <button
+            onClick={() => setActiveSection('incentives')}
+            className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+              activeSection === 'incentives'
+                ? 'bg-orange-500 text-white shadow-md'
+                : 'text-gray-600 hover:bg-gray-100'
+            }`}
+          >
+            Sistema de Incentivos
+          </button>
         </div>
+      </div>
 
-        {/* Main Content */}
-        <div className="lg:w-3/4">
-          {renderActiveSection()}
-        </div>
+      {/* Main Content */}
+      <div className="w-full">
+        {renderActiveSection()}
       </div>
 
       {/* Add Waiter Modal */}
