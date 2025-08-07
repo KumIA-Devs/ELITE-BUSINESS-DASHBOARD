@@ -7596,19 +7596,80 @@ export const ConfigurationSection = ({ restaurantConfig, updateRestaurantConfig,
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <h3 className="text-lg font-bold text-gray-800 mb-4">🏢 Información Básica del Negocio</h3>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Nombre del Negocio</label>
-            <input
-              type="text"
-              value={businessInfo.name}
-              onChange={(e) => handleBusinessInfoChange('name', e.target.value)}
-              onBlur={handleSaveBusinessInfo}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-              placeholder="IL MANDORLA SMOKEHOUSE"
-            />
-          </div>
+        {/* Restaurant Branding Section */}
+        <div className="bg-gradient-to-r from-orange-50 to-red-50 rounded-xl p-6 border border-orange-200 mb-6">
+          <h3 className="text-lg font-bold text-gray-800 mb-6">🎨 Branding del Restaurante</h3>
           
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Restaurant Name Section */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-3">Nombre del Restaurante</label>
+              <div className="flex items-center space-x-3">
+                <div className="flex-1 px-4 py-3 bg-white border border-gray-300 rounded-lg">
+                  <span className="text-lg font-bold text-gray-900">{businessInfo.name}</span>
+                  <div className="text-xs text-gray-500 mt-1">
+                    {canChangeName ? 
+                      '✅ Disponible para editar' : 
+                      `🔒 Disponible en ${getDaysUntilNameChange()} días`
+                    }
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowNameEditModal(true)}
+                  disabled={!canChangeName}
+                  className={`px-4 py-3 rounded-lg font-medium transition-all duration-200 ${
+                    canChangeName 
+                      ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-lg hover:shadow-xl transform hover:scale-105' 
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  }`}
+                >
+                  ✏️ Editar
+                </button>
+              </div>
+            </div>
+
+            {/* Logo Section */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-3">Logo del Restaurante</label>
+              <div className="flex items-center space-x-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center overflow-hidden shadow-lg">
+                  {businessInfo.logo ? (
+                    <img 
+                      src={businessInfo.logo} 
+                      alt="Logo" 
+                      className="w-full h-full object-cover rounded-xl"
+                    />
+                  ) : (
+                    <span className="text-white font-bold text-lg">
+                      {businessInfo.name.split(' ').map(word => word[0]).join('').slice(0, 2)}
+                    </span>
+                  )}
+                </div>
+                <div className="flex-1">
+                  <button
+                    onClick={() => setShowLogoModal(true)}
+                    className="w-full px-4 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                  >
+                    📁 {businessInfo.logo ? 'Cambiar Logo' : 'Subir Logo'}
+                  </button>
+                  <p className="text-xs text-gray-500 mt-2">Formato: PNG, JPG, SVG. Máx: 5MB</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Subtitle Info */}
+          <div className="mt-6 p-4 bg-white rounded-lg border border-gray-200">
+            <h4 className="font-medium text-gray-800 mb-2">💡 Información del Sistema</h4>
+            <p className="text-sm text-gray-600">
+              El subtítulo aparece como <span className="font-medium text-orange-600">"Powered by KumIA Technology"</span> 
+              y representa el respaldo tecnológico de tu plataforma. Este texto no es modificable para mantener 
+              la consistencia de la marca KumIA en todos los restaurantes.
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">          
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de Cocina</label>
             <input
