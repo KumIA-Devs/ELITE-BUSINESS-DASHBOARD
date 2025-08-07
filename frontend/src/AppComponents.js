@@ -14174,7 +14174,8 @@ export const GestionGarzonWebApp = () => {
   const [activeSection, setActiveSection] = useState('team-management');
   const [showAddWaiterModal, setShowAddWaiterModal] = useState(false);
   const [showShiftModal, setShowShiftModal] = useState(false);
-  const [showIncentiveModal, setShowIncentiveModal] = useState(false);
+  const [showWaiterDetailsModal, setShowWaiterDetailsModal] = useState(false);
+  const [showRemoveWaiterModal, setShowRemoveWaiterModal] = useState(false);
   const [selectedWaiter, setSelectedWaiter] = useState(null);
   
   // Mock data for waiters
@@ -14187,7 +14188,7 @@ export const GestionGarzonWebApp = () => {
       avatar: null,
       rating: 4.8,
       totalOrders: 234,
-      avgDeliveryTime: 12.5, // minutes
+      avgDeliveryTime: 12.5,
       customerSatisfaction: 96,
       shiftsThisWeek: 5,
       hoursWorked: 42,
@@ -14273,6 +14274,31 @@ export const GestionGarzonWebApp = () => {
       alerts: ['🏆 Top performer del mes', 'Mentor asignado para nuevos']
     }
   ]);
+
+  // Handle waiter removal
+  const handleRemoveWaiter = (waiter) => {
+    setSelectedWaiter(waiter);
+    setShowRemoveWaiterModal(true);
+  };
+
+  const confirmRemoveWaiter = () => {
+    setWaiters(waiters.filter(w => w.id !== selectedWaiter.id));
+    setShowRemoveWaiterModal(false);
+    setSelectedWaiter(null);
+    alert('✅ Garzón eliminado exitosamente');
+  };
+
+  // Handle waiter details
+  const handleViewDetails = (waiter) => {
+    setSelectedWaiter(waiter);
+    setShowWaiterDetailsModal(true);
+  };
+
+  // Handle shift management
+  const handleManageShift = (waiter) => {
+    setSelectedWaiter(waiter);
+    setShowShiftModal(true);
+  };
 
   // Sections configuration
   const sections = [
