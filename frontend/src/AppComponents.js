@@ -15123,6 +15123,6 @@ export default {
   AIAgentsSection,
   InteligenciaCompetitiva,
   JuegosMultijugador,
-  GestionUserWebApp,
+  GestionGarzonWebApp,
   TuFacturacionKumia
 };
