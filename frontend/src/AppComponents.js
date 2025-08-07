@@ -3201,15 +3201,109 @@ Ejemplo: "¡Hola! Como cliente ${showSegmentModal.nivel}, tienes acceso exclusiv
                 </div>
                 
                 <button 
-                  onClick={() => completeGame(Math.floor(Math.random() * 900) + 100, Math.floor(Math.random() * 3) + 1)}
+                  onClick={() => {
+                    const randomScore = Math.floor(Math.random() * 900) + 100;
+                    const randomStars = Math.floor(Math.random() * 3) + 1;
+                    completeGame(randomScore, randomStars);
+                  }}
                   className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-8 py-4 rounded-xl text-lg font-bold hover:from-green-600 hover:to-blue-600 transition-all duration-200 transform hover:scale-105 shadow-lg"
                 >
-                  🚀 ¡Comenzar Juego!
+                  🚀 ¡Comenzar {currentPlayingGame === 'kumiSudoku' ? 'Sudoku' : currentPlayingGame === 'pacKumia' ? 'Pac-Man' : 'Crucigrama'}!
                 </button>
                 
-                <div className="mt-6 text-xs text-gray-500">
-                  💡 Los juegos completamente funcionales estarán disponibles en la próxima actualización.<br/>
-                  Por ahora puedes probar la mecánica de recompensas.
+                <div className="mt-6 p-4 bg-yellow-50 rounded-lg">
+                  <div className="text-sm text-yellow-800">
+                    <strong>🎯 Mecánica del Juego:</strong><br/>
+                    {currentPlayingGame === 'kumiSudoku' && 'Completa una grilla 4x4 con números del 1-4, sin repetir en filas, columnas ni cuadrantes.'}
+                    {currentPlayingGame === 'pacKumia' && 'Navega por un laberinto simple, recoge todos los puntos amarillos y evita obstáculos.'}
+                    {currentPlayingGame === 'kumiCrucigrama' && 'Resuelve palabras cruzadas con términos gastronómicos y culinarios.'}
+                  </div>
+                </div>
+                
+                <div className="mt-4 text-xs text-gray-500">
+                  💡 Los juegos completamente interactivos estarán disponibles en próximas actualizaciones.<br/>
+                  Esta versión demuestra la mecánica de recompensas y puntuación.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 🎮 MODAL DE JUEGO FUNCIONAL */}
+      {showGamePlayModal && currentPlayingGame && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-2xl font-bold text-gray-800">
+                  🎮 {currentPlayingGame === 'kumiSudoku' ? 'KumIA Sudoku' : 
+                       currentPlayingGame === 'pacKumia' ? 'Pac-KumIA' : 
+                       'KumIA Crucigrama'}
+                </h2>
+                <button onClick={closeGame} className="text-gray-500 hover:text-gray-700 text-2xl">×</button>
+              </div>
+              
+              <div className="text-center py-20">
+                <div className="text-6xl mb-4">
+                  {currentPlayingGame === 'kumiSudoku' ? '🧠' : 
+                   currentPlayingGame === 'pacKumia' ? '🕹️' : '📝'}
+                </div>
+                <h3 className="text-xl font-bold text-gray-800 mb-2">
+                  {currentPlayingGame === 'kumiSudoku' ? `Sudoku ${gameLevel === 1 ? 'Fácil' : gameLevel === 2 ? 'Medio' : 'Difícil'}` : 
+                   currentPlayingGame === 'pacKumia' ? `Pac-Man ${gameLevel === 1 ? 'Novato' : gameLevel === 2 ? 'Pro' : 'Master'}` : 
+                   `Crucigrama Nivel ${gameLevel}`}
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  {currentPlayingGame === 'kumiSudoku' ? 'Completa el sudoku 4x4. Usa lógica para llenar todas las casillas sin repetir números.' : 
+                   currentPlayingGame === 'pacKumia' ? 'Recoge todos los puntos evitando obstáculos. Usa las flechas del teclado para moverte.' : 
+                   'Resuelve las pistas culinarias para completar el crucigrama gastronómico.'}
+                </p>
+                
+                <div className="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-xl mb-6">
+                  <h4 className="font-bold text-gray-800 mb-3">🏆 Sistema de Recompensas KumIA</h4>
+                  <div className="grid grid-cols-3 gap-4 text-sm">
+                    <div className="text-center">
+                      <div className="text-yellow-500 text-xl">⭐</div>
+                      <div className="font-medium">1 Estrella</div>
+                      <div className="text-gray-600">Completar</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-yellow-500 text-xl">⭐⭐</div>
+                      <div className="font-medium">2 Estrellas</div>
+                      <div className="text-gray-600">Buen tiempo</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-yellow-500 text-xl">⭐⭐⭐</div>
+                      <div className="font-medium">3 Estrellas</div>
+                      <div className="text-gray-600">Excelencia</div>
+                    </div>
+                  </div>
+                </div>
+                
+                <button 
+                  onClick={() => {
+                    const randomScore = Math.floor(Math.random() * 900) + 100;
+                    const randomStars = Math.floor(Math.random() * 3) + 1;
+                    completeGame(randomScore, randomStars);
+                  }}
+                  className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-8 py-4 rounded-xl text-lg font-bold hover:from-green-600 hover:to-blue-600 transition-all duration-200 transform hover:scale-105 shadow-lg"
+                >
+                  🚀 ¡Comenzar {currentPlayingGame === 'kumiSudoku' ? 'Sudoku' : currentPlayingGame === 'pacKumia' ? 'Pac-Man' : 'Crucigrama'}!
+                </button>
+                
+                <div className="mt-6 p-4 bg-yellow-50 rounded-lg">
+                  <div className="text-sm text-yellow-800">
+                    <strong>🎯 Mecánica del Juego:</strong><br/>
+                    {currentPlayingGame === 'kumiSudoku' && 'Completa una grilla 4x4 con números del 1-4, sin repetir en filas, columnas ni cuadrantes.'}
+                    {currentPlayingGame === 'pacKumia' && 'Navega por un laberinto simple, recoge todos los puntos amarillos y evita obstáculos.'}
+                    {currentPlayingGame === 'kumiCrucigrama' && 'Resuelve palabras cruzadas con términos gastronómicos y culinarios.'}
+                  </div>
+                </div>
+                
+                <div className="mt-4 text-xs text-gray-500">
+                  💡 Los juegos completamente interactivos estarán disponibles en próximas actualizaciones.<br/>
+                  Esta versión demuestra la mecánica de recompensas y puntuación.
                 </div>
               </div>
             </div>
