@@ -10984,6 +10984,34 @@ Nunca seas agresivo, siempre agrega valor genuino.`,
 ⚠️ Nota: El agente clonado está inactivo. Actívalo cuando esté listo.`);
   };
 
+  // 🗑️ NUEVA FUNCIÓN PARA ELIMINAR AGENTES
+  const handleDeleteAgent = (agentId) => {
+    const agent = agents.find(a => a.id === agentId);
+    setAgentToDelete(agent);
+    setShowDeleteAgentModal(true);
+  };
+
+  const confirmDeleteAgent = () => {
+    if (!agentToDelete) return;
+    
+    // Check if it's a core agent that shouldn't be deleted
+    const coreAgentIds = ['agent_google_reviews', 'agent_whatsapp_concierge', 'agent_instagram_cm', 'agent_facebook_cm', 'agent_whatsapp_loyalty'];
+    
+    if (coreAgentIds.includes(agentToDelete.id)) {
+      alert('❌ No puedes eliminar agentes esenciales del sistema\n\nEste agente es parte de la configuración base de KumIA y es necesario para el funcionamiento del ecosistema.\n\n💡 Alternativas:\n• Desactivar temporalmente\n• Modificar su configuración\n• Duplicar y personalizar');
+      setShowDeleteAgentModal(false);
+      setAgentToDelete(null);
+      return;
+    }
+
+    setAgents(prev => prev.filter(agent => agent.id !== agentToDelete.id));
+    setShowDeleteAgentModal(false);
+    
+    alert(`✅ Agente eliminado exitosamente\n\n🗑️ ${agentToDelete.name} ha sido removido del sistema.\n\n📊 Impacto:\n• Se perderán ${agentToDelete.performance?.responses || 0} conversaciones históricas\n• Los canales ${agentToDelete.channels?.join(', ')} quedarán sin agente asignado\n\n⚠️ Recomendación: Asigna un nuevo agente a estos canales para mantener la automatización.`);
+    
+    setAgentToDelete(null);
+  };
+
   const handleAnalyzePerformance = (agentId) => {
     const agent = agents.find(a => a.id === agentId);
     setSelectedAgent(agent);
