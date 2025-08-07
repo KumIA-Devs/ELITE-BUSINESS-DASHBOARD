@@ -1353,6 +1353,12 @@ const MenuSection = () => {
   const [viewMode, setViewMode] = useState('admin'); // admin, customer
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [showNewItemModal, setShowNewItemModal] = useState(false);
+  // 🆕 Category Management States
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [categoryAction, setCategoryAction] = useState('add'); // add, edit, duplicate
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const [editingCategoryIndex, setEditingCategoryIndex] = useState(-1);
+  
   const [newItem, setNewItem] = useState({
     name: '',
     description: '',
