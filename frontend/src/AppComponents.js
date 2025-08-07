@@ -13451,6 +13451,29 @@ export const JuegosMultijugador = () => {
     alert('✅ Configuración del juego actualizada exitosamente!');
   };
 
+  // 🎮 FUNCIONES PARA JUGAR JUEGOS REALES
+  const handlePlayGame = (gameId, level = 1) => {
+    const game = juegos['1P'].find(g => g.id === gameId);
+    if (game && game.developed) {
+      setCurrentPlayingGame(gameId);
+      setGameLevel(level);
+      setShowGamePlayModal(true);
+    } else {
+      alert('🚧 Este juego está en desarrollo y estará disponible próximamente.\n\n⭐ Próximas actualizaciones incluirán:\n• Juegos completamente funcionales\n• Sistema de puntajes\n• Recompensas KumIA Stars\n• Competencias entre mesas');
+    }
+  };
+
+  const closeGame = () => {
+    setShowGamePlayModal(false);
+    setCurrentPlayingGame(null);
+    setGameLevel(1);
+  };
+
+  const completeGame = (score, starsEarned) => {
+    alert(`🎉 ¡Juego completado!\n\n🏆 Puntuación: ${score}\n⭐ KumIA Stars ganadas: ${starsEarned}\n\n¡Felicitaciones! Tus stars se han agregado a tu cuenta.`);
+    closeGame();
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
