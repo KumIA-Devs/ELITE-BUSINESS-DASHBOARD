@@ -15201,7 +15201,7 @@ export const GestionGarzonWebApp = () => {
             {/* Action Buttons */}
             <div className="grid grid-cols-2 gap-2">
               <button
-                onClick={() => setSelectedWaiter(waiter)}
+                onClick={() => handleViewDetails(waiter)}
                 className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors text-sm"
               >
                 📊 Ver Detalles
