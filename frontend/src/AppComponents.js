@@ -8433,9 +8433,19 @@ export const ConfigurationSection = ({ restaurantConfig, updateRestaurantConfig,
               <div className="space-y-4">
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                   <p className="text-sm text-yellow-800">
-                    ⚠️ <strong>Restricción:</strong> Solo puedes cambiar el nombre una vez cada 90 días. 
-                    Después de guardar, deberás esperar 90 días para el próximo cambio.
+                    ⚠️ <strong>Sistema de cambios:</strong> Tienes derecho a 3 cambios de nombre cada 90 días. 
+                    Después de usar los 3 cambios, deberás esperar 90 días para obtener 3 cambios nuevos.
                   </p>
+                  <div className="mt-2 text-xs text-yellow-700">
+                    {(() => {
+                      const info = getNameChangeInfo();
+                      if (info.canChange) {
+                        return `Cambios restantes: ${info.changesLeft}/3`;
+                      } else {
+                        return `Próximo cambio disponible en: ${info.daysRemaining} días`;
+                      }
+                    })()}
+                  </div>
                 </div>
 
                 <div>
