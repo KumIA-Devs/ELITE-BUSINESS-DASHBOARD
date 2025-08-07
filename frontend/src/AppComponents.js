@@ -14682,6 +14682,66 @@ export const TuFacturacionKumia = () => {
     });
   };
 
+  // Payment method functions
+  const handleAddPaymentMethod = (e) => {
+    e.preventDefault();
+    
+    if (!newPaymentMethod.cardNumber || !newPaymentMethod.expMonth || !newPaymentMethod.expYear || !newPaymentMethod.cvc) {
+      alert('❌ Por favor completa todos los campos obligatorios');
+      return;
+    }
+
+    const newMethod = {
+      id: Date.now(),
+      type: 'credit',
+      last4: newPaymentMethod.cardNumber.slice(-4),
+      brand: getBrand(newPaymentMethod.cardNumber),
+      expMonth: newPaymentMethod.expMonth,
+      expYear: newPaymentMethod.expYear,
+      isDefault: newPaymentMethod.isDefault
+    };
+
+    // If this is set as default, remove default from others
+    if (newMethod.isDefault) {
+      setPaymentMethods(prev => prev.map(method => ({ ...method, isDefault: false })));
+    }
+
+    setPaymentMethods(prev => [...prev, newMethod]);
+    setNewPaymentMethod({
+      cardNumber: '',
+      expMonth: '',
+      expYear: '',
+      cvc: '',
+      holderName: '',
+      isDefault: false
+    });
+    setShowPaymentMethodModal(false);
+    alert('✅ Método de pago agregado exitosamente');
+  };
+
+  const getBrand = (cardNumber) => {
+    const firstDigit = cardNumber[0];
+    if (firstDigit === '4') return 'Visa';
+    if (firstDigit === '5') return 'Mastercard';
+    if (firstDigit === '3') return 'Amex';
+    return 'Card';
+  };
+
+  const handleUpdateBusinessData = (e) => {
+    e.preventDefault();
+    setShowUpdateDataModal(false);
+    alert('✅ Datos empresariales actualizados exitosamente');
+  };
+
+  const removePaymentMethod = (id) => {
+    if (paymentMethods.length === 1) {
+      alert('❌ Debes mantener al menos un método de pago activo');
+      return;
+    }
+    setPaymentMethods(prev => prev.filter(method => method.id !== id));
+    alert('✅ Método de pago eliminado');
+  };
+
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('es-CL', {
       style: 'currency',
