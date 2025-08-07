@@ -10650,6 +10650,8 @@ export const AIAgentsSection = () => {
   const [showAnalyzeModal, setShowAnalyzeModal] = useState(false);
   const [showPerformanceModal, setShowPerformanceModal] = useState(false);
   const [showKumiaChat, setShowKumiaChat] = useState(false);
+  const [showDeleteAgentModal, setShowDeleteAgentModal] = useState(false);
+  const [agentToDelete, setAgentToDelete] = useState(null);
   
   // 🆕 ESTADO PARA CHAT CON GEMINI
   const [chatMessages, setChatMessages] = useState([]);
