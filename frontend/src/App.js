@@ -1707,6 +1707,69 @@ const MenuSection = () => {
     setShowNewItemModal(true);
   };
 
+  // 🆕 CATEGORY MANAGEMENT FUNCTIONS
+  const handleAddCategory = () => {
+    setCategoryAction('add');
+    setNewCategoryName('');
+    setShowCategoryModal(true);
+  };
+
+  const handleEditCategory = (categoryName, index) => {
+    setCategoryAction('edit');
+    setNewCategoryName(categoryName);
+    setEditingCategoryIndex(index);
+    setShowCategoryModal(true);
+  };
+
+  const handleDuplicateCategory = (categoryName) => {
+    setCategoryAction('duplicate');
+    setNewCategoryName(`${categoryName} (Copia)`);
+    setShowCategoryModal(true);
+  };
+
+  const handleCategoryAction = () => {
+    if (!newCategoryName.trim()) {
+      alert('Por favor ingresa un nombre para la categoría');
+      return;
+    }
+
+    if (categoryAction === 'add' || categoryAction === 'duplicate') {
+      if (categories.includes(newCategoryName.trim())) {
+        alert('Ya existe una categoría con ese nombre');
+        return;
+      }
+      setCategories([...categories, newCategoryName.trim()]);
+    } else if (categoryAction === 'edit') {
+      const updatedCategories = [...categories];
+      updatedCategories[editingCategoryIndex] = newCategoryName.trim();
+      setCategories(updatedCategories);
+    }
+
+    setShowCategoryModal(false);
+    setNewCategoryName('');
+    setEditingCategoryIndex(-1);
+    alert('✅ Categoría actualizada exitosamente');
+  };
+
+  const handleDeleteCategory = (categoryName, index) => {
+    const hasItems = menuItems.some(item => item.category === categoryName);
+    
+    if (hasItems) {
+      if (!confirm(`La categoría "${categoryName}" tiene items asociados. ¿Estás seguro de eliminarla? Los items quedarán sin categoría.`)) {
+        return;
+      }
+    }
+
+    const updatedCategories = categories.filter((_, i) => i !== index);
+    setCategories(updatedCategories);
+    
+    if (selectedCategory === categoryName) {
+      setSelectedCategory('all');
+    }
+    
+    alert('✅ Categoría eliminada exitosamente');
+  };
+
   const filteredItems = selectedCategory === 'all' 
     ? menuItems 
     : menuItems.filter(item => item.category === selectedCategory);
