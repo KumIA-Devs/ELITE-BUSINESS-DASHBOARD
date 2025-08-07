@@ -14928,10 +14928,16 @@ export const TuFacturacionKumia = () => {
             </div>
 
             <div className="flex space-x-2">
-              <button className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">
+              <button 
+                onClick={() => setShowPaymentMethodModal(true)}
+                className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              >
                 ➕ Agregar Método
               </button>
-              <button className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors">
+              <button 
+                onClick={() => setShowUpdateDataModal(true)}
+                className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+              >
                 ✏️ Actualizar Datos
               </button>
             </div>
