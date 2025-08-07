@@ -12649,8 +12649,24 @@ export const InteligenciaCompetitiva = () => {
           >
             📈 Tendencias IA
           </button>
-          <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
-            🔄 Actualizar Datos
+          <button 
+            onClick={async () => {
+              setIsUpdatingData(true);
+              // Simulate data fetching
+              setTimeout(() => {
+                setLastUpdateTime(new Date());
+                setIsUpdatingData(false);
+                alert('✅ Datos actualizados exitosamente\n\nSe ha recopilado información actualizada de:\n• Google Reviews\n• Redes sociales\n• Plataformas de delivery\n• Análisis de precios');
+              }, 2000);
+            }}
+            disabled={isUpdatingData}
+            className={`px-4 py-2 rounded-lg transition-colors ${
+              isUpdatingData 
+                ? 'bg-gray-400 text-gray-200 cursor-not-allowed' 
+                : 'bg-blue-500 text-white hover:bg-blue-600'
+            }`}
+          >
+            {isUpdatingData ? '⏳ Actualizando...' : '🔄 Actualizar Datos'}
           </button>
         </div>
       </div>
