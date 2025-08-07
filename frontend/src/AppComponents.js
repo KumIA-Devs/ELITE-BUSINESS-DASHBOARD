@@ -8387,6 +8387,150 @@ export const ConfigurationSection = ({ restaurantConfig, updateRestaurantConfig,
           {renderConfigContent()}
         </div>
       </div>
+
+      {/* Name Edit Modal */}
+      {showNameEditModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">✏️ Editar Nombre del Restaurante</h2>
+                <button
+                  onClick={() => setShowNameEditModal(false)}
+                  className="text-gray-500 hover:text-gray-700 text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                  <p className="text-sm text-yellow-800">
+                    ⚠️ <strong>Restricción:</strong> Solo puedes cambiar el nombre una vez cada 90 días. 
+                    Después de guardar, deberás esperar 90 días para el próximo cambio.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Nuevo nombre del restaurante</label>
+                  <input
+                    type="text"
+                    value={newRestaurantName}
+                    onChange={(e) => setNewRestaurantName(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    placeholder="Ej: MI RESTAURANTE"
+                    maxLength="50"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Máximo 50 caracteres</p>
+                </div>
+
+                <div className="text-sm text-gray-600">
+                  <p><strong>Vista previa del header:</strong></p>
+                  <div className="mt-2 p-3 bg-gray-50 rounded-lg flex items-center">
+                    <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex items-center justify-center mr-3">
+                      <span className="text-white font-bold text-xs">
+                        {newRestaurantName.split(' ').map(word => word[0]).join('').slice(0, 2)}
+                      </span>
+                    </div>
+                    <div>
+                      <div className="font-bold text-gray-900">{newRestaurantName || 'NOMBRE VACÍO'}</div>
+                      <div className="text-xs text-gray-600">Powered by KumIA Technology</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center pt-6 border-t border-gray-200 mt-6">
+                <button
+                  onClick={() => setShowNameEditModal(false)}
+                  className="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleNameChange}
+                  disabled={!newRestaurantName.trim()}
+                  className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-lg hover:from-orange-600 hover:to-red-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed font-bold"
+                >
+                  💾 Guardar Cambios
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Logo Upload Modal */}
+      {showLogoModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">📁 Subir Logo</h2>
+                <button
+                  onClick={() => setShowLogoModal(false)}
+                  className="text-gray-500 hover:text-gray-700 text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <p className="text-sm text-blue-800">
+                    💡 <strong>Recomendaciones:</strong> Usa una imagen cuadrada (1:1) con fondo transparente 
+                    para mejores resultados. El logo aparecerá en el header del dashboard.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Seleccionar archivo</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleLogoUpload}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">PNG, JPG, SVG. Máximo 5MB</p>
+                </div>
+
+                {businessInfo.logo && (
+                  <div className="text-center">
+                    <p className="text-sm font-medium text-gray-700 mb-2">Vista previa actual:</p>
+                    <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center mx-auto overflow-hidden shadow-lg">
+                      <img 
+                        src={businessInfo.logo} 
+                        alt="Logo actual" 
+                        className="w-full h-full object-cover rounded-xl"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex justify-between items-center pt-6 border-t border-gray-200 mt-6">
+                <button
+                  onClick={() => setShowLogoModal(false)}
+                  className="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors"
+                >
+                  Cerrar
+                </button>
+                <button
+                  onClick={() => {
+                    updateRestaurantConfig({ logo: null });
+                    setBusinessInfo(prev => ({ ...prev, logo: null }));
+                    setShowLogoModal(false);
+                    alert('✅ Logo eliminado exitosamente');
+                  }}
+                  className="bg-red-500 text-white px-4 py-3 rounded-lg hover:bg-red-600 transition-colors"
+                >
+                  🗑️ Eliminar Logo
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
