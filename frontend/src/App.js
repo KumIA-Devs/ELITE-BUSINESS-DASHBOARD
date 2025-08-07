@@ -2935,12 +2935,22 @@ const Dashboard = () => {
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
-              <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center mr-4 shadow-lg">
-                <span className="text-white font-bold text-lg">IM</span>
+              <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center mr-4 shadow-lg overflow-hidden">
+                {restaurantConfig.logo ? (
+                  <img 
+                    src={restaurantConfig.logo} 
+                    alt="Logo" 
+                    className="w-full h-full object-cover rounded-xl"
+                  />
+                ) : (
+                  <span className="text-white font-bold text-lg">
+                    {restaurantConfig.name.split(' ').map(word => word[0]).join('').slice(0, 2)}
+                  </span>
+                )}
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">IL MANDORLA</h1>
-                <p className="text-sm text-gray-600">Sistema KUMIA Elite</p>
+                <h1 className="text-xl font-bold text-gray-900">{restaurantConfig.name}</h1>
+                <p className="text-sm text-gray-600">Powered by KumIA Technology</p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
