@@ -74,6 +74,11 @@ export const CentroIAMarketing = () => {
   const [showDeleteAgentModal, setShowDeleteAgentModal] = useState(false);
   const [agentToDelete, setAgentToDelete] = useState(null);
 
+  // Estados para el modal de juego funcional
+  const [showGamePlayModal, setShowGamePlayModal] = useState(false);
+  const [currentPlayingGame, setCurrentPlayingGame] = useState(null);
+  const [gameLevel, setGameLevel] = useState(1);
+
   // Función para manejar actualización de configuración de juego
   const handleUpdateGameConfig = (gameId, config) => {
     alert(`✅ Configuración del juego actualizada exitosamente!\n\nJuego ID: ${gameId}\nStars Reales: ${config.starsReales}\nMáx por sesión: ${config.maxStarsPorSesion}\nActivo: ${config.activo ? 'Sí' : 'No'}`);
