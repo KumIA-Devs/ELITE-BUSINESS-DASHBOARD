@@ -2824,6 +2824,35 @@ const Dashboard = () => {
   const [metrics, setMetrics] = useState({});
   const [loading, setLoading] = useState(true);
 
+  // Restaurant Configuration State
+  const [restaurantConfig, setRestaurantConfig] = useState(() => {
+    const savedConfig = localStorage.getItem('restaurantConfig');
+    return savedConfig ? JSON.parse(savedConfig) : {
+      name: 'IL MANDORLA',
+      logo: null,
+      lastNameChange: null,
+      canChangeName: true
+    };
+  });
+
+  // Check if name can be changed (90-day restriction)
+  const canChangeName = () => {
+    if (!restaurantConfig.lastNameChange) return true;
+    const daysSinceLastChange = Math.floor((Date.now() - new Date(restaurantConfig.lastNameChange)) / (1000 * 60 * 60 * 24));
+    return daysSinceLastChange >= 90;
+  };
+
+  // Update restaurant configuration
+  const updateRestaurantConfig = (newConfig) => {
+    const updatedConfig = { 
+      ...restaurantConfig, 
+      ...newConfig,
+      lastNameChange: newConfig.name !== restaurantConfig.name ? new Date().toISOString() : restaurantConfig.lastNameChange
+    };
+    setRestaurantConfig(updatedConfig);
+    localStorage.setItem('restaurantConfig', JSON.stringify(updatedConfig));
+  };
+
   useEffect(() => {
     fetchMetrics();
   }, []);
