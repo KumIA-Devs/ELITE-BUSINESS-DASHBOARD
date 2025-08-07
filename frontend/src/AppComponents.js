@@ -85,6 +85,17 @@ export const CentroIAMarketing = () => {
     setShowGameConfigModal(null);
   };
 
+  // Funciones para el modal de juego funcional
+  const closeGame = () => {
+    setShowGamePlayModal(false);
+    setCurrentPlayingGame(null);
+  };
+
+  const completeGame = (score, stars) => {
+    alert(`🎉 ¡Juego completado!\n\nPuntuación: ${score}\nEstrellas obtenidas: ${stars} ⭐\n\n¡Las estrellas se han agregado a tu cuenta KumIA!`);
+    closeGame();
+  };
+
   // Función para manejar agregar método de pago
   const handleAddPaymentMethod = (e) => {
     e.preventDefault();
