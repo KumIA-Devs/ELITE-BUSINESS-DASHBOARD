@@ -12551,6 +12551,9 @@ export const InteligenciaCompetitiva = () => {
   const [selectedCompetitor, setSelectedCompetitor] = useState(null);
   const [benchmarkFilter, setBenchmarkFilter] = useState('todos');
   const [showTrendsModal, setShowTrendsModal] = useState(false);
+  const [showUpdateDataModal, setShowUpdateDataModal] = useState(false);
+  const [lastUpdateTime, setLastUpdateTime] = useState(new Date());
+  const [isUpdatingData, setIsUpdatingData] = useState(false);
 
   // Benchmark por rubro
   const benchmarkData = {
