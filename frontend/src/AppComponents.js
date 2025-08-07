@@ -11496,6 +11496,20 @@ Optimiza los prompts de tus agentes con mejor performance y replica esas técnic
                   📊 Analizar
                 </button>
               </div>
+              <div className="flex space-x-2">
+                <button 
+                  onClick={() => handleDeleteAgent(agent.id)}
+                  className="flex-1 bg-red-100 text-red-700 px-3 py-2 rounded-lg text-sm hover:bg-red-200 transition-colors"
+                >
+                  🗑️ Eliminar
+                </button>
+                <button 
+                  onClick={() => alert(`📖 **Cómo funciona ${agent.name}:**\n\n🔧 **Entrenamiento:**\n• Fine-tuning con Gemini Pro API\n• RAG con documentos del restaurante\n• Actualizaciones automáticas cada 48h\n\n⚙️ **Operación:**\n• Webhooks en tiempo real\n• Context window de 32k tokens\n• Respuesta promedio: 1.2 segundos\n\n🛠️ **Integraciones:**\n• ${agent.channels?.join(' + ')} APIs\n• Firebase Firestore (memoria)\n• Cloud Functions (processing)\n\n💡 **Próximamente:** Integración completa con todas las APIs mencionadas`)}
+                  className="flex-1 bg-gray-100 text-gray-700 px-3 py-2 rounded-lg text-sm hover:bg-gray-200 transition-colors"
+                >
+                  ❓ ¿Cómo funciona?
+                </button>
+              </div>
             </div>
 
             {/* Last training */}
