@@ -7457,10 +7457,14 @@ Saludos,
 };
 
 // 🆕 CONFIGURATION SECTION AMPLIADA - KUMIA ELITE
-export const ConfigurationSection = () => {
+export const ConfigurationSection = ({ restaurantConfig, updateRestaurantConfig, canChangeName }) => {
   const [activeConfigTab, setActiveConfigTab] = useState('general');
+  const [showNameEditModal, setShowNameEditModal] = useState(false);
+  const [newRestaurantName, setNewRestaurantName] = useState(restaurantConfig?.name || 'IL MANDORLA');
+  const [showLogoModal, setShowLogoModal] = useState(false);
+  
   const [businessInfo, setBusinessInfo] = useState({
-    name: 'IL MANDORLA SMOKEHOUSE',
+    name: restaurantConfig?.name || 'IL MANDORLA',
     address: 'Av. Revolución 1234, Ciudad de México',
     phone: '+52 55 1234 5678',
     email: 'info@ilmandorla.com',
@@ -7478,14 +7482,59 @@ export const ConfigurationSection = () => {
       sunday: { open: '10:00', close: '21:00', active: true }
     },
     cuisineType: 'Smokehouse Premium',
-    logo: 'https://images.app.goo.gl/HySig5BgebwJZG6B9',
+    logo: restaurantConfig?.logo || null,
     brandColors: {
       primary: '#FF6B35',
       secondary: '#FFFFFF',
       accent: '#FF8C42'
-    },
-    aiAvatar: 'https://images.app.goo.gl/ai-avatar-example'
+    }
   });
+
+  // Handle restaurant name change
+  const handleNameChange = () => {
+    if (!canChangeName) {
+      alert('❌ Solo puedes cambiar el nombre una vez cada 90 días');
+      return;
+    }
+    
+    if (newRestaurantName.trim().length < 2) {
+      alert('❌ El nombre debe tener al menos 2 caracteres');
+      return;
+    }
+
+    updateRestaurantConfig({ name: newRestaurantName.trim() });
+    setBusinessInfo(prev => ({ ...prev, name: newRestaurantName.trim() }));
+    setShowNameEditModal(false);
+    alert('✅ Nombre del restaurante actualizado exitosamente');
+  };
+
+  // Handle logo upload
+  const handleLogoUpload = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert('❌ El archivo debe ser menor a 5MB');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const logoData = e.target.result;
+      updateRestaurantConfig({ logo: logoData });
+      setBusinessInfo(prev => ({ ...prev, logo: logoData }));
+      setShowLogoModal(false);
+      alert('✅ Logo actualizado exitosamente');
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Calculate days until next name change
+  const getDaysUntilNameChange = () => {
+    if (!restaurantConfig?.lastNameChange) return 0;
+    const daysSince = Math.floor((Date.now() - new Date(restaurantConfig.lastNameChange)) / (1000 * 60 * 60 * 24));
+    return Math.max(0, 90 - daysSince);
+  };
 
   const [roles, setRoles] = useState([
     { id: 'admin', name: 'Administrador', permissions: ['all'], users: 2, description: 'Acceso completo al sistema' },
