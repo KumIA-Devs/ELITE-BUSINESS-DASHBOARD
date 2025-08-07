@@ -40,6 +40,24 @@ export const CentroIAMarketing = () => {
   const [showGameConfigModal, setShowGameConfigModal] = useState(null);
   const [showGamePreviewModal, setShowGamePreviewModal] = useState(null);
   const [showSecurityModal, setShowSecurityModal] = useState(false);
+  const [showPaymentMethodModal, setShowPaymentMethodModal] = useState(false);
+  const [showUpdateDataModal, setShowUpdateDataModal] = useState(false);
+  const [newPaymentMethod, setNewPaymentMethod] = useState({
+    cardNumber: '',
+    holderName: '',
+    expMonth: '',
+    expYear: '',
+    cvc: '',
+    isDefault: false
+  });
+  const [businessData, setBusinessData] = useState({
+    restaurantName: 'Mi Restaurante',
+    taxId: '',
+    email: '',
+    phone: '',
+    address: '',
+    contactPerson: ''
+  });
   const [seguridadConfig, setSeguridadConfig] = useState({
     radiusGeofencing: 50,
     tiempoMaximoSesion: 30,
