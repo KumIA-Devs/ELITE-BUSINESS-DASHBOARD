@@ -42,6 +42,8 @@ export const CentroIAMarketing = () => {
   const [showSecurityModal, setShowSecurityModal] = useState(false);
   const [showPaymentMethodModal, setShowPaymentMethodModal] = useState(false);
   const [showUpdateDataModal, setShowUpdateDataModal] = useState(false);
+  const [selectedCompetitor, setSelectedCompetitor] = useState(null);
+  const [lastUpdateTime] = useState(new Date());
   const [newPaymentMethod, setNewPaymentMethod] = useState({
     cardNumber: '',
     holderName: '',
