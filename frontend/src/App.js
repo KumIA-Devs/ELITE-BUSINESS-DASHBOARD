@@ -320,7 +320,7 @@ const Login = () => {
 
         <div className="text-center mt-6">
           <p className="text-xs text-gray-500">
-            Sistema KUMIA ELITE - Versión 2.0
+            Powered by KumIA Technology - Versión 2.0
           </p>
         </div>
       </div>
