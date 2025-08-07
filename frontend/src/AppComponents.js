@@ -12772,7 +12772,10 @@ export const InteligenciaCompetitiva = () => {
               </div>
 
               <button 
-                onClick={() => setSelectedCompetitor(competidor)}
+                onClick={() => {
+                  setSelectedCompetitor(competidor);
+                  setShowUpdateDataModal(true);
+                }}
                 className="w-full mt-3 bg-gray-100 text-gray-700 py-2 rounded-lg hover:bg-gray-200 transition-colors text-sm"
               >
                 🔍 Análisis Detallado
