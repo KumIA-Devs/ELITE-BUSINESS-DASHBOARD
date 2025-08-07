@@ -14605,9 +14605,44 @@ export const GestionGarzonWebApp = () => {
 export const TuFacturacionKumia = () => {
   const [showROISimulator, setShowROISimulator] = useState(false);
   const [showContactForm, setShowContactForm] = useState(false);
+  const [showPaymentMethodModal, setShowPaymentMethodModal] = useState(false);
+  const [showUpdateDataModal, setShowUpdateDataModal] = useState(false);
   const [ticketPromedio, setTicketPromedio] = useState(15000);
   const [clientesDiarios, setClientesDiarios] = useState(80);
   const [incrementoKumiA, setIncrementoKumiA] = useState(28);
+  
+  // Payment methods state
+  const [paymentMethods, setPaymentMethods] = useState([
+    {
+      id: 1,
+      type: 'credit',
+      last4: '4242',
+      brand: 'Visa',
+      expMonth: '12',
+      expYear: '2027',
+      isDefault: true
+    }
+  ]);
+  
+  // New payment method form
+  const [newPaymentMethod, setNewPaymentMethod] = useState({
+    cardNumber: '',
+    expMonth: '',
+    expYear: '',
+    cvc: '',
+    holderName: '',
+    isDefault: false
+  });
+  
+  // Business data form
+  const [businessData, setBusinessData] = useState({
+    restaurantName: 'IL MANDORLA',
+    email: 'admin@ilmandorla.com',
+    phone: '+595 21 123456',
+    address: 'Av. Revolución 1234, Ciudad de México',
+    taxId: '12345678901',
+    contactPerson: 'Juan Pérez'
+  });
   
   // Estado del formulario de contacto
   const [contactForm, setContactForm] = useState({
