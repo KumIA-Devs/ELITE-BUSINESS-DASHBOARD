@@ -13595,20 +13595,58 @@ export const JuegosMultijugador = () => {
                 </div>
               </div>
 
-              <div className="flex space-x-2">
+              <div className="flex space-x-2 mb-2">
                 <button 
                   onClick={() => handleConfigureGame(juego)}
                   className="flex-1 bg-blue-100 text-blue-700 py-2 rounded-lg text-sm hover:bg-blue-200 transition-colors"
                 >
                   ⚙️ Configurar
                 </button>
-                <button 
-                  onClick={() => handlePreviewGame(juego)}
-                  className="flex-1 bg-green-100 text-green-700 py-2 rounded-lg text-sm hover:bg-green-200 transition-colors"
-                >
-                  🎮 Vista Previa
-                </button>
+                {juego.developed ? (
+                  <button 
+                    onClick={() => handlePlayGame(juego.id, 1)}
+                    className="flex-1 bg-green-100 text-green-700 py-2 rounded-lg text-sm hover:bg-green-200 transition-colors font-bold"
+                  >
+                    🎮 ¡JUGAR!
+                  </button>
+                ) : (
+                  <button 
+                    onClick={() => handlePreviewGame(juego)}
+                    className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg text-sm hover:bg-gray-200 transition-colors"
+                  >
+                    🎮 Vista Previa
+                  </button>
+                )}
               </div>
+              
+              {/* Level Selection for Developed Games */}
+              {juego.developed && (
+                <div className="flex space-x-1">
+                  {juego.id === 'kumiSudoku' && (
+                    <>
+                      <button onClick={() => handlePlayGame(juego.id, 1)} className="flex-1 bg-green-50 text-green-600 py-1 px-2 rounded text-xs hover:bg-green-100">Fácil</button>
+                      <button onClick={() => handlePlayGame(juego.id, 2)} className="flex-1 bg-yellow-50 text-yellow-600 py-1 px-2 rounded text-xs hover:bg-yellow-100">Medio</button>
+                      <button onClick={() => handlePlayGame(juego.id, 3)} className="flex-1 bg-red-50 text-red-600 py-1 px-2 rounded text-xs hover:bg-red-100">Difícil</button>
+                    </>
+                  )}
+                  {juego.id === 'pacKumia' && (
+                    <>
+                      <button onClick={() => handlePlayGame(juego.id, 1)} className="flex-1 bg-blue-50 text-blue-600 py-1 px-2 rounded text-xs hover:bg-blue-100">Novato</button>
+                      <button onClick={() => handlePlayGame(juego.id, 2)} className="flex-1 bg-purple-50 text-purple-600 py-1 px-2 rounded text-xs hover:bg-purple-100">Pro</button>
+                      <button onClick={() => handlePlayGame(juego.id, 3)} className="flex-1 bg-orange-50 text-orange-600 py-1 px-2 rounded text-xs hover:bg-orange-100">Master</button>
+                    </>
+                  )}
+                  {juego.id === 'kumiCrucigrama' && (
+                    <>
+                      <button onClick={() => handlePlayGame(juego.id, 1)} className="flex-1 bg-green-50 text-green-600 py-1 px-1 rounded text-xs hover:bg-green-100">N1</button>
+                      <button onClick={() => handlePlayGame(juego.id, 2)} className="flex-1 bg-blue-50 text-blue-600 py-1 px-1 rounded text-xs hover:bg-blue-100">N2</button>
+                      <button onClick={() => handlePlayGame(juego.id, 3)} className="flex-1 bg-yellow-50 text-yellow-600 py-1 px-1 rounded text-xs hover:bg-yellow-100">N3</button>
+                      <button onClick={() => handlePlayGame(juego.id, 4)} className="flex-1 bg-orange-50 text-orange-600 py-1 px-1 rounded text-xs hover:bg-orange-100">N4</button>
+                      <button onClick={() => handlePlayGame(juego.id, 5)} className="flex-1 bg-red-50 text-red-600 py-1 px-1 rounded text-xs hover:bg-red-100">N5</button>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
           ))}
         </div>
