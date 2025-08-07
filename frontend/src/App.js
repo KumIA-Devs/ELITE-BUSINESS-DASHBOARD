@@ -255,7 +255,7 @@ const Login = () => {
           </div>
           <h1 className="text-3xl font-bold text-gray-800 mb-2">IL MANDORLA</h1>
           <p className="text-gray-600 mb-1">Dashboard Administrativo</p>
-          <p className="text-sm text-orange-600 font-medium">Sistema KUMIA Elite</p>
+          <p className="text-sm text-orange-600 font-medium">Powered by KumIA Technology</p>
         </div>
 
         <div className="mb-6">
