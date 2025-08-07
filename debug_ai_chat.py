@@ -7,7 +7,7 @@ import requests
 import json
 import uuid
 
-BACKEND_URL = "https://355dd713-0907-4ee1-a125-ebf97fe9c105.preview.emergentagent.com/api"
+BACKEND_URL = "https://cd2332d5-5a25-473f-9b89-d67786d83b0b.preview.emergentagent.com/api"
 
 def test_ai_chat_debug():
     session = requests.Session()
