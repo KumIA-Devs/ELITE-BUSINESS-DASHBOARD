@@ -7631,10 +7631,14 @@ export const ConfigurationSection = ({ restaurantConfig, updateRestaurantConfig,
                 <div className="flex-1 px-4 py-3 bg-white border border-gray-300 rounded-lg">
                   <span className="text-lg font-bold text-gray-900">{businessInfo.name}</span>
                   <div className="text-xs text-gray-500 mt-1">
-                    {canChangeName ? 
-                      '✅ Disponible para editar' : 
-                      `🔒 Disponible en ${getDaysUntilNameChange()} días`
-                    }
+                    {(() => {
+                      const info = getNameChangeInfo();
+                      if (info.canChange) {
+                        return `✅ ${info.changesLeft} cambios disponibles`;
+                      } else {
+                        return `🔒 Disponible en ${info.daysRemaining} días`;
+                      }
+                    })()}
                   </div>
                 </div>
                 <button
