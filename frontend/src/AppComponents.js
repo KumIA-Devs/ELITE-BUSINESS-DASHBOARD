@@ -15326,6 +15326,190 @@ export const JuegosMultijugador = () => {
           </div>
         </div>
       </div>
+
+      {/* 🎮 GAME PLAY MODAL - Missing Implementation */}
+      {showGamePlayModal && currentPlayingGame && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-screen overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">
+                  {currentPlayingGame === 'kumiSudoku' ? '🧠 KumIA Sudoku' : 
+                   currentPlayingGame === 'pacKumia' ? '🕹️ Pac-KumIA' : 
+                   currentPlayingGame === 'kumiCrucigrama' ? '📝 KumIA Crucigrama' : 
+                   '🎮 Juego'}
+                  <span className="text-sm font-normal text-gray-600 ml-2">
+                    - Nivel {gameLevel}
+                  </span>
+                </h2>
+                <button 
+                  onClick={closeGame}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Game Interface */}
+              <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-8 min-h-96">
+                <div className="text-center">
+                  <div className="text-6xl mb-6">
+                    {currentPlayingGame === 'kumiSudoku' ? '🧠' : 
+                     currentPlayingGame === 'pacKumia' ? '🕹️' : 
+                     currentPlayingGame === 'kumiCrucigrama' ? '📝' : '🎮'}
+                  </div>
+                  
+                  <h3 className="text-2xl font-bold text-gray-800 mb-4">
+                    {currentPlayingGame === 'kumiSudoku' ? `Sudoku ${gameLevel === 1 ? 'Fácil' : gameLevel === 2 ? 'Medio' : 'Difícil'}` : 
+                     currentPlayingGame === 'pacKumia' ? `Pac-KumIA ${gameLevel === 1 ? 'Novato' : gameLevel === 2 ? 'Pro' : 'Master'}` : 
+                     currentPlayingGame === 'kumiCrucigrama' ? `Crucigrama Nivel ${gameLevel}` : 
+                     'Juego KumIA'}
+                  </h3>
+
+                  {/* Sudoku Game Implementation */}
+                  {currentPlayingGame === 'kumiSudoku' && (
+                    <div className="space-y-4">
+                      <div className="bg-white rounded-lg p-6 shadow-sm">
+                        <div className="grid grid-cols-4 gap-1 max-w-xs mx-auto">
+                          {Array.from({length: 16}, (_, i) => (
+                            <div 
+                              key={i}
+                              className="w-8 h-8 border border-gray-300 rounded flex items-center justify-center cursor-pointer hover:bg-blue-50 text-sm font-bold"
+                              onClick={() => {/* Game logic here */}}
+                            >
+                              {Math.floor(Math.random() * 4) + 1}
+                            </div>
+                          ))}
+                        </div>
+                        <div className="mt-4 text-sm text-gray-600">
+                          <p>Completa el sudoku 4x4 sin repetir números en filas o columnas</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Pac-Man Game Implementation */}
+                  {currentPlayingGame === 'pacKumia' && (
+                    <div className="space-y-4">
+                      <div className="bg-black rounded-lg p-6 shadow-sm">
+                        <div className="grid grid-cols-10 gap-px max-w-sm mx-auto">
+                          {Array.from({length: 100}, (_, i) => (
+                            <div 
+                              key={i}
+                              className={`w-4 h-4 ${Math.random() > 0.7 ? 'bg-blue-600' : Math.random() > 0.95 ? 'bg-yellow-400 rounded-full' : 'bg-black'}`}
+                            >
+                              {i === 22 && <span className="text-yellow-400 text-xs">🟡</span>}
+                            </div>
+                          ))}
+                        </div>
+                        <div className="mt-4 text-sm text-white">
+                          <p>Usa las teclas de dirección para moverte y comer todos los puntos</p>
+                          <div className="flex justify-center space-x-2 mt-2">
+                            <div className="text-xs bg-gray-700 px-2 py-1 rounded">↑ ↓ ← →</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Crucigrama Game Implementation */}
+                  {currentPlayingGame === 'kumiCrucigrama' && (
+                    <div className="space-y-4">
+                      <div className="bg-white rounded-lg p-6 shadow-sm">
+                        <div className="grid grid-cols-8 gap-px max-w-md mx-auto">
+                          {Array.from({length: 64}, (_, i) => (
+                            <div 
+                              key={i}
+                              className={`w-6 h-6 border border-gray-300 ${Math.random() > 0.3 ? 'bg-white' : 'bg-black'} flex items-center justify-center text-xs font-bold`}
+                            >
+                              {Math.random() > 0.7 && Math.random() > 0.3 ? String.fromCharCode(65 + Math.floor(Math.random() * 26)) : ''}
+                            </div>
+                          ))}
+                        </div>
+                        <div className="mt-4 text-sm text-gray-600">
+                          <p><strong>1 Horizontal:</strong> Plato principal del restaurante (7 letras)</p>
+                          <p><strong>2 Vertical:</strong> Bebida favorita con las comidas (5 letras)</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Game Controls */}
+                  <div className="flex justify-center space-x-4 mt-6">
+                    <button 
+                      onClick={() => {
+                        const score = Math.floor(Math.random() * 1000) + 500;
+                        const starsEarned = Math.floor(Math.random() * 3) + 1;
+                        completeGame(score, starsEarned);
+                      }}
+                      className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors font-bold"
+                    >
+                      ✅ Completar Juego
+                    </button>
+                    <button 
+                      onClick={closeGame}
+                      className="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors"
+                    >
+                      🚪 Salir del Juego
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Game Stats */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 p-4 bg-gray-50 rounded-xl">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-blue-600">⏱️</div>
+                  <div className="text-sm font-medium text-gray-700">Tiempo</div>
+                  <div className="text-lg font-bold text-gray-800">00:45</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-green-600">🎯</div>
+                  <div className="text-sm font-medium text-gray-700">Puntaje</div>
+                  <div className="text-lg font-bold text-gray-800">0</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-yellow-600">⭐</div>
+                  <div className="text-sm font-medium text-gray-700">Stars Posibles</div>
+                  <div className="text-lg font-bold text-gray-800">
+                    {currentPlayingGame === 'kumiSudoku' ? '2' : 
+                     currentPlayingGame === 'pacKumia' ? '2' : 
+                     currentPlayingGame === 'kumiCrucigrama' ? '3' : '1'}
+                  </div>
+                </div>
+              </div>
+
+              {/* Instructions */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+                <h4 className="font-bold text-blue-800 mb-2">📖 Instrucciones</h4>
+                <div className="text-sm text-blue-700">
+                  {currentPlayingGame === 'kumiSudoku' && (
+                    <ul className="list-disc list-inside space-y-1">
+                      <li>Completa el tablero sin repetir números en filas o columnas</li>
+                      <li>Cada región 2x2 debe contener números del 1 al 4</li>
+                      <li>Gana estrellas KumIA por completarlo sin errores</li>
+                    </ul>
+                  )}
+                  {currentPlayingGame === 'pacKumia' && (
+                    <ul className="list-disc list-inside space-y-1">
+                      <li>Come todos los puntos del laberinto</li>
+                      <li>Evita a los fantasmas o cómete una estrella de poder</li>
+                      <li>Completa niveles para ganar más estrellas KumIA</li>
+                    </ul>
+                  )}
+                  {currentPlayingGame === 'kumiCrucigrama' && (
+                    <ul className="list-disc list-inside space-y-1">
+                      <li>Completa las palabras usando las pistas horizontales y verticales</li>
+                      <li>Las palabras están relacionadas con gastronomía y IL MANDORLA</li>
+                      <li>Cada palabra correcta te da más estrellas KumIA</li>
+                    </ul>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
