@@ -13238,6 +13238,12 @@ export const JuegosMultijugador = () => {
   const [showGamePreviewModal, setShowGamePreviewModal] = useState(null);
   const [showSecurityModal, setShowSecurityModal] = useState(false);
   const [selectedGameType, setSelectedGameType] = useState('1P');
+  
+  // Game playing states
+  const [showGamePlayModal, setShowGamePlayModal] = useState(false);
+  const [currentPlayingGame, setCurrentPlayingGame] = useState(null);
+  const [gameLevel, setGameLevel] = useState(1);
+  
   const [gameStats, setGameStats] = useState({
     sesionesDiarias: 47,
     starsEntregadas: 156,
