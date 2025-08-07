@@ -2267,6 +2267,100 @@ const MenuSection = () => {
           </div>
         </div>
       )}
+
+      {/* Category Management Modal */}
+      {showCategoryModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">
+                  {categoryAction === 'add' ? '➕ Nueva Categoría' : 
+                   categoryAction === 'edit' ? '✏️ Editar Categoría' : 
+                   '📋 Duplicar Categoría'}
+                </h2>
+                <button
+                  onClick={() => {
+                    setShowCategoryModal(false);
+                    setNewCategoryName('');
+                    setEditingCategoryIndex(-1);
+                  }}
+                  className="text-gray-500 hover:text-gray-700 text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <p className="text-sm text-blue-800">
+                    💡 <strong>Gestión de Categorías:</strong> Puedes crear, editar, duplicar o eliminar categorías 
+                    según las necesidades de tu menú. Las categorías te ayudan a organizar mejor tus productos.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Nombre de la categoría</label>
+                  <input
+                    type="text"
+                    value={newCategoryName}
+                    onChange={(e) => setNewCategoryName(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    placeholder="Ej: Postres, Aperitivos, Especialidades"
+                    maxLength="30"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Máximo 30 caracteres</p>
+                </div>
+
+                <div className="text-sm text-gray-600">
+                  <p><strong>Vista previa:</strong></p>
+                  <div className="mt-2 p-2 bg-gray-50 rounded border">
+                    <span className="px-4 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium">
+                      {newCategoryName || 'Nombre de categoría'}
+                    </span>
+                  </div>
+                </div>
+
+                {categories.length > 1 && categoryAction === 'edit' && (
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                    <p className="text-xs text-yellow-800">
+                      ⚠️ <strong>Nota:</strong> Al editar esta categoría, todos los items asociados 
+                      mantendrán la nueva categoría automáticamente.
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex justify-between items-center pt-6 border-t border-gray-200 mt-6">
+                <div className="text-sm text-gray-500">
+                  Categorías actuales: {categories.length}
+                </div>
+                <div className="flex space-x-3">
+                  <button
+                    onClick={() => {
+                      setShowCategoryModal(false);
+                      setNewCategoryName('');
+                      setEditingCategoryIndex(-1);
+                    }}
+                    className="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={handleCategoryAction}
+                    disabled={!newCategoryName.trim()}
+                    className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-lg hover:from-orange-600 hover:to-red-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed font-bold"
+                  >
+                    {categoryAction === 'add' ? '➕ Crear Categoría' : 
+                     categoryAction === 'edit' ? '✏️ Actualizar Categoría' : 
+                     '📋 Duplicar Categoría'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
